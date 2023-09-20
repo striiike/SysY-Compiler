@@ -2,10 +2,8 @@
 // Created by hiccup on 2023/9/19.
 //
 
-//#ifndef COMPILER_LEXER_H
-//#define COMPILER_LEXER_H
 
-//#pragma once
+#pragma once
 #include <vector>
 #include <string>
 #include <fstream>
@@ -36,6 +34,7 @@ private:
     std::string code;
     std::vector<Token> tokens;
     std::size_t pos;
+    std::size_t line;
 
     char peek(int offset);
     char next();
@@ -46,5 +45,3 @@ private:
     void tokenizeOperatorOrPunctuation();
     void tokenizeString();
 };
-
-//#endif //COMPILER_LEXER_H

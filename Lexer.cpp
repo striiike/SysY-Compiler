@@ -140,3 +140,4 @@ std::vector<Token> Lexer::analyze() {
     }
     return tokens;
 }
+
