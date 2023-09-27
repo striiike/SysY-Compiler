@@ -1,43 +1,64 @@
 //
 // Created by hiccup on 2023/9/18.
 //
+
+
 #include <iostream>
-#include <fstream>
-#include <string>
-#include "Lexer.h"
+#include <memory> // For std::shared_ptr
+#include <vector>
 
+class InitVal;
+class ExpInitVal;
+class ArrayInitVal;
 
+using InitValPtr = std::shared_ptr<InitVal>;
+using ExpInitValPtr = std::shared_ptr<ExpInitVal>;
 
-const char* tokenTypeStrings[] = {
-        "IDENFR", "NOT", "MULT", "ASSIGN",
-        "INTCON", "AND", "DIV", "SEMICN",
-        "STRCON", "OR", "MOD", "COMMA",
-        "MAINTK", "FORTK", "LSS", "LPARENT",
-        "CONSTTK", "GETINTTK", "LEQ", "RPARENT",
-        "INTTK", "PRINTFTK", "GRE", "LBRACK",
-        "BREAKTK", "RETURNTK", "GEQ", "RBRACK",
-        "CONTINUETK", "PLUS", "EQL", "LBRACE",
-        "IFTK", "MINU", "NEQ", "RBRACE",
-        "ELSETK", "VOIDTK"
+class InitVal {
+public:
+    virtual void print(){
+
+    }
 };
 
-std::string tokenTypeToString(TokenType type) {
-    return tokenTypeStrings[type];
-}
+class ExpInitVal : public InitVal {
+private:
+    bool isConst;
+    int expPtr;
+public:
+    ExpInitVal(bool isConst, int expPtr) :
+            isConst(isConst), expPtr((expPtr)) {}
+//    void print() override {}
+};
 
-int main() {
+class ArrayInitVal : public InitVal {
+private:
+    bool isConst;
+    std::vector<InitValPtr> initValPtrs;
+public:
+    explicit ArrayInitVal(bool isConst, std::vector<InitValPtr> initValPtrs) :
+            isConst(isConst), initValPtrs(std::move(initValPtrs)) {}
+};
 
-    std::ifstream infile("./testfile.txt");
-    std::string code((std::istreambuf_iterator<char>(infile)), std::istreambuf_iterator<char>());
 
-    Lexer lexer(code);
-    std::vector<Token> tokens = lexer.analyze();
 
-    std::ofstream outfile("./output.txt");
-    for (const auto& token : tokens) {
-        outfile << tokenTypeToString(token.type) << " " << token.value << std::endl;
-    }
-    outfile.close();
 
+//int main() {
+//    ExpInitValPtr obb = std::make_shared<ExpInitVal>(true, 234);
+//
+//    InitValPtr obj = obb;
+//    return 0;
+//}
+
+
+
+
+//
+#include "driver/Driver.h"
+
+    int main() {
+
+    Driver driver;
+    driver.runCompiler();
     return 0;
 }

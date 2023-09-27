@@ -4,6 +4,7 @@
 
 
 #pragma once
+
 #include <vector>
 #include <string>
 #include <fstream>
@@ -18,30 +19,51 @@ enum TokenType {
     BREAKTK, RETURNTK, GEQ, RBRACK,
     CONTINUETK, PLUS, EQL, LBRACE,
     IFTK, MINU, NEQ, RBRACE,
-    ELSETK, VOIDTK
+    ELSETK, VOIDTK,
+    // expression
+//    LVal, PrimaryExp, SubExp, Number,
+//    BaseUnaryExp, FunctionCall, FuncRParams, UnaryExp,
+//    MulExp, AddExp, RelExp, EqExp,
+//    LAndExp, LOrExp, Exp, Cond, ConstExp
+    // declaration
+
+    // stmt
+
+
+
 };
 
 struct Token {
     TokenType type;
     std::string value;
+    int lineNum;
 };
 
 class Lexer {
 public:
-    explicit Lexer(const std::string& code);
+    explicit Lexer(const std::string &code);
+
     std::vector<Token> analyze();
+
 private:
     std::string code;
     std::vector<Token> tokens;
     std::size_t pos;
-    std::size_t line;
+    std::size_t curLineNum = 0;
 
     char peek(int offset);
+
     char next();
+
     void skipWhitespace();
+
     void tokenize();
+
     void tokenizeNumber();
+
     void tokenizeWord();
+
     void tokenizeOperatorOrPunctuation();
+
     void tokenizeString();
 };

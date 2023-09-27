@@ -83,7 +83,6 @@ void Lexer::tokenizeNumber() {
     tokens.push_back({INTCON, num});
 }
 
-
 // alpha, digit or _
 void Lexer::tokenizeWord() {
     std::string word;
