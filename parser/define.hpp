@@ -8,6 +8,7 @@
 
 #include <memory>
 #include "ASTNode.hpp"
+#include "TokenNode.hpp"
 
 class ExpressionParser;
 class DeclarationParser;

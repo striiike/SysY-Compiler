@@ -6,7 +6,6 @@
 #include "driver/Driver.h"
 
 int main() {
-
     Driver driver;
     driver.runCompiler();
     return 0;
