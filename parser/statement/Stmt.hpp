@@ -9,16 +9,20 @@
 #include <utility>
 
 #include "../define.hpp"
+#include "../ASTNode.hpp"
 #include "SimpleStmt.hpp"
 #include "ComplexStmt.hpp"
 
-class Stmt {
+class Stmt : public ASTNode {
 private:
     SimpleStmtPtr simpleStmtPtr;
     ComplexStmtPtr complexStmtPtr;
 public:
     Stmt(SimpleStmtPtr simpleStmt, ComplexStmtPtr complexStmt) :
-            simpleStmtPtr(std::move(simpleStmt)), complexStmtPtr(std::move(complexStmt)){}
+            simpleStmtPtr(std::move(simpleStmt)), complexStmtPtr(std::move(complexStmt)){
+        name = "<Stmt>";
+        printInformation();
+    }
 };
 
 

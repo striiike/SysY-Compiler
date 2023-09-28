@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "../define.hpp"
+#include "../ASTNode.hpp"
 
 class ComplexStmt {
 public:
@@ -27,22 +28,25 @@ public :
 
 class ForStmt : public ComplexStmt {
 private:
-    AssignStmtPtr assignStmtPtr1;
-    AssignStmtPtr assignStmtPtr2;
+    _ForStmtPtr assignStmtPtr1;
+    _ForStmtPtr assignStmtPtr2;
     CondPtr condPtr;
     StmtPtr stmtPtr;
 public :
     ForStmt(CondPtr condPtr, StmtPtr stmtPtr,
-            AssignStmtPtr assignStmtPtr1, AssignStmtPtr assignStmtPtr2) :
+            _ForStmtPtr assignStmtPtr1, _ForStmtPtr assignStmtPtr2) :
             condPtr(std::move(condPtr)), stmtPtr(std::move(stmtPtr)),
             assignStmtPtr1(std::move(assignStmtPtr1)),
             assignStmtPtr2(std::move(assignStmtPtr2)) {}
 };
 
-class Block : public ComplexStmt {
+class Block : public ComplexStmt, ASTNode {
 private:
     std::vector<BlockItemPtr> blockItemPtrs;
 public:
     explicit Block(std::vector<BlockItemPtr> blockItemPtrs) :
-            blockItemPtrs(std::move(blockItemPtrs)) {}
+            blockItemPtrs(std::move(blockItemPtrs)) {
+        name = "<Block>";
+        printInformation();
+    }
 };

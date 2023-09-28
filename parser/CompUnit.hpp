@@ -9,13 +9,17 @@
 #include <utility>
 #include <vector>
 #include "define.hpp"
+#include "ASTNode.hpp"
 
-class CompUnit {
+class CompUnit : public ASTNode{
 public:
     explicit CompUnit(std::vector<DeclPtr> declPtrs, std::vector<FuncDefPtr> funcDefPtrs,
                       MainFuncDefPtr mainFuncDefPtr)
             : declPtrs(std::move(declPtrs)), funcDefPtrs(std::move(funcDefPtrs)),
-              mainFuncDefPtr(std::move(mainFuncDefPtr)) {}
+              mainFuncDefPtr(std::move(mainFuncDefPtr)) {
+        name = "<CompUnit>";
+        printInformation();
+    }
 
 private:
     std::vector<DeclPtr> declPtrs;

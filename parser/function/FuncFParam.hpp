@@ -5,8 +5,10 @@
 #ifndef COMPILER_FUNCFPARAM_HPP
 #define COMPILER_FUNCFPARAM_HPP
 
+#include "../define.hpp"
+#include "../ASTNode.hpp"
 
-class FuncFParam {
+class FuncFParam : public ASTNode {
 private:
     TokenNode bType;
     TokenNode ident;
@@ -17,7 +19,10 @@ public:
             : bType(std::move(bType)),
               ident(std::move(ident)),
               isArray(isArray),
-              constExpPtrs(std::move(constExpPtrs)) {}
+              constExpPtrs(std::move(constExpPtrs)) {
+        name = "<FuncFParam>";
+        printInformation();
+    }
 };
 
 

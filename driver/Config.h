@@ -7,6 +7,7 @@
 
 
 #include <string>
+#include <fstream>
 
 class Config {
 public:
@@ -17,6 +18,13 @@ public:
     explicit Config();
 
 };
+
+extern bool PARSER_DISPLAY;
+extern bool PARSER_SWITCH;
+
+extern std::ofstream outfile;
+
+extern void printString(std::string str);
 
 
 #endif //COMPILER_CONFIG_H

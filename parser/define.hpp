@@ -7,6 +7,7 @@
 
 
 #include <memory>
+#include "ASTNode.hpp"
 
 class ExpressionParser;
 class DeclarationParser;
@@ -76,7 +77,9 @@ class ReturnStmt;
 class GetintStmt;
 class PrintfStmt;
 class IfStmt;
+class _ForStmt;
 class ForStmt;
+
 
 using StmtPtr = std::shared_ptr<Stmt>;
 using SimpleStmtPtr = std::shared_ptr<SimpleStmt>;
@@ -92,6 +95,7 @@ using GetintStmtPtr = std::shared_ptr<GetintStmt>;
 using PrintfStmtPtr = std::shared_ptr<PrintfStmt>;
 using IfStmtPtr = std::shared_ptr<IfStmt>;
 using ForStmtPtr = std::shared_ptr<ForStmt>;
+using _ForStmtPtr = std::shared_ptr<_ForStmt>;
 
 class FuncDef;
 class FuncFParams;

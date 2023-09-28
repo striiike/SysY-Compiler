@@ -59,12 +59,12 @@ PrimaryExpPtr ExpressionParser::parsePrimaryExp() {
             auto left = tokenStream.next();
             ExpPtr expPtr = parseExp();
             auto right = tokenStream.next();
-            return std::make_shared<PrimaryExp>(expPtr);
+            return std::make_shared<PrimaryExp>(expPtr, nullptr, nullptr);
         }
         case IDENFR:
-            return std::make_shared<PrimaryExp>(parseLVal());
+            return std::make_shared<PrimaryExp>(nullptr, parseLVal(), nullptr);
         case INTCON:
-            return std::make_shared<PrimaryExp>(parseNumber());
+            return std::make_shared<PrimaryExp>(nullptr, nullptr, parseNumber());
         default:
             return nullptr;
     }
@@ -117,14 +117,23 @@ UnaryExpPtr ExpressionParser::parseUnaryExp() {
             break;
         }
         unaryOps.push_back(tokenStream.next()->type);
+        printString("<UnaryOp>");
     }
 
     auto token1 = tokenStream.peek()->type;
     auto token2 = tokenStream.peek(1)->type;
     if (token1 == IDENFR && token2 == LPARENT) {
-        return make_shared<UnaryExp>(unaryOps, nullptr, parseFunctionCall());
+        auto ret = make_shared<UnaryExp>(unaryOps, nullptr, parseFunctionCall());
+        for (int i = 0; i < unaryOps.size(); i++) {
+            printString("<UnaryExp>");
+        }
+        return ret;
     } else {
-        return make_shared<UnaryExp>(unaryOps, parsePrimaryExp(), nullptr);
+        auto ret = make_shared<UnaryExp>(unaryOps, parsePrimaryExp(), nullptr);
+        for (int i = 0; i < unaryOps.size(); i++) {
+            printString("<UnaryExp>");
+        }
+        return ret;
     }
 
 }
@@ -137,9 +146,11 @@ MulExpPtr ExpressionParser::parseMulExp() {
     while (!tokenStream.reachEnd()) {
         auto token = tokenStream.peek();
         if (!token || (token->type != MULT && token->type != DIV && token->type != MOD)) break;
-
+        printString("<MulExp>");
         operators.push_back(tokenStream.next()->type);
         operands.push_back(parseUnaryExp());
+
+
     }
 
     return std::make_shared<MulExp>(std::move(leftOperand), std::move(operators), std::move(operands));
@@ -153,9 +164,11 @@ AddExpPtr ExpressionParser::parseAddExp() {
     while (!tokenStream.reachEnd()) {
         auto token = tokenStream.peek();
         if (!token || (token->type != PLUS && token->type != MINU)) break;
+        printString("<AddExp>");
 
         operators.push_back(tokenStream.next()->type); // Assuming next() will return the token
         operands.push_back(parseMulExp());
+
     }
 
     return std::make_shared<AddExp>(std::move(leftOperand), std::move(operators), std::move(operands));
@@ -169,9 +182,11 @@ RelExpPtr ExpressionParser::parseRelExp() {
     while (!tokenStream.reachEnd()) {
         auto token = tokenStream.peek();
         if (!token || (token->type != LSS && token->type != GRE && token->type != LEQ && token->type != GEQ)) break;
+        printString("<RelExp>");
 
         operators.push_back(tokenStream.next()->type);
         operands.push_back(parseAddExp());
+
     }
 
     return std::make_shared<RelExp>(std::move(leftOperand), std::move(operators), std::move(operands));
@@ -185,6 +200,7 @@ EqExpPtr ExpressionParser::parseEqExp() {
     while (!tokenStream.reachEnd()) {
         auto token = tokenStream.peek();
         if (!token || (token->type != EQL && token->type != NEQ)) break;
+        printString("<EqExp>");
 
         operators.push_back(tokenStream.next()->type);
         operands.push_back(parseRelExp());
@@ -201,6 +217,7 @@ LAndExpPtr ExpressionParser::parseLAndExp() {
     while (!tokenStream.reachEnd()) {
         auto token = tokenStream.peek();
         if (!token || token->type != AND) break;
+        printString("<LAndExp>");
 
         operators.push_back(tokenStream.next()->type);
         operands.push_back(parseEqExp());
@@ -217,6 +234,7 @@ LOrExpPtr ExpressionParser::parseLOrExp() {
     while (!tokenStream.reachEnd()) {
         auto token = tokenStream.peek();
         if (!token || token->type != OR) break;
+        printString("<LOrExp>");
 
         operators.push_back(tokenStream.next()->type);
         operands.push_back(parseLAndExp());

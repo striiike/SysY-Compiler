@@ -18,6 +18,10 @@ private:
 public:
     TokenNode(Token token) :
             value(std::move(token.value)), type(token.type), lineNum(token.lineNum) {}
+
+    TokenType getType() {
+        return type;
+    }
 };
 
 

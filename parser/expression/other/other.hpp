@@ -43,14 +43,17 @@ private:
     FunctionCallPtr functionCallPtr;
 public:
     UnaryExp(std::vector<TokenType> unaryOps, PrimaryExpPtr primaryExpPtr, FunctionCallPtr functionCallPtr);
+
     // Getter methods
-    [[nodiscard]] const std::vector<TokenType>& getUnaryOps() const {
+    [[nodiscard]] const std::vector<TokenType> &getUnaryOps() const {
         return unaryOps;
     }
-    const PrimaryExpPtr& getPrimaryExpPtr() const {
+
+    const PrimaryExpPtr &getPrimaryExpPtr() const {
         return primaryExpPtr;
     }
-    const FunctionCallPtr& getFunctionCallPtr() const {
+
+    const FunctionCallPtr &getFunctionCallPtr() const {
         return functionCallPtr;
     }
 };
@@ -61,11 +64,17 @@ private:
     LValPtr lValPtr = nullptr;
     NumberPtr numberPtr = nullptr;
 public:
-    explicit PrimaryExp(ExpPtr exp) : expPtr(std::move(exp)) {}
+    PrimaryExp(ExpPtr exp, LValPtr lVal, NumberPtr number)
+            : expPtr(std::move(exp)), lValPtr(std::move(lVal)),
+              numberPtr(std::move(number)) {
+        name = "<PrimaryExp>";
+        printInformation();
+    }
+
     ExpPtr getExpPtr() { return expPtr; }
-    explicit PrimaryExp(LValPtr lVal) : lValPtr(std::move(lVal)) {}
+
     LValPtr getLValPtr() { return lValPtr; }
-    explicit PrimaryExp(NumberPtr number) : numberPtr(std::move(number)) {}
+
     NumberPtr getNumberPtr() { return numberPtr; }
 };
 
@@ -85,14 +94,14 @@ public:
     FunctionCall(std::string ident, FuncRParamsPtr funcRParamsPtr);;
 };
 
-class ConstExp {
+class ConstExp : public ASTNode {
 private:
     AddExpPtr addExpPtr;
 public:
     explicit ConstExp(AddExpPtr sharedPtr);
 };
 
-class Cond {
+class Cond : public ASTNode {
 private:
     LOrExpPtr lOrExpPtr;
 public:

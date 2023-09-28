@@ -6,6 +6,3 @@
 
 #include <utility>
 
-Def::Def(TokenNode ident, std::vector<ConstExpPtr> constExpPtrs, InitValPtr initValPtr)
-        : ident(std::move(ident)), constExpPtrs(std::move(constExpPtrs)), initValPtr(std::move(initValPtr)) {
-}

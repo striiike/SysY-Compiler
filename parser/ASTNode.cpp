@@ -4,5 +4,3 @@
 
 #include "ASTNode.hpp"
 
-void ASTNode::printInformation() {
-}

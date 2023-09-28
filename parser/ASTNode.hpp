@@ -4,9 +4,17 @@
 
 #pragma once
 
+#include <iostream>
+#include "../driver/Config.h"
+
 class ASTNode {
 public:
-    virtual void printInformation();
+    std::string name;
+
+    void printInformation() const {
+        if (PARSER_DISPLAY && PARSER_SWITCH)
+            outfile << name << std::endl;
+    }
 };
 
 

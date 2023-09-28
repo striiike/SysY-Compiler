@@ -17,6 +17,7 @@ FunctionParser::FunctionParser(TokenStream &tokenStream)
 
 FuncDefPtr FunctionParser::parseFuncDef() {
     TokenNode funcType(tokenStream.next().value());
+    printString("<FuncType>");
     TokenNode ident(tokenStream.next().value());
     auto left = tokenStream.next();
     FuncFParamsPtr funcFParamsPtr = nullptr;

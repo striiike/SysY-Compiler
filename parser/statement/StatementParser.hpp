@@ -30,7 +30,7 @@ public :
 
     ComplexStmtPtr parseComplexStmt();
 
-    AssignStmtPtr parseAssignStmt();
+    _ForStmtPtr parse_ForStmt();
 
     SimpleStmtPtr parseAssignOrGetintStmt(const LValPtr& lValPtr);
 };

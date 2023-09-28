@@ -22,6 +22,18 @@ public:
             : lValPtr(std::move(lValPtr)), expPtr(std::move(expPtr)) {}
 };
 
+class _ForStmt : public ASTNode {
+private:
+    LValPtr lValPtr;
+    ExpPtr expPtr;
+public:
+    _ForStmt(LValPtr lValPtr, ExpPtr expPtr)
+            : lValPtr(std::move(lValPtr)), expPtr(std::move(expPtr)) {
+        name = "<ForStmt>";
+        printInformation();
+    }
+};
+
 class ExpStmt : public SimpleStmt {
 private:
     ExpPtr expPtr;

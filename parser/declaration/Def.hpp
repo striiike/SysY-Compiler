@@ -9,13 +9,20 @@
 #include "../TokenNode.hpp"
 #include "../define.hpp"
 
-class Def {
+class Def : public ASTNode {
 private:
+    bool isConst;
     TokenNode ident;
     std::vector<ConstExpPtr> constExpPtrs;
     InitValPtr initValPtr;
 public:
-    Def(TokenNode ident, std::vector<ConstExpPtr> constExpPtrs, InitValPtr initValPtr);
+    Def(bool isConst, TokenNode ident, std::vector<ConstExpPtr> constExpPtrs, InitValPtr initValPtr)
+            : isConst(isConst), ident(std::move(ident)), constExpPtrs(std::move(constExpPtrs)),
+              initValPtr(std::move(initValPtr)) {
+        name = isConst ? "<ConstDef>" : "<VarDef>";
+        printInformation();
+    }
+
 };
 
 

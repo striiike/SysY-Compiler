@@ -53,16 +53,16 @@ DefPtr DeclarationParser::parseDef(bool isConst) {
     }
     if (tokenStream.peek()->type == ASSIGN) {
         auto assign = tokenStream.next();
-        return std::make_shared<Def>(ident, constExpPtrs, parseInitVal(isConst));
+        return std::make_shared<Def>(isConst, ident, constExpPtrs, parseInitVal(isConst));
     }
-    return std::make_shared<Def>(ident, constExpPtrs, nullptr);
+    return std::make_shared<Def>(isConst, ident, constExpPtrs, nullptr);
 }
 
 //    <InitVal>       := <ExpInitVal> | <ArrInitVal>
 InitValPtr DeclarationParser::parseInitVal(bool isConst) {
     if (tokenStream.peek()->type != LBRACE) {
         auto ret = parseExpInitVal(isConst);
-        return ret ;
+        return ret;
     }
     return parseArrayInitVal(isConst);
 }
@@ -70,7 +70,8 @@ InitValPtr DeclarationParser::parseInitVal(bool isConst) {
 //    <ExpInitVal>    := <Exp>
 ExpInitValPtr DeclarationParser::parseExpInitVal(bool isConst) {
     ExpressionParser expressionParser(tokenStream);
-    return std::make_shared<ExpInitVal>(isConst, expressionParser.parseExp());
+    if (isConst) return std::make_shared<ExpInitVal>(isConst, nullptr, expressionParser.parseConstExp());
+    return std::make_shared<ExpInitVal>(isConst, expressionParser.parseExp(), nullptr);
 }
 
 //    <ArrInitVal>    := '{' [ <InitVal> { ',' <InitVal> } ] '}'    // 语义分析时要求必须个数与维度对应

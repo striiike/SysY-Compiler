@@ -23,7 +23,7 @@ CompUnit Parser::parseCompUnit() {
         auto type2 = tokenStream.peek(2)->type;
         if (type == INTTK && type1 == MAINTK && type2 == LPARENT) {
             _main = functionParser.parseMainFuncDef();
-        } else if ((type == VOIDTK || type1 == INTTK) && type1 == IDENFR && type2 == LPARENT) {
+        } else if ((type == VOIDTK || type == INTTK) && type1 == IDENFR && type2 == LPARENT) {
             funcDefPtrs.push_back(functionParser.parseFuncDef());
         } else {
             declPtrs.push_back(declarationParser.parseDecl());

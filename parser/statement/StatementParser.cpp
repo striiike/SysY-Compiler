@@ -71,7 +71,7 @@ StmtPtr StatementParser::parseStmt() {
 }
 
 // used to check whether Exp is LVal, \only for parseSimpleStmt
-LValPtr getLValPtr(const ExpPtr& expPtr) {
+LValPtr getLValPtr(const ExpPtr &expPtr) {
     ;
     auto add = expPtr->addExpPtr;
     auto mul = add->getLeftOperand();
@@ -79,11 +79,13 @@ LValPtr getLValPtr(const ExpPtr& expPtr) {
     auto ops = unary->getUnaryOps();
     if (!ops.empty()) return nullptr;
     auto primary = unary->getPrimaryExpPtr();
-    return primary->getLValPtr();
+    if (primary)
+        return primary->getLValPtr();
+    else return nullptr;
 };
 
 
-SimpleStmtPtr StatementParser::parseAssignOrGetintStmt(const LValPtr& lValPtr) {
+SimpleStmtPtr StatementParser::parseAssignOrGetintStmt(const LValPtr &lValPtr) {
     auto assign = tokenStream.next();
     if (tokenStream.peek()->type == GETINTTK) {
         auto _getint = *tokenStream.next();
@@ -141,20 +143,39 @@ SimpleStmtPtr StatementParser::parseSimpleStmt() {
         return std::make_shared<PrintfStmt>(_printf, formatStringToken, expPtrs);
     }
 
-    ExpPtr expPtr = expressionParser.parseExp();
-    LValPtr lValPtr = getLValPtr(expPtr);
-    if (lValPtr == nullptr) {
-        return std::make_shared<ExpStmt>(expPtr);
+
+    /// \very \servere \problem \!!
+    bool isAssignOrGetint = false;
+    PARSER_DISPLAY = false;
+    {
+        /// \NO_NEED_TO_WORRY_SIDE_EFFECT_OF_COPY
+        /// \ZHEN_NI_MA_CHUN
+        TokenStream tokenStreamCopy1(tokenStream);
+        TokenStream tokenStreamCopy2(tokenStream);
+
+        ExpressionParser expressionParserCopy1(tokenStreamCopy1);
+        ExpressionParser expressionParserCopy2(tokenStreamCopy2);
+        ExpPtr expPtr = expressionParserCopy1.parseExp();
+        LValPtr lValPtr = getLValPtr(expPtr);
+        if (lValPtr) {
+            LValPtr lValPtr1 = expressionParserCopy2.parseLVal();
+            isAssignOrGetint = (tokenStreamCopy2.peek()->type == ASSIGN);
+        }
+    }
+    PARSER_DISPLAY = true;
+
+    if (isAssignOrGetint) {
+        return parseAssignOrGetintStmt(expressionParser.parseLVal());
     } else {
-        return parseAssignOrGetintStmt(lValPtr);
+        return std::make_shared<ExpStmt>(expressionParser.parseExp());
     }
 }
 
-AssignStmtPtr StatementParser::parseAssignStmt() {
+_ForStmtPtr StatementParser::parse_ForStmt() {
     ExpressionParser expressionParser(tokenStream);
     LValPtr lValPtr = expressionParser.parseLVal();
     auto assign = tokenStream.next();
-    return std::make_shared<AssignStmt>(lValPtr, expressionParser.parseExp());
+    return std::make_shared<_ForStmt>(lValPtr, expressionParser.parseExp());
 }
 
 //    <IfStmt>        := 'if' '(' <Cond> ')' <Stmt> [ 'else' <Stmt> ]
@@ -176,9 +197,9 @@ ComplexStmtPtr StatementParser::parseComplexStmt() {
     if (tokenStream.peek()->type == FORTK) {
         auto _for = tokenStream.next();
         auto left = tokenStream.next();
-        AssignStmtPtr assignStmtPtr1 = nullptr;
+        _ForStmtPtr assignStmtPtr1 = nullptr;
         if (tokenStream.peek()->type != SEMICN) {
-            assignStmtPtr1 = parseAssignStmt();
+            assignStmtPtr1 = parse_ForStmt();
         }
         auto semicn1 = tokenStream.next();
         CondPtr condPtr = nullptr;
@@ -187,9 +208,10 @@ ComplexStmtPtr StatementParser::parseComplexStmt() {
             condPtr = expressionParser.parseCond();
         }
         auto semicn2 = tokenStream.next();
-        AssignStmtPtr assignStmtPtr2 = nullptr;
-        if (tokenStream.peek()->type != SEMICN) {
-            assignStmtPtr1 = parseAssignStmt();
+        _ForStmtPtr assignStmtPtr2 = nullptr;
+
+        if (tokenStream.peek()->type != RPARENT) {
+            assignStmtPtr1 = parse_ForStmt();
         }
         auto right = tokenStream.next();
         return std::make_shared<ForStmt>(condPtr, parseStmt(), assignStmtPtr1, assignStmtPtr2);
