@@ -5,7 +5,7 @@
 #pragma once
 
 #include <iostream>
-#include "../driver/Config.h"
+#include "../Config.h"
 
 class ASTNode {
 public:

@@ -2,8 +2,7 @@
 // Created by hiccup on 2023/9/25.
 //
 
-#ifndef COMPILER_DECL_HPP
-#define COMPILER_DECL_HPP
+#pragma once
 
 
 #include <utility>
@@ -25,4 +24,3 @@ public :
 };
 
 
-#endif //COMPILER_DECL_HPP

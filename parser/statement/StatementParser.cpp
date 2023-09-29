@@ -5,8 +5,8 @@
 #include "StatementParser.hpp"
 #include "../declaration/DeclarationParser.hpp"
 #include "../expression/ExpressionParser.hpp"
-#include "../expression/other/other.hpp"
-#include "../expression/uniform/Uniform.hpp"
+#include "../expression/other.hpp"
+#include "../expression/Uniform.hpp"
 
 
 //    // 以分号结尾的简单语句

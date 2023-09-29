@@ -5,8 +5,8 @@
 #pragma once
 
 #include <memory>
-#include "../TokenStream.h"
-#include "uniform/Uniform.hpp"
+#include "../TokenStream.hpp"
+#include "Uniform.hpp"
 
 
 class ExpressionParser {

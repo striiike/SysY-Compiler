@@ -3,9 +3,7 @@
 //
 // Created by hiccup on 2023/9/27.
 //
-
-#ifndef COMPILER_MAINFUNCDEF_HPP
-#define COMPILER_MAINFUNCDEF_HPP
+#pragma once
 
 #include "../define.hpp"
 #include "../ASTNode.hpp"
@@ -23,5 +21,3 @@ public:
     }
 };
 
-
-#endif //COMPILER_MAINFUNCDEF_HPP

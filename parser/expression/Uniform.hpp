@@ -2,15 +2,14 @@
 // Created by hiccup on 2023/9/21.
 //
 
-#ifndef COMPILER_UNIFORM_HPP
-#define COMPILER_UNIFORM_HPP
+#pragma once
 
 
 #include <vector>
 #include <memory>
-#include "../../../lexer/Lexer.h"
-#include "../../ASTNode.hpp"
-#include "../../define.hpp"
+#include "../../lexer/Lexer.h"
+#include "../ASTNode.hpp"
+#include "../define.hpp"
 
 
 // only for certain syntax as (MulExp, AddExp, RelExp, EqExp, LAndExp, LOrExp)
@@ -102,6 +101,3 @@ public:
         printInformation();
     }
 };
-
-
-#endif //COMPILER_UNIFORM_HPP

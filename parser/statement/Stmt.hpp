@@ -2,9 +2,7 @@
 // Created by hiccup on 2023/9/26.
 //
 
-#ifndef COMPILER_STMT_HPP
-#define COMPILER_STMT_HPP
-
+#pragma once
 
 #include <utility>
 
@@ -24,6 +22,3 @@ public:
         printInformation();
     }
 };
-
-
-#endif //COMPILER_STMT_HPP

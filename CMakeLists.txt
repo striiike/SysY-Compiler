@@ -7,21 +7,17 @@ add_executable(compiler main.cpp
         lexer/Lexer.cpp
         lexer/Lexer.h
         lexer/Lexer.cpp
-        parser/Parser.h
-        parser/Parser.cpp
-        driver/Driver.h
-        driver/Driver.cpp
-        driver/Config.h
-        driver/Config.cpp
-        parser/TokenStream.h
+        parser/Parser.hpp
+        Config.h
+        Config.cpp
+        parser/TokenStream.hpp
         parser/TokenStream.cpp
         parser/ASTNode.hpp
-        parser/ASTNode.cpp
-        parser/expression/uniform/Uniform.hpp
+        parser/expression/Uniform.hpp
         parser/expression/ExpressionParser.hpp
         parser/expression/ExpressionParser.cpp
-        parser/expression/other/other.hpp
-        parser/expression/other/other.cpp
+        parser/expression/other.hpp
+        parser/expression/other.cpp
         parser/TokenNode.hpp
         parser/define.hpp
         parser/declaration/DeclarationParser.hpp
@@ -30,7 +26,6 @@ add_executable(compiler main.cpp
         parser/declaration/Decl.hpp
         parser/declaration/Def.hpp
         parser/declaration/InitVal.hpp
-        parser/declaration/Def.cpp
         parser/statement/StatementParser.hpp
         parser/statement/StatementParser.cpp
         parser/function/FunctionParser.hpp

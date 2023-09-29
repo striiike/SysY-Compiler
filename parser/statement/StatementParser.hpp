@@ -2,11 +2,10 @@
 // Created by hiccup on 2023/9/26.
 //
 
-#ifndef COMPILER_STATEMENTPARSER_HPP
-#define COMPILER_STATEMENTPARSER_HPP
+#pragma once
 
 
-#include "../TokenStream.h"
+#include "../TokenStream.hpp"
 #include "../define.hpp"
 
 #include "BlockItem.hpp"
@@ -35,5 +34,3 @@ public :
     SimpleStmtPtr parseAssignOrGetintStmt(const LValPtr& lValPtr);
 };
 
-
-#endif //COMPILER_STATEMENTPARSER_HPP

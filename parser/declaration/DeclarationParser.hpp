@@ -5,7 +5,7 @@
 #pragma once
 
 #include <memory>
-#include "../TokenStream.h"
+#include "../TokenStream.hpp"
 #include "../define.hpp"
 #include "Def.hpp"
 #include "Decl.hpp"

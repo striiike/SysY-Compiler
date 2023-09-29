@@ -2,10 +2,7 @@
 // Created by hiccup on 2023/9/23.
 //
 
-#ifndef COMPILER_DEFINE_HPP
-#define COMPILER_DEFINE_HPP
-
-
+#pragma once
 #include <memory>
 #include "ASTNode.hpp"
 #include "TokenNode.hpp"
@@ -114,6 +111,3 @@ class CompUnit;
 class WhatTheFuck {
 
 };
-
-
-#endif //COMPILER_DEFINE_HPP

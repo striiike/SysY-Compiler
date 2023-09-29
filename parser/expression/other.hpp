@@ -9,8 +9,8 @@
 #include <string>
 #include <utility>
 #include <vector>
-#include "../../define.hpp"
-#include "../../TokenNode.hpp"
+#include "../define.hpp"
+#include "../TokenNode.hpp"
 
 
 class Number : public ASTNode {

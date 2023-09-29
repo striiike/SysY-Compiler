@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "../TokenStream.h"
+#include "../TokenStream.hpp"
 #include "FuncDef.hpp"
 #include "FuncFParam.hpp"
 #include "FuncFParams.hpp"

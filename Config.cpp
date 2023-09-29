@@ -18,5 +18,4 @@ std::ofstream outfile("output.txt");
 void printString(std::string str) {
     if (PARSER_DISPLAY && PARSER_SWITCH) {
         outfile << str << std::endl;    }
-
 }

@@ -4,7 +4,7 @@
 
 #include "ExpressionParser.hpp"
 #include "../TokenNode.hpp"
-#include "other/other.hpp"
+#include "other.hpp"
 
 using namespace std;
 

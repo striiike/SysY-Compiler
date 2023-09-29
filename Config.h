@@ -2,10 +2,7 @@
 // Created by hiccup on 2023/9/20.
 //
 
-#ifndef COMPILER_CONFIG_H
-#define COMPILER_CONFIG_H
-
-
+#pragma once
 #include <string>
 #include <fstream>
 
@@ -27,4 +24,3 @@ extern std::ofstream outfile;
 extern void printString(std::string str);
 
 
-#endif //COMPILER_CONFIG_H

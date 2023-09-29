@@ -4,8 +4,8 @@
 
 #include <optional>
 #include <iostream>
-#include "TokenStream.h"
-#include "../driver/Config.h"
+#include "TokenStream.hpp"
+#include "../Config.h"
 
 const char *tokenTypeStrings[] = {
         "IDENFR", "NOT", "MULT", "ASSIGN",

@@ -1,9 +1,8 @@
 //
 // Created by hiccup on 2023/9/27.
 //
+#pragma once
 
-#ifndef COMPILER_FUNCFPARAM_HPP
-#define COMPILER_FUNCFPARAM_HPP
 
 #include "../define.hpp"
 #include "../ASTNode.hpp"
@@ -25,5 +24,3 @@ public:
     }
 };
 
-
-#endif //COMPILER_FUNCFPARAM_HPP
