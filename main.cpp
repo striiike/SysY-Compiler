@@ -3,7 +3,7 @@
 //
 #include <bits/stdc++.h>
 #include "parser/Parser.hpp"
-#include "Config.h"
+#include "Config.hpp"
 
 bool PARSER_DISPLAY = true;
 bool PARSER_SWITCH = true;

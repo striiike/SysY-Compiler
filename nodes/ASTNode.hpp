@@ -5,7 +5,7 @@
 #pragma once
 
 #include <iostream>
-#include "../Config.h"
+#include "../Config.hpp"
 
 class ASTNode {
 public:

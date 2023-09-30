@@ -14,7 +14,6 @@ private:
 public:
     explicit Parser(TokenStream &tokenStream) : tokenStream(tokenStream) {}
 
-
     std::shared_ptr<Decl> parseDecl();
 
     std::shared_ptr<Def> parseDef(bool isConst);

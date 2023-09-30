@@ -5,7 +5,7 @@
 #include <optional>
 #include <iostream>
 #include "TokenStream.hpp"
-#include "../Config.h"
+#include "../Config.hpp"
 
 const char *tokenTypeStrings[] = {
         "IDENFR", "NOT", "MULT", "ASSIGN",

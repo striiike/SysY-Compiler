@@ -5,6 +5,11 @@
 #include <bits/stdc++.h>
 
 using namespace std;
+
+#define CHECK(x, y)
+
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 //    <Decl>          := ['const'] <BType> <Def> { ',' <Def> } ';'     'const' 修饰若有，则表示常量

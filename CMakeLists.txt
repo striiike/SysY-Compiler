@@ -7,7 +7,7 @@ add_executable(compiler main.cpp
         lexer/Lexer.cpp
         lexer/Lexer.h
         parser/Parser.hpp
-        Config.h
+        Config.hpp
         parser/TokenStream.hpp
         parser/TokenStream.cpp
         nodes/ASTNode.hpp
