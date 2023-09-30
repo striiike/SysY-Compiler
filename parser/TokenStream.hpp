@@ -9,14 +9,29 @@
 #include "../lexer/Lexer.h"
 #include "lib.hpp"
 #include "../Config.hpp"
+#include "../nodes/TokenNode.hpp"
+#include "Exception.hpp"
 
-#include <optional>
+#include <bits/stdc++.h>
+using namespace std;
 
 class TokenStream {
     std::vector<Token>::iterator current;
     std::vector<Token>::iterator end;
 public:
     static std::string tokenTypeToString(TokenType type) {
+        const char *tokenTypeStrings[] = {
+                "IDENFR", "NOT", "MULT", "ASSIGN",
+                "INTCON", "AND", "DIV", "SEMICN",
+                "STRCON", "OR", "MOD", "COMMA",
+                "MAINTK", "FORTK", "LSS", "LPARENT",
+                "CONSTTK", "GETINTTK", "LEQ", "RPARENT",
+                "INTTK", "PRINTFTK", "GRE", "LBRACK",
+                "BREAKTK", "RETURNTK", "GEQ", "RBRACK",
+                "CONTINUETK", "PLUS", "EQL", "LBRACE",
+                "IFTK", "MINU", "NEQ", "RBRACE",
+                "ELSETK", "VOIDTK"
+        };
         return tokenTypeStrings[type];
     }
 
@@ -41,8 +56,22 @@ public:
         return {};
     }
 
-    bool reachEnd() const {
+    bool reachEnd() {
         return current == end;
+    }
+
+    TokenNode check(TokenType type, Exception exception) {
+        if (peek()->type != type) {
+            error(exception);
+            /// \useless
+            return TokenNode(peek().value());
+        } else {
+            return TokenNode(next().value());
+        }
+    }
+
+    void error(Exception exception) {
+        errorList.emplace_back(exception, current->lineNum);
     }
 
 };

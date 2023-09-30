@@ -33,7 +33,10 @@ char Lexer::next() {
 }
 
 void Lexer::skipWhitespace() {
-    while (std::isspace(peek())) next();
+    while (std::isspace(peek())) {
+        if (peek() == '\n') curLineNum++;
+        next();
+    }
 }
 
 void Lexer::tokenize() {
@@ -42,14 +45,17 @@ void Lexer::tokenize() {
     // skip single-line comment
     if (peek() == '/' && peek(1) == '/') {
         while (peek() && next() != '\n');
+        curLineNum++;
     }
 
     // skip multi-lines comment
     if (peek() == '/' && peek(1) == '*') {
         next();
         next();
-        while (peek() && (peek() != '*' || peek(1) != '/'))
+        while (peek() && (peek() != '*' || peek(1) != '/')) {
+            if (peek() == '\n') curLineNum++;
             next();
+        }
         next();
         next();
     }
@@ -72,7 +78,7 @@ void Lexer::tokenizeString() {
         str.push_back(next());
     }
     str.push_back(next());  // Skip the closing quote
-    tokens.push_back({STRCON, str});
+    tokens.push_back({STRCON, str, curLineNum});
 }
 
 void Lexer::tokenizeNumber() {
@@ -80,7 +86,7 @@ void Lexer::tokenizeNumber() {
     while (std::isdigit(peek())) {
         num.push_back(next());
     }
-    tokens.push_back({INTCON, num});
+    tokens.push_back({INTCON, num, curLineNum});
 }
 
 // alpha, digit or _
@@ -90,9 +96,9 @@ void Lexer::tokenizeWord() {
         word.push_back(next());
     }
     if (keywordMap.find(word) != keywordMap.end()) {
-        tokens.push_back({keywordMap[word], word});
+        tokens.push_back({keywordMap[word], word, curLineNum});
     } else {
-        tokens.push_back({IDENFR, word});
+        tokens.push_back({IDENFR, word, curLineNum});
     }
 }
 
@@ -129,7 +135,7 @@ void Lexer::tokenizeOperatorOrPunctuation() {
         op += next();
     }
     if (opMap.find(op) != opMap.end()) {
-        tokens.push_back({opMap[op], op});
+        tokens.push_back({opMap[op], op, curLineNum});
     }
 }
 

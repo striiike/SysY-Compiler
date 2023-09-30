@@ -38,7 +38,7 @@ private:
     std::string code;
     std::vector<Token> tokens;
     std::size_t pos;
-    std::size_t curLineNum = 0;
+    int curLineNum = 1;
 
     char peek(int offset);
 

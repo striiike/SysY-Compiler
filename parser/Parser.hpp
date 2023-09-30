@@ -5,6 +5,7 @@
 #pragma once
 
 #include "TokenStream.hpp"
+#include "Exception.hpp"
 #include "../nodes/lib.hpp"
 #include <bits/stdc++.h>
 
@@ -12,8 +13,6 @@ class Parser {
 private:
     TokenStream &tokenStream;
 public:
-    void error(Exception exception);
-
     explicit Parser(TokenStream &tokenStream) : tokenStream(tokenStream) {}
 
     std::shared_ptr<Decl> parseDecl();
