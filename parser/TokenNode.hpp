@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "ASTNode.hpp"
+#include "../nodes/ASTNode.hpp"
 #include "../lexer/Lexer.h"
 #include <utility>
 #include <vector>

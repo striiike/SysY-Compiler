@@ -6,8 +6,8 @@
 
 #include <utility>
 
-#include "../define.hpp"
-#include "../ASTNode.hpp"
+#include "lib.hpp"
+#include "ASTNode.hpp"
 
 class BlockItem : public ASTNode {
 private:
@@ -15,7 +15,8 @@ private:
     StmtPtr stmtPtr;
 public:
     BlockItem(DeclPtr declPtr, StmtPtr stmtPtr) :
-        declPtr(std::move(declPtr)), stmtPtr(std::move(stmtPtr)) {
+        declPtr(std::move(declPtr)), 
+        stmtPtr(std::move(stmtPtr)) {
         name = "<BlockItem>";
 //        printInformation();
     }

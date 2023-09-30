@@ -7,8 +7,8 @@
 
 #include <utility>
 #include <vector>
-#include "../TokenNode.hpp"
-#include "../define.hpp"
+#include "../parser/TokenNode.hpp"
+#include "lib.hpp"
 
 class Decl : public ASTNode{
 private:

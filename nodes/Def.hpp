@@ -6,8 +6,8 @@
 #define COMPILER_DEF_HPP
 
 
-#include "../TokenNode.hpp"
-#include "../define.hpp"
+#include "../parser/TokenNode.hpp"
+#include "lib.hpp"
 
 class Def : public ASTNode {
 private:

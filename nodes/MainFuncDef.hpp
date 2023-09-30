@@ -5,8 +5,8 @@
 //
 #pragma once
 
-#include "../define.hpp"
-#include "../ASTNode.hpp"
+#include "lib.hpp"
+#include "ASTNode.hpp"
 
 class MainFuncDef : public ASTNode{
 private:

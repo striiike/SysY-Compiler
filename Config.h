@@ -6,16 +6,6 @@
 #include <string>
 #include <fstream>
 
-class Config {
-public:
-    std::string sourceFilePath;
-    bool LEXER_DISPLAY;
-    bool PARSER_DISPLAY;
-
-    explicit Config();
-
-};
-
 extern bool PARSER_DISPLAY;
 extern bool PARSER_SWITCH;
 

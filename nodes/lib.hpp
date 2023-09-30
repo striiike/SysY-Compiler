@@ -1,16 +1,11 @@
 //
-// Created by hiccup on 2023/9/23.
+// Created by hiccup on 2023/9/30.
 //
 
-#pragma once
+#ifndef COMPILER_LIB_HPP
+#define COMPILER_LIB_HPP
+
 #include <memory>
-#include "ASTNode.hpp"
-#include "TokenNode.hpp"
-
-class ExpressionParser;
-class DeclarationParser;
-
-
 
 class MulExp;
 class AddExp;
@@ -111,3 +106,23 @@ class CompUnit;
 class WhatTheFuck {
 
 };
+
+#include "BlockItem.hpp"
+#include "ComplexStmt.hpp"
+#include "Decl.hpp"
+#include "Def.hpp"
+#include "FuncDef.hpp"
+#include "FuncFParams.hpp"
+#include "FuncFParam.hpp"
+#include "InitVal.hpp"
+#include "MainFuncDef.hpp"
+#include "ExprOthers.hpp"
+#include "SimpleStmt.hpp"
+#include "Stmt.hpp"
+#include "ExprUniform.hpp"
+#include "CompUnit.hpp"
+
+
+
+
+#endif //COMPILER_LIB_HPP

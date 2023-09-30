@@ -4,8 +4,8 @@
 #pragma once
 
 
-#include "../define.hpp"
-#include "../ASTNode.hpp"
+#include "lib.hpp"
+#include "ASTNode.hpp"
 
 class FuncFParam : public ASTNode {
 private:

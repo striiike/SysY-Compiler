@@ -8,8 +8,8 @@
 
 #include <utility>
 
-#include "../TokenNode.hpp"
-#include "../define.hpp"
+#include "../parser/TokenNode.hpp"
+#include "lib.hpp"
 
 class FuncDef : public ASTNode {
 private:

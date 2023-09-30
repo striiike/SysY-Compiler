@@ -2,15 +2,14 @@
 // Created by hiccup on 2023/9/22.
 //
 
-#ifndef COMPILER_OTHER_HPP
-#define COMPILER_OTHER_HPP
+#pragma once
 
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
-#include "../define.hpp"
-#include "../TokenNode.hpp"
+#include "lib.hpp"
+#include "../parser/TokenNode.hpp"
 
 
 class Number : public ASTNode {
@@ -108,4 +107,3 @@ public:
     explicit Cond(LOrExpPtr lOrExpPtr);
 };
 
-#endif //COMPILER_OTHER_HPP

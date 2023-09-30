@@ -6,8 +6,8 @@
 
 #include <utility>
 
-#include "../define.hpp"
-#include "../ASTNode.hpp"
+#include "lib.hpp"
+#include "ASTNode.hpp"
 #include "SimpleStmt.hpp"
 #include "ComplexStmt.hpp"
 

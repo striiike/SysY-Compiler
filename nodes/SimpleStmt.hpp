@@ -5,8 +5,8 @@
 #pragma once
 
 #include <vector>
-#include "../define.hpp"
-#include "../TokenNode.hpp"
+#include "lib.hpp"
+#include "../parser/TokenNode.hpp"
 
 class SimpleStmt {
 public:

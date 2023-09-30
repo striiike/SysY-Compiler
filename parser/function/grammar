@@ -1,5 +1,0 @@
-<FuncDef>       := <FuncType> Ident '(' [<FuncFParams> ] ')' <Block>
-<MainFuncDef>   := 'int' 'main' '(' ')' <Block>
-<FuncType>      := 'void' | 'int'
-<FuncFParams>   := <FuncFParam> { ',' <FuncFParam> }
-<FuncFParam>    := <BType> Ident [ '[' ']' { '[' <ConstExp> ']' } ]

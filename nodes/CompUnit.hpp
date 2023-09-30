@@ -8,15 +8,16 @@
 
 #include <utility>
 #include <vector>
-#include "define.hpp"
+#include "lib.hpp"
 #include "ASTNode.hpp"
 
-class CompUnit : public ASTNode{
+class CompUnit : public ASTNode {
 public:
     explicit CompUnit(std::vector<DeclPtr> declPtrs, std::vector<FuncDefPtr> funcDefPtrs,
-                      MainFuncDefPtr mainFuncDefPtr)
-            : declPtrs(std::move(declPtrs)), funcDefPtrs(std::move(funcDefPtrs)),
-              mainFuncDefPtr(std::move(mainFuncDefPtr)) {
+                      MainFuncDefPtr mainFuncDefPtr) :
+            declPtrs(std::move(declPtrs)),
+            funcDefPtrs(std::move(funcDefPtrs)),
+            mainFuncDefPtr(std::move(mainFuncDefPtr)) {
         name = "<CompUnit>";
         printInformation();
     }
