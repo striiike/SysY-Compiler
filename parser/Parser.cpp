@@ -35,11 +35,10 @@ DefPtr Parser::parseDef(bool isConst) {
     TokenNode ident(*tokenStream.next());
 
     std::vector<ConstExpPtr> constExpPtrs;
-    Parser expressionParser(tokenStream);
     while (!tokenStream.reachEnd()) {
         if (tokenStream.peek()->type != LBRACK) break;
         auto left = tokenStream.next();
-        constExpPtrs.push_back(expressionParser.parseConstExp());
+        constExpPtrs.push_back(parseConstExp());
         auto right = tokenStream.next();
     }
     if (tokenStream.peek()->type == ASSIGN) {
@@ -60,9 +59,8 @@ InitValPtr Parser::parseInitVal(bool isConst) {
 
 //    <ExpInitVal>    := <Exp>
 ExpInitValPtr Parser::parseExpInitVal(bool isConst) {
-    Parser expressionParser(tokenStream);
-    if (isConst) return std::make_shared<ExpInitVal>(isConst, nullptr, expressionParser.parseConstExp());
-    return std::make_shared<ExpInitVal>(isConst, expressionParser.parseExp(), nullptr);
+    if (isConst) return std::make_shared<ExpInitVal>(isConst, nullptr, parseConstExp());
+    return std::make_shared<ExpInitVal>(isConst, parseExp(), nullptr);
 }
 
 //    <ArrInitVal>    := '{' [ <InitVal> { ',' <InitVal> } ] '}'    // 语义分析时要求必须个数与维度对应
@@ -524,6 +522,7 @@ SimpleStmtPtr Parser::parseSimpleStmt() {
         LValPtr lValPtr = getLValPtr(expPtr);
         if (lValPtr) {
             LValPtr lValPtr1 = ParserCopy2.parseLVal();
+            auto fuck = tokenStreamCopy2.peek();
             isAssignOrGetint = (tokenStreamCopy2.peek()->type == ASSIGN);
         }
     }

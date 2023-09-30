@@ -10,7 +10,7 @@
 
 class Parser {
 private:
-    TokenStream tokenStream;
+    TokenStream &tokenStream;
 public:
     explicit Parser(TokenStream &tokenStream) : tokenStream(tokenStream) {}
 
