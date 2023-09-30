@@ -47,7 +47,7 @@ public:
            std::vector<std::shared_ptr<UnaryExp>> operands)
             : ExprUniform<std::shared_ptr<UnaryExp>>(std::move(leftOperand), std::move(operators), std::move(operands)) {
         name = "<MulExp>";
-        printInformation();
+        print();
     }
 };
 
@@ -58,7 +58,7 @@ public:
            std::vector<std::shared_ptr<MulExp>> operands)
             : ExprUniform<std::shared_ptr<MulExp>>(std::move(leftOperand), std::move(operators), std::move(operands)) {
         name = "<AddExp>";
-        printInformation();
+        print();
     }
 };
 
@@ -68,7 +68,7 @@ public:
            std::vector<std::shared_ptr<AddExp>> operands)
             : ExprUniform<std::shared_ptr<AddExp>>(std::move(leftOperand), std::move(operators), std::move(operands)) {
         name = "<RelExp>";
-        printInformation();
+        print();
     }
 };
 
@@ -78,7 +78,7 @@ public:
           std::vector<std::shared_ptr<RelExp>> operands)
             : ExprUniform<std::shared_ptr<RelExp>>(std::move(leftOperand), std::move(operators), std::move(operands)) {
         name = "<EqExp>";
-        printInformation();
+        print();
     }
 };
 
@@ -88,7 +88,7 @@ public:
             std::vector<std::shared_ptr<EqExp>> operands)
             : ExprUniform<std::shared_ptr<EqExp>>(std::move(leftOperand), std::move(operators), std::move(operands)) {
         name = "<LAndExp>";
-        printInformation();
+        print();
     }
 };
 
@@ -98,6 +98,6 @@ public:
            std::vector<std::shared_ptr<LAndExp>> operands)
             : ExprUniform<std::shared_ptr<LAndExp>>(std::move(leftOperand), std::move(operators), std::move(operands)) {
         name = "<LOrExp>";
-        printInformation();
+        print();
     }
 };

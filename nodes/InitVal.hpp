@@ -24,7 +24,7 @@ public:
     ExpInitVal(bool isConst, ExpPtr expPtr, ConstExpPtr constExpPtr) :
             isConst(isConst), expPtr(std::move(expPtr)), constExpPtr(std::move(constExpPtr)) {
         name = isConst ? "<ConstInitVal>" : "<InitVal>";
-        printInformation();
+        print();
     }
 };
 
@@ -36,7 +36,7 @@ public:
     explicit ArrayInitVal(bool isConst, std::vector<InitValPtr> initValPtrs) :
             isConst(isConst), initValPtrs(std::move(initValPtrs)) {
         name = isConst ? "<ConstInitVal>" : "<InitVal>";
-        printInformation();
+        print();
     }
 };
 

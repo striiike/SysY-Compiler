@@ -9,12 +9,11 @@ add_executable(compiler main.cpp
         parser/Parser.hpp
         Config.hpp
         parser/TokenStream.hpp
-        parser/TokenStream.cpp
         nodes/ASTNode.hpp
         nodes/ExprUniform.hpp
         nodes/ExprOthers.hpp
         nodes/ExprOthers.cpp
-        parser/TokenNode.hpp
+        nodes/TokenNode.hpp
         nodes/Decl.hpp
         nodes/Decl.hpp
         nodes/Def.hpp
@@ -29,4 +28,6 @@ add_executable(compiler main.cpp
         nodes/CompUnit.hpp
         nodes/lib.hpp
         parser/Parser.cpp
+        parser/Exception.hpp
+        parser/lib.hpp
 )

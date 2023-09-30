@@ -19,6 +19,6 @@ public:
     Stmt(SimpleStmtPtr simpleStmt, ComplexStmtPtr complexStmt) :
             simpleStmtPtr(std::move(simpleStmt)), complexStmtPtr(std::move(complexStmt)){
         name = "<Stmt>";
-        printInformation();
+        print();
     }
 };

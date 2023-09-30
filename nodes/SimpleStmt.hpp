@@ -6,7 +6,7 @@
 
 #include <vector>
 #include "lib.hpp"
-#include "../parser/TokenNode.hpp"
+#include "TokenNode.hpp"
 
 class SimpleStmt {
 public:
@@ -30,7 +30,7 @@ public:
     _ForStmt(LValPtr lValPtr, ExpPtr expPtr)
             : lValPtr(std::move(lValPtr)), expPtr(std::move(expPtr)) {
         name = "<ForStmt>";
-        printInformation();
+        print();
     }
 };
 

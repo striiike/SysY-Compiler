@@ -2,15 +2,24 @@
 // Created by hiccup on 2023/9/30.
 //
 #include "Parser.hpp"
+#include "Exception.hpp"
 #include <bits/stdc++.h>
 
 using namespace std;
 
-#define CHECK(x, y)
+#define CHECK(x, y) \
+if (tokenStream.next()->type != x) {\
+    if (y == UNDEFINED_BEHAVIOUR) {\
+        return;\
+    }\
+    error(y);\
+}\
 
 
+void Parser::error(Exception exception) {
+    return;
+};
 
-////////////////////////////////////////////////////////////////////////////////////////////////
 
 //    <Decl>          := ['const'] <BType> <Def> { ',' <Def> } ';'     'const' 修饰若有，则表示常量
 DeclPtr Parser::parseDecl() {
@@ -29,14 +38,12 @@ DeclPtr Parser::parseDecl() {
         defPtrs.push_back(parseDef(isConst));
     }
 
-    // ;
     auto semicn = tokenStream.next();
     return std::make_shared<Decl>(isConst, bType, defPtrs);
 }
 
 //    <Def>           := Ident { '[' <ConstExp> ']'  } [ '=' <InitVal> ]   // 如果是常量声明则必须有 InitVal
 DefPtr Parser::parseDef(bool isConst) {
-    // ident
     TokenNode ident(*tokenStream.next());
 
     std::vector<ConstExpPtr> constExpPtrs;
@@ -459,7 +466,7 @@ LValPtr getLValPtr(const ExpPtr &expPtr) {
 SimpleStmtPtr Parser::parseAssignOrGetintStmt(const LValPtr &lValPtr) {
     auto assign = tokenStream.next();
     if (tokenStream.peek()->type == GETINTTK) {
-        auto _getint = *tokenStream.next();
+        TokenNode _getint(*tokenStream.next());
         tokenStream.next();
         tokenStream.next();
         return std::make_shared<GetintStmt>(lValPtr, _getint);
@@ -501,7 +508,7 @@ SimpleStmtPtr Parser::parseSimpleStmt() {
         TokenNode _printf(token);
         tokenStream.next();
         auto left = tokenStream.next();
-        Token formatStringToken = *tokenStream.next();
+        TokenNode formatStringToken(*tokenStream.next());
         std::vector<ExpPtr> expPtrs;
         while (!tokenStream.reachEnd()) {
             if (tokenStream.peek()->type != COMMA) break;
@@ -527,7 +534,6 @@ SimpleStmtPtr Parser::parseSimpleStmt() {
         LValPtr lValPtr = getLValPtr(expPtr);
         if (lValPtr) {
             LValPtr lValPtr1 = ParserCopy2.parseLVal();
-            auto fuck = tokenStreamCopy2.peek();
             isAssignOrGetint = (tokenStreamCopy2.peek()->type == ASSIGN);
         }
     }

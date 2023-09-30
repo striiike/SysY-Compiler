@@ -7,7 +7,7 @@
 
 #include <utility>
 #include <vector>
-#include "../parser/TokenNode.hpp"
+#include "TokenNode.hpp"
 #include "lib.hpp"
 
 class Decl : public ASTNode{
@@ -19,7 +19,7 @@ public :
     Decl(bool isConst, TokenNode bType, std::vector<DefPtr> defPtrs) :
             isConst(isConst), bType(std::move(bType)), defPtrs(std::move(defPtrs)) {
         name = isConst ? "<ConstDecl>" : "<VarDecl>";
-        printInformation();
+        print();
     }
 };
 

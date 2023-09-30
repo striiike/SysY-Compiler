@@ -11,10 +11,11 @@ class ASTNode {
 public:
     std::string name;
 
-    void printInformation() const {
+    void print() const {
         if (PARSER_DISPLAY && PARSER_SWITCH)
             outfile << name << std::endl;
     }
+
 };
 
 

@@ -17,7 +17,7 @@ public:
     explicit FuncFParams(std::vector<FuncFParamPtr> funcFParamPtrs) :
             funcFParamPtrs(std::move(funcFParamPtrs)) {
         name = "<FuncFParams>";
-        printInformation();
+        print();
     }
 };
 

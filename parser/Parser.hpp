@@ -12,6 +12,8 @@ class Parser {
 private:
     TokenStream &tokenStream;
 public:
+    void error(Exception exception);
+
     explicit Parser(TokenStream &tokenStream) : tokenStream(tokenStream) {}
 
     std::shared_ptr<Decl> parseDecl();

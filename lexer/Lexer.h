@@ -20,17 +20,6 @@ enum TokenType {
     CONTINUETK, PLUS, EQL, LBRACE,
     IFTK, MINU, NEQ, RBRACE,
     ELSETK, VOIDTK,
-    // expression
-//    LVal, PrimaryExp, SubExp, Number,
-//    BaseUnaryExp, FunctionCall, FuncRParams, UnaryExp,
-//    MulExp, AddExp, RelExp, EqExp,
-//    LAndExp, LOrExp, Exp, Cond, ConstExp
-    // declaration
-
-    // stmt
-
-
-
 };
 
 struct Token {

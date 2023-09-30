@@ -7,24 +7,44 @@
 
 
 #include "../lexer/Lexer.h"
+#include "lib.hpp"
+#include "../Config.hpp"
 
 #include <optional>
 
 class TokenStream {
-private:
     std::vector<Token>::iterator current;
     std::vector<Token>::iterator end;
-
-    /// only used by Parser
-    friend class Parser;
-
 public:
-    explicit TokenStream(std::vector<Token> &tokens);
+    static std::string tokenTypeToString(TokenType type) {
+        return tokenTypeStrings[type];
+    }
 
-    bool reachEnd() const;
+    explicit TokenStream(std::vector<Token> &tokens) : current(tokens.begin()), end(tokens.end()) {}
 
-    std::optional<Token> next();
-    std::optional<Token> peek(int n = 0);
+    std::optional<Token> next() {
+        if (current != end) {
+            auto token = *(current++);
+            if (PARSER_DISPLAY && PARSER_SWITCH)
+                outfile << tokenTypeToString(token.type) << " " << token.value << std::endl;
+            return token;
+        }
+        return {};
+    }
+
+    std::optional<Token> peek(int n = 0) {
+        auto temp = current;
+        std::advance(temp, n);
+        if (temp != end) {
+            return *temp;
+        }
+        return {};
+    }
+
+    bool reachEnd() const {
+        return current == end;
+    }
+
 };
 
 #endif //COMPILER_TOKEN_ANALYZER_H

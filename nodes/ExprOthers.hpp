@@ -9,7 +9,7 @@
 #include <utility>
 #include <vector>
 #include "lib.hpp"
-#include "../parser/TokenNode.hpp"
+#include "TokenNode.hpp"
 
 
 class Number : public ASTNode {
@@ -67,7 +67,7 @@ public:
             : expPtr(std::move(exp)), lValPtr(std::move(lVal)),
               numberPtr(std::move(number)) {
         name = "<PrimaryExp>";
-        printInformation();
+        print();
     }
 
     ExpPtr getExpPtr() { return expPtr; }

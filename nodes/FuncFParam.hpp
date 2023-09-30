@@ -20,7 +20,7 @@ public:
               isArray(isArray),
               constExpPtrs(std::move(constExpPtrs)) {
         name = "<FuncFParam>";
-        printInformation();
+        print();
     }
 };
 

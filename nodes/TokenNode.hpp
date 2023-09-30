@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "../nodes/ASTNode.hpp"
+#include "ASTNode.hpp"
 #include "../lexer/Lexer.h"
 #include <utility>
 #include <vector>
@@ -16,7 +16,7 @@ private:
     int lineNum;
     TokenType type;
 public:
-    TokenNode(Token token) :
+    explicit TokenNode(Token token) :
             value(std::move(token.value)), type(token.type), lineNum(token.lineNum) {}
 
     TokenType getType() {

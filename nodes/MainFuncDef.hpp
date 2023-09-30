@@ -17,7 +17,7 @@ public:
     MainFuncDef(TokenNode bType, TokenNode _main, BlockPtr blockPtr) :
             bType(std::move(bType)), _main(std::move(_main)), blockPtr(std::move(blockPtr)) {
         name = "<MainFuncDef>";
-        printInformation();
+        print();
     }
 };
 

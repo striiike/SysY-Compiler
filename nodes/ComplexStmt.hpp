@@ -47,6 +47,6 @@ public:
     explicit Block(std::vector<BlockItemPtr> blockItemPtrs) :
             blockItemPtrs(std::move(blockItemPtrs)) {
         name = "<Block>";
-        printInformation();
+        print();
     }
 };

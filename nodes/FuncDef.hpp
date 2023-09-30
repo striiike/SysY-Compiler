@@ -8,7 +8,7 @@
 
 #include <utility>
 
-#include "../parser/TokenNode.hpp"
+#include "TokenNode.hpp"
 #include "lib.hpp"
 
 class FuncDef : public ASTNode {
@@ -23,7 +23,7 @@ public:
               funcFParamsPtr(std::move(funcFParamsPtr)),
               blockPtr(std::move(blockPtr)) {
         name = "<FuncDef>";
-        printInformation();
+        print();
     }
 };
 

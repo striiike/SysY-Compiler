@@ -19,7 +19,7 @@ public:
             funcDefPtrs(std::move(funcDefPtrs)),
             mainFuncDefPtr(std::move(mainFuncDefPtr)) {
         name = "<CompUnit>";
-        printInformation();
+        print();
     }
 
 private:

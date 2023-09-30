@@ -6,7 +6,7 @@
 #define COMPILER_DEF_HPP
 
 
-#include "../parser/TokenNode.hpp"
+#include "TokenNode.hpp"
 #include "lib.hpp"
 
 class Def : public ASTNode {
@@ -20,7 +20,7 @@ public:
             : isConst(isConst), ident(std::move(ident)), constExpPtrs(std::move(constExpPtrs)),
               initValPtr(std::move(initValPtr)) {
         name = isConst ? "<ConstDef>" : "<VarDef>";
-        printInformation();
+        print();
     }
 
 };
