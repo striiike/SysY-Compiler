@@ -8,10 +8,11 @@
 #include <utility>
 #include <vector>
 
-#include "lib.hpp"
 #include "ASTNode.hpp"
+#include "Stmt.hpp"
+#include "BlockItem.hpp"
 
-class ComplexStmt {
+class ComplexStmt : public ASTNode {
 public:
     virtual void debug() {}
 };
@@ -24,6 +25,11 @@ private:
 public :
     IfStmt(CondPtr condPtr, StmtPtr stmtPtr, StmtPtr stmtElsePtr) :
             condPtr(std::move(condPtr)), stmtPtr(std::move(stmtPtr)), stmtElsePtr(std::move(stmtElsePtr)) {}
+
+    void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override {
+        condPtr->checkError(ctx, ret);
+        stmtPtr->checkError(ctx, ret);
+    }
 };
 
 class ForStmt : public ComplexStmt {
@@ -40,7 +46,7 @@ public :
             assignStmtPtr2(std::move(assignStmtPtr2)) {}
 };
 
-class Block : public ComplexStmt, ASTNode {
+class Block : public ComplexStmt {
 private:
     std::vector<BlockItemPtr> blockItemPtrs;
 public:
@@ -48,5 +54,10 @@ public:
             blockItemPtrs(std::move(blockItemPtrs)) {
         name = "<Block>";
         print();
+    }
+
+    void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override {
+        symbol.startScope();
+
     }
 };

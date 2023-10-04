@@ -3,14 +3,16 @@
 //
 
 #pragma once
-#include <string>
-#include <fstream>
+#include <bits/stdc++.h>
+#include "parser/Exception.hpp"
 
 extern bool PARSER_DISPLAY;
 extern bool PARSER_SWITCH;
 
 extern std::ofstream outfile;
 
-extern void printString(std::string str);
+extern void printString(const std::string& str);
+
+extern map<Exception, char> exceptionToString;
 
 

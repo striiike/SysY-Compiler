@@ -5,7 +5,6 @@
 #pragma once
 
 #include <vector>
-#include "lib.hpp"
 #include "TokenNode.hpp"
 
 class SimpleStmt {

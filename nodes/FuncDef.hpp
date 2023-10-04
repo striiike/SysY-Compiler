@@ -9,7 +9,8 @@
 #include <utility>
 
 #include "TokenNode.hpp"
-#include "lib.hpp"
+#include "FuncFParams.hpp"
+#include "ComplexStmt.hpp"
 
 class FuncDef : public ASTNode {
 private:
@@ -25,6 +26,17 @@ public:
         name = "<FuncDef>";
         print();
     }
+
+    void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override {
+        if (funcFParamsPtr) funcFParamsPtr->checkError(ctx, ret);
+        blockPtr->checkError(ctx, ret);
+
+        // no detail for check error
+        if (!symbol.insertFunc(ident.getValue(), funcType.getType() == VOIDTK)) {
+            errorList.emplace_back(Exception::REDEFINED_IDENT, ident.getLineNum());
+        }
+    }
 };
 
 #endif //COMPILER_FUNCDEF_HPP
+

@@ -51,7 +51,7 @@ public:
 
     ExpPtr parseExp();
 
-    ConstExpPtr parseConstExp();
+    ExpPtr parseConstExp();
 
     CondPtr parseCond();
 

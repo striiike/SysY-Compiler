@@ -8,9 +8,9 @@
 #include <utility>
 #include <vector>
 #include "TokenNode.hpp"
-#include "lib.hpp"
+#include "Def.hpp"
 
-class Decl : public ASTNode{
+class Decl : public ASTNode {
 private:
     bool isConst;
     TokenNode bType;
@@ -20,6 +20,13 @@ public :
             isConst(isConst), bType(std::move(bType)), defPtrs(std::move(defPtrs)) {
         name = isConst ? "<ConstDecl>" : "<VarDecl>";
         print();
+    }
+
+    void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override {
+        ctx->isConst = this->isConst;
+        for (const auto &i: defPtrs)
+            i->checkError(ctx, ret);
+        ctx->isConst = false;
     }
 };
 

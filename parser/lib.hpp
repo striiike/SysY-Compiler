@@ -4,6 +4,9 @@
 
 #pragma once
 
-
+#include "Exception.hpp"
+#include "Parser.hpp"
+#include "Symbol.hpp"
+#include "TokenStream.hpp"
 
 

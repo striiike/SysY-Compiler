@@ -11,7 +11,6 @@
 #include <string>
 
 class TokenNode : public ASTNode {
-private:
     std::string value;
     int lineNum;
     TokenType type;
@@ -21,6 +20,14 @@ public:
 
     TokenType getType() {
         return type;
+    }
+
+    string getValue() {
+        return value;
+    }
+
+    int getLineNum() {
+        return lineNum;
     }
 };
 

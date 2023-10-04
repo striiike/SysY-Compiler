@@ -6,8 +6,9 @@
 
 #include <utility>
 
-#include "lib.hpp"
 #include "ASTNode.hpp"
+#include "Decl.hpp"
+#include "Stmt.hpp"
 
 class BlockItem : public ASTNode {
 private:
@@ -20,6 +21,13 @@ public:
         name = "<BlockItem>";
 //        printInformation();
     }
+
+    void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override {
+        if (declPtr) declPtr->checkError(ctx, ret);
+        if (stmtPtr) stmtPtr->checkError(ctx, ret);
+    }
+
+
 };
 
 

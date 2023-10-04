@@ -12,7 +12,6 @@ add_executable(compiler main.cpp
         nodes/ASTNode.hpp
         nodes/ExprUniform.hpp
         nodes/ExprOthers.hpp
-        nodes/ExprOthers.cpp
         nodes/TokenNode.hpp
         nodes/Decl.hpp
         nodes/Decl.hpp
@@ -30,4 +29,6 @@ add_executable(compiler main.cpp
         parser/Parser.cpp
         parser/Exception.hpp
         parser/lib.hpp
+        parser/Symbol.hpp
+        parser/Symbol.cpp
 )

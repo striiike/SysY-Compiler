@@ -3,7 +3,9 @@
 //
 
 #pragma once
+
 #include <bits/stdc++.h>
+
 using namespace std;
 
 enum class Exception {
@@ -24,21 +26,19 @@ enum class Exception {
     CORRECT
 };
 
-inline map<Exception, char> exceptionToString = {
-        {Exception::INVALID_CHARACTER, 'a'},
-        {Exception::REDEFINED_IDENT, 'b'},
-        {Exception::UNDEFINED_IDENT, 'c'},
-        {Exception::PARAMS_NUM_UNMATCHED, 'd'},
-        {Exception::PARAM_TYPE_UNMATCHED, 'e'},
-        {Exception::VOID_RETURN_INT, 'f'},
-        {Exception::INT_RETURN_LACKED, 'g'},
-        {Exception::CONST_ASSIGNED, 'h'},
-        {Exception::SEMICN_LACKED, 'i'},
-        {Exception::RPARENT_LACKED, 'j'},
-        {Exception::RBRACK_LACKED, 'k'},
-        {Exception::FORMAT_CHAR_UNMATCHED, 'l'},
-        {Exception::BREAK_CONTINUE_OUT_LOOP, 'm'},
-        {Exception::UNDEFINED_ERROR, 'n'}
+struct ErrorCtx {
+    bool isConst;
+    bool isGlobal;
+    bool voidFunc;
+
+
 };
 
-inline vector<pair<Exception, int>> errorList;
+struct ErrorRet {
+    int b;
+//    ErrorRet()
+};
+
+using ErrorCtxPtr = std::shared_ptr<ErrorCtx>;
+using ErrorRetPtr = std::shared_ptr<ErrorRet>;
+

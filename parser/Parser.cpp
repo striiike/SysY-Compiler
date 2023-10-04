@@ -31,7 +31,7 @@ DeclPtr Parser::parseDecl() {
 DefPtr Parser::parseDef(bool isConst) {
     TokenNode ident(*tokenStream.next());
 
-    std::vector<ConstExpPtr> constExpPtrs;
+    std::vector<ExpPtr> constExpPtrs;
     while (!tokenStream.reachEnd()) {
         if (tokenStream.peek()->type != LBRACK) break;
         auto left = tokenStream.next();
@@ -56,8 +56,7 @@ InitValPtr Parser::parseInitVal(bool isConst) {
 
 //    <ExpInitVal>    := <Exp>
 ExpInitValPtr Parser::parseExpInitVal(bool isConst) {
-    if (isConst) return std::make_shared<ExpInitVal>(isConst, nullptr, parseConstExp());
-    return std::make_shared<ExpInitVal>(isConst, parseExp(), nullptr);
+    return std::make_shared<ExpInitVal>(isConst, isConst ? parseConstExp() : parseExp());
 }
 
 //    <ArrInitVal>    := '{' [ <InitVal> { ',' <InitVal> } ] '}'    // 语义分析时要求必须个数与维度对应
@@ -84,11 +83,11 @@ ArrayInitValPtr Parser::parseArrayInitVal(bool isConst) {
 
 
 ExpPtr Parser::parseExp() {
-    return std::make_shared<Exp>(std::move(parseAddExp()));
+    return std::make_shared<Exp>(std::move(parseAddExp()), false);
 }
 
-ConstExpPtr Parser::parseConstExp() {
-    return std::make_shared<ConstExp>(std::move(parseAddExp()));
+ExpPtr Parser::parseConstExp() {
+    return std::make_shared<Exp>(std::move(parseAddExp()), true);
 }
 
 CondPtr Parser::parseCond() {
@@ -144,7 +143,7 @@ FunctionCallPtr Parser::parseFunctionCall() {
     auto left = tokenStream.next();
 
     auto token = tokenStream.peek()->type;
-    FuncRParamsPtr funcRParamsPtr = parseFuncRParams();
+    FuncRParamsPtr funcRParamsPtr;
     if (token == IDENFR || token == LPARENT || token == INTCON
         || token == PLUS || token == MINU || token == NOT) {
         funcRParamsPtr = parseFuncRParams();
@@ -342,7 +341,7 @@ FuncFParamPtr Parser::parseFuncFParam() {
     Token _ident = tokenStream.next().value();
     TokenNode ident(_ident);
 
-    std::vector<ConstExpPtr> constExpPtrs;
+    std::vector<ExpPtr> constExpPtrs;
 
     if (tokenStream.peek()->type != LBRACK)
         return std::make_shared<FuncFParam>(bType, ident, false, constExpPtrs);

@@ -7,7 +7,6 @@
 #ifndef COMPILER_FUNCFPARAMS_HPP
 #define COMPILER_FUNCFPARAMS_HPP
 
-#include "lib.hpp"
 #include "ASTNode.hpp"
 
 class FuncFParams : public ASTNode{

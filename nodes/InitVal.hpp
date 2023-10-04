@@ -6,7 +6,6 @@
 
 #include <utility>
 #include <vector>
-#include "lib.hpp"
 #include "ASTNode.hpp"
 
 
@@ -19,13 +18,16 @@ class ExpInitVal : public InitVal {
 private:
     bool isConst;
     ExpPtr expPtr;
-    ConstExpPtr constExpPtr;
 public:
-    ExpInitVal(bool isConst, ExpPtr expPtr, ConstExpPtr constExpPtr) :
-            isConst(isConst), expPtr(std::move(expPtr)), constExpPtr(std::move(constExpPtr)) {
+    ExpInitVal(bool isConst, ExpPtr expPtr) :
+            isConst(isConst), expPtr(std::move(expPtr)) {
         name = isConst ? "<ConstInitVal>" : "<InitVal>";
         print();
     }
+
+//    void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override {
+//        if ()
+//    }
 };
 
 class ArrayInitVal : public InitVal {
@@ -37,6 +39,10 @@ public:
             isConst(isConst), initValPtrs(std::move(initValPtrs)) {
         name = isConst ? "<ConstInitVal>" : "<InitVal>";
         print();
+    }
+
+    void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override {
+
     }
 };
 

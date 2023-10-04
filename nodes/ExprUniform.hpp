@@ -9,8 +9,8 @@
 #include <memory>
 #include "../lexer/Lexer.h"
 #include "ASTNode.hpp"
-#include "lib.hpp"
 
+using namespace std;
 
 // only for certain syntax as (MulExp, AddExp, RelExp, EqExp, LAndExp, LOrExp)
 //
@@ -25,8 +25,11 @@
 
 template<typename T>
 class ExprUniform : public ASTNode {
+    T leftOperand;
+    vector<TokenType> operators;
+    vector<T> operands;
 public:
-    ExprUniform(T leftOperand, std::vector<TokenType> operators, std::vector<T> operands)
+    ExprUniform(T leftOperand, vector<TokenType> operators, vector<T> operands)
             : leftOperand(std::move(leftOperand)),
               operators(std::move(operators)),
               operands(std::move(operands)) {}
@@ -34,69 +37,68 @@ public:
     T getLeftOperand() {
         return leftOperand;
     };
-private:
-    T leftOperand;
-    std::vector<TokenType> operators;
-    std::vector<T> operands;
+
+
 };
 
 
-class MulExp : public ExprUniform<std::shared_ptr<UnaryExp>> {
+class MulExp : public ExprUniform<UnaryExpPtr> {
 public:
-    MulExp(std::shared_ptr<UnaryExp> leftOperand, std::vector<TokenType> operators,
-           std::vector<std::shared_ptr<UnaryExp>> operands)
-            : ExprUniform<std::shared_ptr<UnaryExp>>(std::move(leftOperand), std::move(operators), std::move(operands)) {
+    MulExp(UnaryExpPtr leftOperand, vector<TokenType> operators,
+           vector<UnaryExpPtr> operands)
+            : ExprUniform<UnaryExpPtr>(std::move(leftOperand), std::move(operators), std::move(operands)) {
         name = "<MulExp>";
         print();
     }
 };
 
 
-class AddExp : public ExprUniform<std::shared_ptr<MulExp>> {
+class AddExp : public ExprUniform<MulExpPtr> {
 public:
-    AddExp(std::shared_ptr<MulExp> leftOperand, std::vector<TokenType> operators,
-           std::vector<std::shared_ptr<MulExp>> operands)
-            : ExprUniform<std::shared_ptr<MulExp>>(std::move(leftOperand), std::move(operators), std::move(operands)) {
+    AddExp(MulExpPtr leftOperand, vector<TokenType> operators,
+           vector<MulExpPtr> operands)
+            : ExprUniform<MulExpPtr>(std::move(leftOperand), std::move(operators), std::move(operands)) {
         name = "<AddExp>";
         print();
     }
 };
 
-class RelExp : public ExprUniform<std::shared_ptr<AddExp>> {
+class RelExp : public ExprUniform<AddExpPtr> {
 public:
-    RelExp(std::shared_ptr<AddExp> leftOperand, std::vector<TokenType> operators,
-           std::vector<std::shared_ptr<AddExp>> operands)
-            : ExprUniform<std::shared_ptr<AddExp>>(std::move(leftOperand), std::move(operators), std::move(operands)) {
+    RelExp(AddExpPtr leftOperand, vector<TokenType> operators,
+           vector<AddExpPtr> operands)
+            : ExprUniform<AddExpPtr>(std::move(leftOperand), std::move(operators), std::move(operands)) {
         name = "<RelExp>";
         print();
     }
 };
 
-class EqExp : public ExprUniform<std::shared_ptr<RelExp>> {
+class EqExp : public ExprUniform<RelExpPtr> {
 public:
-    EqExp(std::shared_ptr<RelExp> leftOperand, std::vector<TokenType> operators,
-          std::vector<std::shared_ptr<RelExp>> operands)
-            : ExprUniform<std::shared_ptr<RelExp>>(std::move(leftOperand), std::move(operators), std::move(operands)) {
+    EqExp(RelExpPtr leftOperand, vector<TokenType> operators, vector<RelExpPtr> operands)
+            : ExprUniform<RelExpPtr>(std::move(leftOperand), std::move(operators), std::move(operands)) {
         name = "<EqExp>";
         print();
     }
 };
 
-class LAndExp : public ExprUniform<std::shared_ptr<EqExp>> {
+
+
+class LAndExp : public ExprUniform<EqExpPtr> {
 public:
-    LAndExp(std::shared_ptr<EqExp> leftOperand, std::vector<TokenType> operators,
-            std::vector<std::shared_ptr<EqExp>> operands)
-            : ExprUniform<std::shared_ptr<EqExp>>(std::move(leftOperand), std::move(operators), std::move(operands)) {
+    LAndExp(EqExpPtr leftOperand, vector<TokenType> operators,
+            vector<EqExpPtr> operands)
+            : ExprUniform<EqExpPtr>(std::move(leftOperand), std::move(operators), std::move(operands)) {
         name = "<LAndExp>";
         print();
     }
 };
 
-class LOrExp : public ExprUniform<std::shared_ptr<LAndExp>> {
+class LOrExp : public ExprUniform<LAndExpPtr> {
 public:
-    LOrExp(std::shared_ptr<LAndExp> leftOperand, std::vector<TokenType> operators,
-           std::vector<std::shared_ptr<LAndExp>> operands)
-            : ExprUniform<std::shared_ptr<LAndExp>>(std::move(leftOperand), std::move(operators), std::move(operands)) {
+    LOrExp(LAndExpPtr leftOperand, vector<TokenType> operators,
+           vector<LAndExpPtr> operands)
+            : ExprUniform<LAndExpPtr>(std::move(leftOperand), std::move(operators), std::move(operands)) {
         name = "<LOrExp>";
         print();
     }

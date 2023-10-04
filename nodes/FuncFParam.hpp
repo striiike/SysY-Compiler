@@ -4,7 +4,6 @@
 #pragma once
 
 
-#include "lib.hpp"
 #include "ASTNode.hpp"
 
 class FuncFParam : public ASTNode {
@@ -12,13 +11,13 @@ private:
     TokenNode bType;
     TokenNode ident;
     bool isArray;
-    std::vector<ConstExpPtr> constExpPtrs;
+    std::vector<ExpPtr> expPtrs;
 public:
-    FuncFParam(TokenNode bType, TokenNode ident, bool isArray, std::vector<ConstExpPtr> constExpPtrs)
+    FuncFParam(TokenNode bType, TokenNode ident, bool isArray, std::vector<ExpPtr> expPtrs)
             : bType(std::move(bType)),
               ident(std::move(ident)),
               isArray(isArray),
-              constExpPtrs(std::move(constExpPtrs)) {
+              expPtrs(std::move(expPtrs)) {
         name = "<FuncFParam>";
         print();
     }
