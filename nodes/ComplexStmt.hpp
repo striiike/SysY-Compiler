@@ -12,8 +12,9 @@
 #include "Stmt.hpp"
 #include "BlockItem.hpp"
 
-class ComplexStmt : public ASTNode {
+class ComplexStmt : public Stmt {
 public:
+
     virtual void debug() {}
 };
 
@@ -24,7 +25,8 @@ private:
     StmtPtr stmtElsePtr;
 public :
     IfStmt(CondPtr condPtr, StmtPtr stmtPtr, StmtPtr stmtElsePtr) :
-            condPtr(std::move(condPtr)), stmtPtr(std::move(stmtPtr)), stmtElsePtr(std::move(stmtElsePtr)) {}
+            condPtr(std::move(condPtr)), stmtPtr(std::move(stmtPtr)),
+            stmtElsePtr(std::move(stmtElsePtr)), ComplexStmt() {}
 
     void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override {
         condPtr->checkError(ctx, ret);
@@ -43,7 +45,7 @@ public :
             _ForStmtPtr assignStmtPtr1, _ForStmtPtr assignStmtPtr2) :
             condPtr(std::move(condPtr)), stmtPtr(std::move(stmtPtr)),
             assignStmtPtr1(std::move(assignStmtPtr1)),
-            assignStmtPtr2(std::move(assignStmtPtr2)) {}
+            assignStmtPtr2(std::move(assignStmtPtr2)), ComplexStmt() {}
 };
 
 class Block : public ComplexStmt {
@@ -58,6 +60,5 @@ public:
 
     void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override {
         symbol.startScope();
-
     }
 };

@@ -11,7 +11,7 @@ extern bool PARSER_SWITCH;
 
 extern std::ofstream outfile;
 
-extern void printString(const std::string& str);
+extern void parseLog(const std::string& str);
 
 extern map<Exception, char> exceptionToString;
 

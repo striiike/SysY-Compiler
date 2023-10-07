@@ -8,7 +8,7 @@
 
 #include "../lexer/Lexer.h"
 #include "lib.hpp"
-#include "../Config.hpp"
+#include "../Config.h"
 #include "../nodes/TokenNode.hpp"
 #include "Exception.hpp"
 

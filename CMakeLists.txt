@@ -7,7 +7,7 @@ add_executable(compiler main.cpp
         lexer/Lexer.cpp
         lexer/Lexer.h
         parser/Parser.hpp
-        Config.hpp
+        Config.h
         parser/TokenStream.hpp
         nodes/ASTNode.hpp
         nodes/ExprUniform.hpp
@@ -31,4 +31,5 @@ add_executable(compiler main.cpp
         parser/lib.hpp
         parser/Symbol.hpp
         parser/Symbol.cpp
+        nodes/CompUnit.hpp
 )

@@ -1,36 +1,42 @@
-   <Decl>          := ['const'] <BType> <Def> { ',' <Def> } ';'     'const' 修饰若有，则表示常量
-   <Def>           := Ident { '[' <ConstExp> ']'  } [ '=' <InitVal> ]   // 如果是常量声明则必须有 InitVal
+   <Decl>          := ['const'] <BType> <Def> { ',' <Def> } ';'
+   <Def>           := Ident { '[' <ConstExp> ']'  } [ '=' <InitVal> ]
    <InitVal>       := <ExpInitVal> | <ArrInitVal>
    <ExpInitVal>    := <Exp>
-   <ArrInitVal>    := '{' [ <InitVal> { ',' <InitVal> } ] '}'    // 语义分析时要求必须个数与维度对应
-   <LVal>          := Ident { '[' <Exp> ']' } // public class LVal { ident, class Index, List<Index> }
-   <PrimaryExp>    := '(' <Exp> ')' | <LVal> | <Number>
-         Look forward: '(' :: <SubExp>, <Ident> :: <LVal>, <IntConst> :: <Number>
+   <ArrInitVal>    := '{' [ <InitVal> { ',' <InitVal> } ] '}'
+
+
+
+   <LVal>          := Ident { '[' <Exp> ']' }                                                                           // public class LVal { ident, class Index, List<Index> }
+   <PrimaryExp>    := '(' <Exp> ')' | <LVal> | <Number>                                                                 //         Look forward: '(' :: <SubExp>, <Ident> :: <LVal>, <IntConst> :: <Number>
    <FunctionCall>  := <Ident> '(' [ <FuncRParams> ] ')'
    <FuncRParams>   := <Exp> { ',', <Exp> } // List<Exp>
    <UnaryExp>      := { <UnaryOp> } (<PrimaryExp> | <FunctionCall>)
-         List<UnaryOp>, UnaryOp 包含在 UnaryExp 内部，不单独建类
-         即不包含 <UnaryOp> 的 <UnaryExp>    需要向前看 2 个符号:
-         Ident '(' :: <FunctionCall>, Ident :: <LVal>, '(' :: <SubExp>, IntConst :: <Number>
+                                                                                                                        Ident '(' :: <FunctionCall>, Ident :: <LVal>, '(' :: <SubExp>, IntConst :: <Number>
+
+
    <FuncDef>       := <FuncType> Ident '(' [<FuncFParams> ] ')' <Block>
    <MainFuncDef>   := 'int' 'main' '(' ')' <Block>
    <FuncType>      := 'void' | 'int'
    <FuncFParams>   := <FuncFParam> { ',' <FuncFParam> }
    <FuncFParam>    := <BType> Ident [ '[' ']' { '[' <ConstExp> ']' } ]
-   // 以分号结尾的简单语句
-   <AssignStmt>    := <LVal> '=' <Exp> // 这些新增非终结符的组成不含分号
-   <ExpStmt>       := <Exp>            // 空语句放到最后了
+
+
+   <AssignStmt>    := <LVal> '=' <Exp>
+   <ExpStmt>       := <Exp>
    <BreakStmt>     := 'break'
    <ContinueStmt>  := 'continue'
    <ReturnStmt>    := 'return' [<Exp>]
-   <GetintStmt>     := <LVal> '=' 'getint' '(' ')'
+   <GetintStmt>    := <LVal> '=' 'getint' '(' ')'
    <PrintfStmt>    := 'printf' '(' FormatString { ',' <Exp> } ')'
-   <SimpleStmt>       := <AssignStmt> | <ExpStmt> | <BreakStmt> | <ContinueStmt>
-   | <ReturnStmt> | <GetintStmt> | <PrintfStmt> // <SimpleStmt> 是以分号结尾的语句(不含分号)的合集
-   // 复杂的语句
+   <SimpleStmt>    := <AssignStmt> | <ExpStmt> | <BreakStmt> | <ContinueStmt> | <ReturnStmt> | <GetintStmt> | <PrintfStmt>
+
    <IfStmt>        := 'if' '(' <Cond> ')' <Stmt> [ 'else' <Stmt> ]
-   <WhileStmt>     := 'while' '(' <Cond> ')' <Stmt>
-   <ComplexStmt>       := <IfStmt> | <WhileStmt> | <Block>
+   <_ForStmt>      :=  <LVal> '=' <Exp>    // real forStmt
+   <ForStmt>       := 'for' '(' [<_ForStmt>] ';' [<Cond>] ';' [<_ForStmt>] ')' Stmt
+   <ComplexStmt>   := <IfStmt> | <ForStmt> | <Block>
+
    <Stmt>          := ';' | <SimpleStmt> ';' | <ComplexStmt>    // 将分号放在这里统一处理
    <BlockItem>     := <Decl> | <Stmt>
    <Block>         := '{' { <BlockItem> } '}'
+
+   <CompUnit>      := { <Decl> } { <FuncDef> } <MainFuncDef>

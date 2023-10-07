@@ -77,23 +77,5 @@ public:
 
     SimpleStmtPtr parseAssignOrGetintStmt(const LValPtr &lValPtr);
 
-    //  <CompUnit>      := { <Decl> } { <FuncDef> } <MainFuncDef>
-    CompUnit parseCompUnit() {
-        MainFuncDefPtr _main;
-        std::vector<DeclPtr> declPtrs;
-        std::vector<FuncDefPtr> funcDefPtrs;
-        while (!tokenStream.reachEnd()) {
-            auto type = tokenStream.peek()->type;
-            auto type1 = tokenStream.peek(1)->type;
-            auto type2 = tokenStream.peek(2)->type;
-            if (type == INTTK && type1 == MAINTK && type2 == LPARENT) {
-                _main = parseMainFuncDef();
-            } else if ((type == VOIDTK || type == INTTK) && type1 == IDENFR && type2 == LPARENT) {
-                funcDefPtrs.push_back(parseFuncDef());
-            } else {
-                declPtrs.push_back(parseDecl());
-            }
-        }
-        return CompUnit(declPtrs, funcDefPtrs, _main);
-    }
+    CompUnit parseCompUnit();
 };

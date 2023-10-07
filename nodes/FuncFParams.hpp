@@ -1,12 +1,10 @@
-#include <utility>
-
 //
 // Created by hiccup on 2023/9/27.
 //
 
-#ifndef COMPILER_FUNCFPARAMS_HPP
-#define COMPILER_FUNCFPARAMS_HPP
+#pragma once
 
+#include <utility>
 #include "ASTNode.hpp"
 
 class FuncFParams : public ASTNode{
@@ -21,4 +19,4 @@ public:
 };
 
 
-#endif //COMPILER_FUNCFPARAMS_HPP
+

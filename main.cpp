@@ -5,7 +5,7 @@
 #include "parser/Parser.hpp"
 #include "parser/Exception.hpp"
 #include "lexer/Lexer.h"
-#include "Config.hpp"
+#include "Config.h"
 using namespace std;
 
 bool PARSER_DISPLAY = true;
@@ -13,7 +13,7 @@ bool PARSER_SWITCH = true;
 
 std::ofstream outfile("./output.txt");
 
-void printString(const std::string& str) {
+void parseLog(const std::string& str) {
     if (PARSER_DISPLAY && PARSER_SWITCH) {
         outfile << str << std::endl;
     }

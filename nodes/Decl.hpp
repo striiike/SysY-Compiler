@@ -7,17 +7,19 @@
 
 #include <utility>
 #include <vector>
+#include "ASTNode.hpp"
 #include "TokenNode.hpp"
 #include "Def.hpp"
 
 class Decl : public ASTNode {
-private:
     bool isConst;
     TokenNode bType;
     std::vector<DefPtr> defPtrs;
 public :
     Decl(bool isConst, TokenNode bType, std::vector<DefPtr> defPtrs) :
-            isConst(isConst), bType(std::move(bType)), defPtrs(std::move(defPtrs)) {
+            isConst(isConst),
+            bType(std::move(bType)),
+            defPtrs(std::move(defPtrs)) {
         name = isConst ? "<ConstDecl>" : "<VarDecl>";
         print();
     }

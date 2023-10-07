@@ -6,7 +6,6 @@
 
 using namespace std;
 
-//    <Decl>          := ['const'] <BType> <Def> { ',' <Def> } ';'     'const' 修饰若有，则表示常量
 DeclPtr Parser::parseDecl() {
     auto tokenType = tokenStream.peek()->type;
     bool isConst = tokenType == CONSTTK;
@@ -27,7 +26,6 @@ DeclPtr Parser::parseDecl() {
     return std::make_shared<Decl>(isConst, bType, defPtrs);
 }
 
-//    <Def>           := Ident { '[' <ConstExp> ']'  } [ '=' <InitVal> ]   // 如果是常量声明则必须有 InitVal
 DefPtr Parser::parseDef(bool isConst) {
     TokenNode ident(*tokenStream.next());
 
@@ -45,21 +43,16 @@ DefPtr Parser::parseDef(bool isConst) {
     return std::make_shared<Def>(isConst, ident, constExpPtrs, nullptr);
 }
 
-//    <InitVal>       := <ExpInitVal> | <ArrInitVal>
 InitValPtr Parser::parseInitVal(bool isConst) {
-    if (tokenStream.peek()->type != LBRACE) {
-        auto ret = parseExpInitVal(isConst);
-        return ret;
-    }
+    if (tokenStream.peek()->type != LBRACE)
+        return parseExpInitVal(isConst);
     return parseArrayInitVal(isConst);
 }
 
-//    <ExpInitVal>    := <Exp>
 ExpInitValPtr Parser::parseExpInitVal(bool isConst) {
     return std::make_shared<ExpInitVal>(isConst, isConst ? parseConstExp() : parseExp());
 }
 
-//    <ArrInitVal>    := '{' [ <InitVal> { ',' <InitVal> } ] '}'    // 语义分析时要求必须个数与维度对应
 ArrayInitValPtr Parser::parseArrayInitVal(bool isConst) {
     // '{'
     auto left = tokenStream.next();
@@ -81,7 +74,6 @@ ArrayInitValPtr Parser::parseArrayInitVal(bool isConst) {
     return std::make_shared<ArrayInitVal>(isConst, initValPtrs);
 }
 
-
 ExpPtr Parser::parseExp() {
     return std::make_shared<Exp>(std::move(parseAddExp()), false);
 }
@@ -94,7 +86,6 @@ CondPtr Parser::parseCond() {
     return std::make_shared<Cond>(std::move(parseLOrExp()));
 }
 
-//    <LVal>          := Ident { '[' <Exp> ']' } // public class LVal { ident, class Index, List<Index> }
 LValPtr Parser::parseLVal() {
     vector<ExpPtr> array;
     TokenNode ident(*tokenStream.next());
@@ -111,8 +102,6 @@ LValPtr Parser::parseLVal() {
     return std::make_shared<LVal>(ident, array);
 }
 
-//    <PrimaryExp>    := '(' <Exp> ')' | <LVal> | <Number>
-//          Look forward: '(' :: <SubExp>, <Ident> :: <LVal>, <IntConst> :: <Number>
 PrimaryExpPtr Parser::parsePrimaryExp() {
     auto token = tokenStream.peek();
 
@@ -137,7 +126,6 @@ NumberPtr Parser::parseNumber() {
     return make_shared<Number>(str);
 }
 
-//    <FunctionCall>  := <Ident> '(' [ <FuncRParams> ] ')'
 FunctionCallPtr Parser::parseFunctionCall() {
     string ident = tokenStream.next()->value;
     auto left = tokenStream.next();
@@ -152,7 +140,6 @@ FunctionCallPtr Parser::parseFunctionCall() {
     return make_shared<FunctionCall>(ident, funcRParamsPtr);
 }
 
-//    <FuncRParams>   := <Exp> { ',', <Exp> } // List<Exp>
 FuncRParamsPtr Parser::parseFuncRParams() {
     vector<ExpPtr> expPtrs;
     expPtrs.push_back(parseExp());
@@ -166,10 +153,6 @@ FuncRParamsPtr Parser::parseFuncRParams() {
     return make_shared<FuncRParams>(expPtrs);
 }
 
-//    <UnaryExp>      := { <UnaryOp> } (<PrimaryExp> | <FunctionCall>)
-//          List<UnaryOp>, UnaryOp 包含在 UnaryExp 内部，不单独建类
-//          即不包含 <UnaryOp> 的 <UnaryExp>    需要向前看 2 个符号:
-//          Ident '(' :: <FunctionCall>, Ident :: <LVal>, '(' :: <SubExp>, IntConst :: <Number>
 UnaryExpPtr Parser::parseUnaryExp() {
     std::vector<TokenType> unaryOps;
     while (!tokenStream.reachEnd()) {
@@ -177,7 +160,7 @@ UnaryExpPtr Parser::parseUnaryExp() {
             break;
         }
         unaryOps.push_back(tokenStream.next()->type);
-        printString("<UnaryOp>");
+        parseLog("<UnaryOp>");
     }
 
     auto token1 = tokenStream.peek()->type;
@@ -185,13 +168,13 @@ UnaryExpPtr Parser::parseUnaryExp() {
     if (token1 == IDENFR && token2 == LPARENT) {
         auto ret = make_shared<UnaryExp>(unaryOps, nullptr, parseFunctionCall());
         for (int i = 0; i < unaryOps.size(); i++) {
-            printString("<UnaryExp>");
+            parseLog("<UnaryExp>");
         }
         return ret;
     } else {
         auto ret = make_shared<UnaryExp>(unaryOps, parsePrimaryExp(), nullptr);
         for (int i = 0; i < unaryOps.size(); i++) {
-            printString("<UnaryExp>");
+            parseLog("<UnaryExp>");
         }
         return ret;
     }
@@ -206,7 +189,7 @@ MulExpPtr Parser::parseMulExp() {
     while (!tokenStream.reachEnd()) {
         auto token = tokenStream.peek();
         if (!token || (token->type != MULT && token->type != DIV && token->type != MOD)) break;
-        printString("<MulExp>");
+        parseLog("<MulExp>");
         operators.push_back(tokenStream.next()->type);
         operands.push_back(parseUnaryExp());
     }
@@ -222,7 +205,7 @@ AddExpPtr Parser::parseAddExp() {
     while (!tokenStream.reachEnd()) {
         auto token = tokenStream.peek();
         if (!token || (token->type != PLUS && token->type != MINU)) break;
-        printString("<AddExp>");
+        parseLog("<AddExp>");
         operators.push_back(tokenStream.next()->type); // Assuming next() will return the token
         operands.push_back(parseMulExp());
     }
@@ -238,7 +221,7 @@ RelExpPtr Parser::parseRelExp() {
     while (!tokenStream.reachEnd()) {
         auto token = tokenStream.peek();
         if (!token || (token->type != LSS && token->type != GRE && token->type != LEQ && token->type != GEQ)) break;
-        printString("<RelExp>");
+        parseLog("<RelExp>");
         operators.push_back(tokenStream.next()->type);
         operands.push_back(parseAddExp());
     }
@@ -254,7 +237,7 @@ EqExpPtr Parser::parseEqExp() {
     while (!tokenStream.reachEnd()) {
         auto token = tokenStream.peek();
         if (!token || (token->type != EQL && token->type != NEQ)) break;
-        printString("<EqExp>");
+        parseLog("<EqExp>");
         operators.push_back(tokenStream.next()->type);
         operands.push_back(parseRelExp());
     }
@@ -270,7 +253,7 @@ LAndExpPtr Parser::parseLAndExp() {
     while (!tokenStream.reachEnd()) {
         auto token = tokenStream.peek();
         if (!token || token->type != AND) break;
-        printString("<LAndExp>");
+        parseLog("<LAndExp>");
         operators.push_back(tokenStream.next()->type);
         operands.push_back(parseEqExp());
     }
@@ -286,7 +269,7 @@ LOrExpPtr Parser::parseLOrExp() {
     while (!tokenStream.reachEnd()) {
         auto token = tokenStream.peek();
         if (!token || token->type != OR) break;
-        printString("<LOrExp>");
+        parseLog("<LOrExp>");
 
         operators.push_back(tokenStream.next()->type);
         operands.push_back(parseLAndExp());
@@ -295,16 +278,9 @@ LOrExpPtr Parser::parseLOrExp() {
     return std::make_shared<LOrExp>(std::move(leftOperand), std::move(operators), std::move(operands));
 }
 
-
-//    <FuncDef>       := <FuncType> Ident '(' [<FuncFParams> ] ')' <Block>
-//    <MainFuncDef>   := 'int' 'main' '(' ')' <Block>
-//    <FuncType>      := 'void' | 'int'
-//    <FuncFParams>   := <FuncFParam> { ',' <FuncFParam> }
-//    <FuncFParam>    := <BType> Ident [ '[' ']' { '[' <ConstExp> ']' } ]
-
 FuncDefPtr Parser::parseFuncDef() {
     TokenNode funcType(tokenStream.next().value());
-    printString("<FuncType>");
+    parseLog("<FuncType>");
     TokenNode ident(tokenStream.next().value());
     auto left = tokenStream.next();
     FuncFParamsPtr funcFParamsPtr = nullptr;
@@ -356,29 +332,6 @@ FuncFParamPtr Parser::parseFuncFParam() {
     return std::make_shared<FuncFParam>(bType, ident, true, constExpPtrs);
 }
 
-//    // 以分号结尾的简单语句
-//    <AssignStmt>    := <LVal> '=' <Exp> // 这些新增非终结符的组成不含分号
-//    <ExpStmt>       := <Exp>            // 空语句放到最后了
-//    <BreakStmt>     := 'break'
-//    <ContinueStmt>  := 'continue'
-//    <ReturnStmt>    := 'return' [<Exp>]
-//    <GetintStmt>     := <LVal> '=' 'getint' '(' ')'
-//    <PrintfStmt>    := 'printf' '(' FormatString { ',' <Exp> } ')'
-//    <SimpleStmt>       := <AssignStmt> | <ExpStmt> | <BreakStmt> | <ContinueStmt>
-//    | <ReturnStmt> | <GetintStmt> | <PrintfStmt> // <SimpleStmt> 是以分号结尾的语句(不含分号)的合集
-//    // 复杂的语句
-//    <IfStmt>        := 'if' '(' <Cond> ')' <Stmt> [ 'else' <Stmt> ]
-//    <WhileStmt>     := 'while' '(' <Cond> ')' <Stmt>
-//    <ComplexStmt>       := <IfStmt> | <WhileStmt> | <Block>
-//
-//    <Stmt>          := ';' | <SimpleStmt> ';' | <ComplexStmt>    // 将分号放在这里统一处理
-//
-//    <BlockItem>     := <Decl> | <Stmt>
-//
-//    <Block>         := '{' { <BlockItem> } '}'
-
-
-// <Block>         := '{' { <BlockItem> } '}'
 BlockPtr Parser::parseBlock() {
     auto left = tokenStream.next();
     std::vector<BlockItemPtr> blockItemPtrs;
@@ -390,7 +343,6 @@ BlockPtr Parser::parseBlock() {
     return std::make_shared<Block>(blockItemPtrs);
 }
 
-//    <BlockItem>     := <Decl> | <Stmt>
 BlockItemPtr Parser::parseBlockItem() {
     TokenType token = tokenStream.peek()->type;
     if (token == CONSTTK || token == INTTK) {
@@ -399,18 +351,24 @@ BlockItemPtr Parser::parseBlockItem() {
     return std::make_shared<BlockItem>(nullptr, parseStmt());
 }
 
-//    <Stmt>          := ';' | <SimpleStmt> ';' | <ComplexStmt>    // 将分号放在这里统一处理
 StmtPtr Parser::parseStmt() {
     if (tokenStream.peek()->type == SEMICN) {
         auto semicn = tokenStream.next();
-        return std::make_shared<Stmt>(nullptr, nullptr);
+        parseLog("<Stmt>");
+        return std::make_shared<Stmt>();
     }
-    if (tokenStream.peek()->type == IFTK || tokenStream.peek()->type == FORTK || tokenStream.peek()->type == LBRACE)
-        return std::make_shared<Stmt>(nullptr, parseComplexStmt());
+    if (tokenStream.peek()->type == IFTK ||
+        tokenStream.peek()->type == FORTK ||
+        tokenStream.peek()->type == LBRACE) {
+        auto ret = parseComplexStmt();
+        parseLog("<Stmt>");
+        return ret;
+    }
 
     auto simpleStmtPtr = parseSimpleStmt();
     tokenStream.check(SEMICN, Exception::SEMICN_LACKED);
-    return std::make_shared<Stmt>(simpleStmtPtr, nullptr);
+    parseLog("<Stmt>");
+    return simpleStmtPtr;
 }
 
 /// used to check whether Exp is LVal, \only for parseSimpleStmt
@@ -426,7 +384,6 @@ LValPtr getLValPtr(const ExpPtr &expPtr) {
     else return nullptr;
 }
 
-
 SimpleStmtPtr Parser::parseAssignOrGetintStmt(const LValPtr &lValPtr) {
     auto assign = tokenStream.next();
     if (tokenStream.peek()->type == GETINTTK) {
@@ -438,15 +395,6 @@ SimpleStmtPtr Parser::parseAssignOrGetintStmt(const LValPtr &lValPtr) {
     return std::make_shared<AssignStmt>(lValPtr, parseExp());
 }
 
-//    <AssignStmt>    := <LVal> '=' <Exp> // 这些新增非终结符的组成不含分号
-//    <ExpStmt>       := <Exp>            // 空语句放到最后了
-//    <BreakStmt>     := 'break'
-//    <ContinueStmt>  := 'continue'
-//    <ReturnStmt>    := 'return' [<Exp>]
-//    <GetintStmt>     := <LVal> '=' 'getint' '(' ')'
-//    <PrintfStmt>    := 'printf' '(' FormatString { ',' <Exp> } ')'
-//    <SimpleStmt>       := <AssignStmt> | <ExpStmt> | <BreakStmt> | <ContinueStmt>
-//    | <ReturnStmt> | <GetintStmt> | <PrintfStmt>
 SimpleStmtPtr Parser::parseSimpleStmt() {
     auto token = *tokenStream.peek();
     if (token.type == BREAKTK) {
@@ -516,9 +464,6 @@ _ForStmtPtr Parser::parse_ForStmt() {
     return std::make_shared<_ForStmt>(lValPtr, parseExp());
 }
 
-//    <IfStmt>        := 'if' '(' <Cond> ')' <Stmt> [ 'else' <Stmt> ]
-//    <WhileStmt>     := 'while' '(' <Cond> ')' <Stmt>
-//    <ComplexStmt>       := <IfStmt> | <WhileStmt> | <Block>
 ComplexStmtPtr Parser::parseComplexStmt() {
     if (tokenStream.peek()->type == IFTK) {
         auto _if = tokenStream.next();
@@ -558,4 +503,23 @@ ComplexStmtPtr Parser::parseComplexStmt() {
 
     /// \error
     return nullptr;
+}
+
+CompUnit Parser::parseCompUnit() {
+    MainFuncDefPtr _main;
+    std::vector<DeclPtr> declPtrs;
+    std::vector<FuncDefPtr> funcDefPtrs;
+    while (!tokenStream.reachEnd()) {
+        auto type = tokenStream.peek()->type;
+        auto type1 = tokenStream.peek(1)->type;
+        auto type2 = tokenStream.peek(2)->type;
+        if (type == INTTK && type1 == MAINTK && type2 == LPARENT) {
+            _main = parseMainFuncDef();
+        } else if ((type == VOIDTK || type == INTTK) && type1 == IDENFR && type2 == LPARENT) {
+            funcDefPtrs.push_back(parseFuncDef());
+        } else {
+            declPtrs.push_back(parseDecl());
+        }
+    }
+    return CompUnit(declPtrs, funcDefPtrs, _main);
 }

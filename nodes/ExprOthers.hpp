@@ -118,14 +118,6 @@ public:
     }
 };
 
-class ConstExp : public ASTNode {
-    AddExpPtr addExpPtr;
-public:
-    explicit ConstExp(AddExpPtr sharedPtr) : addExpPtr(std::move(sharedPtr)) {
-        name = "<ConstExp>";
-        print();
-    }
-};
 
 class Cond : public ASTNode {
     LOrExpPtr lOrExpPtr;

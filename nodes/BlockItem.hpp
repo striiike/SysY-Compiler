@@ -19,7 +19,6 @@ public:
         declPtr(std::move(declPtr)), 
         stmtPtr(std::move(stmtPtr)) {
         name = "<BlockItem>";
-//        printInformation();
     }
 
     void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override {

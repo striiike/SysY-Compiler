@@ -5,9 +5,22 @@
 #pragma once
 
 #include <iostream>
-#include "../Config.hpp"
+#include "../Config.h"
 #include "../parser/Exception.hpp"
 #include <memory>
+
+class ASTNode {
+public:
+    std::string name;
+
+    void print() const {
+        if (PARSER_DISPLAY && PARSER_SWITCH)
+            outfile << name << std::endl;
+    }
+
+    virtual void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
+    }
+};
 
 class MulExp;
 
@@ -55,7 +68,6 @@ using NumberPtr = std::shared_ptr<Number>;
 using FunctionCallPtr = std::shared_ptr<FunctionCall>;
 using FuncRParamsPtr = std::shared_ptr<FuncRParams>;
 using UnaryExpPtr = std::shared_ptr<UnaryExp>;
-using ConstExpPtr = std::shared_ptr<ConstExp>;
 using CondPtr = std::shared_ptr<Cond>;
 
 
@@ -138,17 +150,3 @@ using FuncFParamPtr = std::shared_ptr<FuncFParam>;
 using MainFuncDefPtr = std::shared_ptr<MainFuncDef>;
 
 class CompUnit;
-
-class ASTNode {
-public:
-    std::string name;
-
-    void print() const {
-        if (PARSER_DISPLAY && PARSER_SWITCH)
-            outfile << name << std::endl;
-    }
-
-    virtual void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
-    }
-
-};

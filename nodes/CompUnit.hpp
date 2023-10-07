@@ -7,7 +7,6 @@
 #include <utility>
 #include <vector>
 #include "ASTNode.hpp"
-#include "../parser/Exception.hpp"
 
 class CompUnit : public ASTNode {
     std::vector<DeclPtr> declPtrs;
