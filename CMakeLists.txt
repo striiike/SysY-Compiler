@@ -6,30 +6,54 @@ set(CMAKE_CXX_STANDARD 17)
 add_executable(compiler main.cpp
         lexer/Lexer.cpp
         lexer/Lexer.h
-        parser/Parser.hpp
+        parser/Parser.h
         Config.h
         parser/TokenStream.hpp
-        nodes/ASTNode.hpp
-        nodes/ExprUniform.hpp
-        nodes/ExprOthers.hpp
-        nodes/TokenNode.hpp
-        nodes/Decl.hpp
-        nodes/Decl.hpp
-        nodes/Def.hpp
-        nodes/InitVal.hpp
-        nodes/BlockItem.hpp
-        nodes/SimpleStmt.hpp
-        nodes/ComplexStmt.hpp
-        nodes/Stmt.hpp
-        nodes/FuncDef.hpp
-        nodes/MainFuncDef.hpp
-        nodes/FuncFParams.hpp
-        nodes/CompUnit.hpp
-        nodes/lib.hpp
+        nodes/ASTNode.h
+        nodes/ExpUniform.h
+        nodes/Exp.h
+        nodes/TokenNode.h
+        nodes/Decl.h
+        nodes/Decl.h
+        nodes/Def.h
+        nodes/InitVal.h
+        nodes/BlockItem.h
+        nodes/SimpleStmt.h
+        nodes/ComplexStmt.h
+        nodes/Stmt.h
+        nodes/FuncDef.h
+        nodes/MainFuncDef.h
+        nodes/FuncFParams.h
+        nodes/CompUnit.h
+        nodes/lib.h
+        nodes/BlockItem.cpp
+        nodes/ComplexStmt.cpp
+        nodes/CompUnit.cpp
+        nodes/Decl.cpp
+        nodes/Def.cpp
+        nodes/Exp.cpp
+        nodes/ExpUniform.cpp
+        nodes/FuncDef.cpp
+        nodes/FuncFParam.cpp
+        nodes/FuncFParams.cpp
+        nodes/InitVal.cpp
+        nodes/MainFuncDef.cpp
+        nodes/SimpleStmt.cpp
+        nodes/Stmt.cpp
+        nodes/TokenNode.cpp
         parser/Parser.cpp
         parser/Exception.hpp
         parser/lib.hpp
         parser/Symbol.hpp
         parser/Symbol.cpp
-        nodes/CompUnit.hpp
+        nodes/CompUnit.h
+        nodes/BlockItem.cpp
+        nodes/UnaryExp.h
+        nodes/UnaryExp.cpp
+        nodes/PrimaryExp.h
+        nodes/PrimaryExp.cpp
+        nodes/LVal.h
+        nodes/LVal.cpp
+        nodes/FunctionCall.h
+        nodes/FunctionCall.cpp
 )

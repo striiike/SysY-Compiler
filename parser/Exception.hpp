@@ -30,15 +30,20 @@ struct ErrorCtx {
     bool isConst;
     bool isGlobal;
     bool voidFunc;
+    bool inFunc;
+    int layerNum = 0;
 
 
 };
 
 struct ErrorRet {
-    int b;
-//    ErrorRet()
+    bool hasRet;
+    int retLineNum;
+    //    ErrorRet()
 };
 
-using ErrorCtxPtr = std::shared_ptr<ErrorCtx>;
-using ErrorRetPtr = std::shared_ptr<ErrorRet>;
+//using ErrorCtxPtr = std::shared_ptr<ErrorCtx>;
+//using ErrorRetPtr = std::shared_ptr<ErrorRet>;
+using ErrorCtxPtr = ErrorCtx *;
+using ErrorRetPtr = ErrorRet *;
 

@@ -2,7 +2,7 @@
 // Created by hiccup on 2023/9/18.
 //
 #include <bits/stdc++.h>
-#include "parser/Parser.hpp"
+#include "parser/Parser.h"
 #include "parser/Exception.hpp"
 #include "lexer/Lexer.h"
 #include "Config.h"
@@ -50,7 +50,9 @@ int main() {
 
     auto AST = parser.parseCompUnit();
 
-    AST.checkError(make_shared<ErrorCtx>(), make_shared<ErrorRet>());
+    auto ctx = new ErrorCtx();
+    auto ret = new ErrorRet();
+//    AST.checkError(ctx, ret);
 
     return 0;
 }

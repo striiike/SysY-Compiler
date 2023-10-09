@@ -6,7 +6,7 @@
 
 #include <utility>
 
-#include "ASTNode.hpp"
+#include "ASTNode.h"
 
 
 class Stmt : public ASTNode {
