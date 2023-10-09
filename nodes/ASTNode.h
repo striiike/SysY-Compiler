@@ -137,11 +137,8 @@ using ForStmtPtr = std::shared_ptr<ForStmt>;
 using _ForStmtPtr = std::shared_ptr<_ForStmt>;
 
 class FuncDef;
-
 class FuncFParams;
-
 class FuncFParam;
-
 class MainFuncDef;
 
 using FuncDefPtr = std::shared_ptr<FuncDef>;
