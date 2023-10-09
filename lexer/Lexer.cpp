@@ -49,7 +49,7 @@ void Lexer::tokenize() {
     }
 
     // skip multi-lines comment
-    if (peek() == '/' && peek(1) == '*') {
+    else if (peek() == '/' && peek(1) == '*') {
         next();
         next();
         while (peek() && (peek() != '*' || peek(1) != '/')) {
@@ -60,7 +60,7 @@ void Lexer::tokenize() {
         next();
     }
 
-    if (peek() == '\"') {
+    else if (peek() == '\"') {
         tokenizeString();
     } else if (std::isdigit(peek())) {
         tokenizeNumber();

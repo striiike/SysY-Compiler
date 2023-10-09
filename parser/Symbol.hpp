@@ -12,20 +12,22 @@
 using namespace std;
 
 class VarSymbol {
+public:
     bool isConst;
     bool isGlobal;
     vector<int> lens;  // at most 2 dimensions
     vector<int> values;     // save it in 1 dimension
-public:
+
     VarSymbol(bool isConst, bool isGlobal, vector<int> lens, vector<int> values) :
             isConst(isConst), isGlobal(isGlobal), lens(std::move(lens)), values(std::move(values)) {}
 
 };
 
 class FuncSymbol {
+public:
     bool isVoid;
     vector<int> dims;       // stand for the types
-public:
+
     FuncSymbol(bool isVoid, vector<int> dims) :
             isVoid(isVoid), dims(std::move(dims)) {}
 };
@@ -73,6 +75,15 @@ public:
         }
     }
 
+    VarSymbolPtr getVar(const string &name) {
+        if (!varsMap.count(name)) return nullptr;
+        return varsMap[name]->top();
+    }
+
+    FuncSymbolPtr getFunc(const string &name) {
+        if (!funcsMap.count(name)) return nullptr;
+        return funcsMap[name];
+    }
 };
 
 extern Symbol symbol;

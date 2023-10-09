@@ -9,7 +9,7 @@
 #include "../lexer/Lexer.h"
 #include "lib.hpp"
 #include "../Config.h"
-#include "../nodes/TokenNode.hpp"
+#include "../nodes/TokenNode.h"
 #include "Exception.hpp"
 
 #include <bits/stdc++.h>

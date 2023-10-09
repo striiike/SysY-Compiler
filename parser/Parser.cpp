@@ -1,7 +1,7 @@
 //
 // Created by hiccup on 2023/9/30.
 //
-#include "Parser.hpp"
+#include "Parser.h"
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -127,7 +127,7 @@ NumberPtr Parser::parseNumber() {
 }
 
 FunctionCallPtr Parser::parseFunctionCall() {
-    string ident = tokenStream.next()->value;
+    TokenNode ident(*tokenStream.next());
     auto left = tokenStream.next();
 
     auto token = tokenStream.peek()->type;
@@ -339,8 +339,8 @@ BlockPtr Parser::parseBlock() {
         if (tokenStream.peek()->type == RBRACE) break;
         blockItemPtrs.push_back(parseBlockItem());
     }
-    auto right = tokenStream.next();
-    return std::make_shared<Block>(blockItemPtrs);
+    TokenNode right( *tokenStream.next());
+    return std::make_shared<Block>(blockItemPtrs, right);
 }
 
 BlockItemPtr Parser::parseBlockItem() {
@@ -475,6 +475,7 @@ ComplexStmtPtr Parser::parseComplexStmt() {
             auto _else = tokenStream.next();
             return std::make_shared<IfStmt>(condPtr, stmtPtr1, parseStmt());
         }
+        return std::make_shared<IfStmt>(condPtr, stmtPtr1, nullptr);
     }
     if (tokenStream.peek()->type == FORTK) {
         auto _for = tokenStream.next();
