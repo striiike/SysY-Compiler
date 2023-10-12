@@ -1,19 +1,21 @@
 //
 // Created by hiccup on 2023/9/18.
 //
-#include <bits/stdc++.h>
+
 #include "parser/Parser.h"
 #include "parser/Exception.hpp"
 #include "lexer/Lexer.h"
 #include "Config.h"
+
 using namespace std;
 
 bool PARSER_DISPLAY = true;
 bool PARSER_SWITCH = true;
 
 std::ofstream outfile("./output.txt");
+std::ofstream errfile("./error.txt");
 
-void parseLog(const std::string& str) {
+void parseLog(const std::string &str) {
     if (PARSER_DISPLAY && PARSER_SWITCH) {
         outfile << str << std::endl;
     }
@@ -50,9 +52,18 @@ int main() {
 
     auto AST = parser.parseCompUnit();
 
-    auto ctx = new ErrorCtx();
-    auto ret = new ErrorRet();
-//    AST.checkError(ctx, ret);
+    auto ctx = make_shared<ErrorCtx>();
+    auto ret = make_shared<ErrorRet>();
+    AST.checkError(ctx, ret);
 
+    std::sort(errorList.begin(), errorList.end(),
+              [](const auto &left, const auto &right) {
+                  return left.second < right.second;
+              });
+    errorList.erase(std::unique(errorList.begin(), errorList.end()), errorList.end());
+
+    for (const auto &pair: errorList) {
+        errfile << pair.second << " " << exceptionToString[pair.first] << std::endl;
+    }
     return 0;
 }

@@ -20,7 +20,11 @@ NumberPtr PrimaryExp::getNumberPtr() { return numberPtr; }
 ExpPtr PrimaryExp::getExpPtr() { return expPtr; }
 
 void PrimaryExp::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
-    if (expPtr) expPtr->checkError(ctx, ret);
-    if (lValPtr) lValPtr->checkError(ctx, ret);
-    if (numberPtr) numberPtr->checkError(ctx, ret);
+    auto _ret = make_shared<ErrorRet>();
+
+    if (expPtr) expPtr->checkError(ctx, _ret);
+    else if (lValPtr) lValPtr->checkError(ctx, _ret);
+    else if (numberPtr) numberPtr->checkError(ctx, _ret);
+
+    ret->dim = _ret->dim;
 }

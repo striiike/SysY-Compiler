@@ -2,7 +2,7 @@
 // Created by hiccup on 2023/9/30.
 //
 #include "Parser.h"
-#include <bits/stdc++.h>
+#include <vector>
 
 using namespace std;
 
@@ -284,7 +284,8 @@ FuncDefPtr Parser::parseFuncDef() {
     TokenNode ident(tokenStream.next().value());
     auto left = tokenStream.next();
     FuncFParamsPtr funcFParamsPtr = nullptr;
-    if (tokenStream.peek()->type != RPARENT) {
+    auto token = tokenStream.peek()->type;
+    if (token == INTTK) {
         funcFParamsPtr = parseFuncFParams();
     }
     tokenStream.check(RPARENT, Exception::RPARENT_LACKED);
@@ -317,7 +318,7 @@ FuncFParamPtr Parser::parseFuncFParam() {
     Token _ident = tokenStream.next().value();
     TokenNode ident(_ident);
 
-    std::vector<ExpPtr> constExpPtrs;
+    std::vector<ExpPtr> constExpPtrs{};
 
     if (tokenStream.peek()->type != LBRACK)
         return std::make_shared<FuncFParam>(bType, ident, false, constExpPtrs);
@@ -411,7 +412,7 @@ SimpleStmtPtr Parser::parseSimpleStmt() {
         TokenNode _return(token);
         tokenStream.next();
         ExpPtr expPtr = nullptr;
-        if (tokenStream.peek()->type != SEMICN) {
+        if (tokenStream.peek()->type != SEMICN && tokenStream.peek()->type != RBRACE) {
             expPtr = parseExp();
         }
         return std::make_shared<ReturnStmt>(_return, expPtr);

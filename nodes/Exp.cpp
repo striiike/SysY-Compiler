@@ -1,7 +1,5 @@
 #include "Exp.h"
-#include "UnaryExp.h"
 #include "../parser/Symbol.hpp"
-#include "TokenNode.h"
 
 Number::Number(std::string num) :
         num(std::stoi(num)) {
@@ -10,7 +8,7 @@ Number::Number(std::string num) :
 }
 
 void Number::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
-    ASTNode::checkError(ctx, ret);
+    ret->dim = 0;
 }
 
 Exp::Exp(AddExpPtr sharedPtr, bool isConst) :

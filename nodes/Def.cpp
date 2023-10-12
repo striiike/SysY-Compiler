@@ -9,7 +9,7 @@ Def::Def(bool isConst, TokenNode ident, std::vector<ExpPtr> expPtrs, InitValPtr 
 
 void Def::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
     for (auto &i: expPtrs) {
-        i->checkError(ctx, nullptr);
+        i->checkError(ctx, ret);
     }
 
     if (initValPtr) initValPtr->checkError(ctx, ret);

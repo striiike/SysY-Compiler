@@ -7,7 +7,9 @@ AssignStmt::AssignStmt(LValPtr lValPtr, ExpPtr expPtr)
         : lValPtr(std::move(lValPtr)), expPtr(std::move(expPtr)), SimpleStmt() {}
 
 void AssignStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
+    ctx->isLeftValue = true;
     lValPtr->checkError(ctx, ret);
+    ctx->isLeftValue = false;
     expPtr->checkError(ctx, ret);
 }
 
@@ -18,7 +20,9 @@ _ForStmt::_ForStmt(LValPtr lValPtr, ExpPtr expPtr)
 }
 
 void _ForStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
+    ctx->isLeftValue = true;
     lValPtr->checkError(ctx, ret);
+    ctx->isLeftValue = false;
     expPtr->checkError(ctx, ret);
 }
 
@@ -33,7 +37,7 @@ BreakStmt::BreakStmt(TokenNode _break)
         : _break(std::move(_break)), SimpleStmt() {}
 
 void BreakStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
-    if (!ctx->layerNum)
+    if (!ctx->loopNum)
         errorList.emplace_back(Exception::BREAK_CONTINUE_OUT_LOOP, _break.getLineNum());
 }
 
@@ -41,7 +45,7 @@ ContinueStmt::ContinueStmt(TokenNode _continue)
         : _continue(std::move(_continue)), SimpleStmt() {}
 
 void ContinueStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
-    if (!ctx->layerNum)
+    if (!ctx->loopNum)
         errorList.emplace_back(Exception::BREAK_CONTINUE_OUT_LOOP, _continue.getLineNum());
 }
 
@@ -51,8 +55,11 @@ ReturnStmt::ReturnStmt(TokenNode _return, ExpPtr expPtr)
 void ReturnStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
     if (expPtr) {
         expPtr->checkError(ctx, ret);
-        ret->hasRet = true;
+        if (ctx->voidFunc) {
+            errorList.emplace_back(Exception::VOID_RETURN_INT, _return.getLineNum());
+        }
     }
+    ret->hasRet = true;
     ret->retLineNum = _return.getLineNum();
 }
 
@@ -60,7 +67,9 @@ GetintStmt::GetintStmt(LValPtr lValPtr, TokenNode _getint)
         : lValPtr(std::move(lValPtr)), _getint(std::move(_getint)), SimpleStmt() {}
 
 void GetintStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
+    ctx->isLeftValue = true;
     lValPtr->checkError(ctx, ret);
+    ctx->isLeftValue = false;
 }
 
 PrintfStmt::PrintfStmt(TokenNode _printf, TokenNode FormatString, std::vector<ExpPtr> expPtrs)

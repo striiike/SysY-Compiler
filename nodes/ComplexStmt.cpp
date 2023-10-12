@@ -21,9 +21,9 @@ void ForStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
     if (condPtr) condPtr->checkError(ctx, ret);
     if (assignStmtPtr2) assignStmtPtr2->checkError(ctx, ret);
 
-    ctx->layerNum++;
+    ctx->loopNum++;
     stmtPtr->checkError(ctx, ret);
-    ctx->layerNum--;
+    ctx->loopNum--;
 }
 
 Block::Block(std::vector<BlockItemPtr> blockItemPtrs, TokenNode rbrace) :
@@ -33,19 +33,18 @@ Block::Block(std::vector<BlockItemPtr> blockItemPtrs, TokenNode rbrace) :
 }
 
 void Block::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
-    symbol.startScope();
+    if (!ctx->afterFuncDef)
+        symbol.startScope();
+    else ctx->afterFuncDef = false;
+
+
+    ctx->layerNum++;
     for (const auto& i : blockItemPtrs) {
         i->checkError(ctx, ret);
     }
+    ctx->layerNum--;
+
+
     symbol.endScope();
-
-    if (ctx->inFunc) {
-        if (!ctx->voidFunc && !ret->hasRet) {
-            errorList.emplace_back(Exception::INT_RETURN_LACKED, rbrace.getLineNum());
-        }
-
-        if (ctx->voidFunc && ret->hasRet) {
-            errorList.emplace_back(Exception::VOID_RETURN_INT, ret->retLineNum);
-        }
-    }
+    ret->rbraceLineNum = rbrace.getLineNum();
 }

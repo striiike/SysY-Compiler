@@ -27,6 +27,12 @@ const FunctionCallPtr &UnaryExp::getFunctionCallPtr() const {
 }
 
 void UnaryExp::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
-    if (primaryExpPtr) primaryExpPtr->checkError(ctx, ret);
-    if (functionCallPtr) functionCallPtr->checkError(ctx, ret);
+    auto _ret = make_shared<ErrorRet>();
+    if (primaryExpPtr) {
+        primaryExpPtr->checkError(ctx, _ret);
+    }
+    else if (functionCallPtr) {
+        functionCallPtr->checkError(ctx, _ret);
+    }
+    ret->dim = _ret->dim;
 }

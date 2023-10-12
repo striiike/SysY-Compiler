@@ -16,5 +16,7 @@ private:
 public:
     FuncFParam(TokenNode bType, TokenNode ident, bool isArray, std::vector<ExpPtr> expPtrs);
     void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+
+    int getDim();
 };
 

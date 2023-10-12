@@ -6,13 +6,13 @@
 #define COMPILER_TOKEN_ANALYZER_H
 
 
+#include <optional>
 #include "../lexer/Lexer.h"
 #include "lib.hpp"
 #include "../Config.h"
 #include "../nodes/TokenNode.h"
 #include "Exception.hpp"
 
-#include <bits/stdc++.h>
 using namespace std;
 
 class TokenStream {
@@ -71,7 +71,9 @@ public:
     }
 
     void error(Exception exception) {
+        current--;
         errorList.emplace_back(exception, current->lineNum);
+        current++;
     }
 
 };

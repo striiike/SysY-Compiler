@@ -4,10 +4,13 @@
 
 #pragma once
 
-#include<bits/stdc++.h>
 
 #include <utility>
 #include "Exception.hpp"
+#include <set>
+#include <stack>
+#include <map>
+#include <iostream>
 
 using namespace std;
 
@@ -45,21 +48,25 @@ public:
 
     // 0 for false
     int insertVar(bool isConst, const string &name, const vector<int> &lens, const vector<int> &values = {}) {
-        auto scope = *symbolStack.top();
-        if (scope.count(name)) return 0;
+        auto scope = symbolStack.top();
+        if (scope->count(name)) return 0;
 
-        scope.insert(name);
-        if (!varsMap.count(name)) varsMap[name] = make_shared<stack<VarSymbolPtr>>();
         bool isGlobal = symbolStack.size() == 1;
+        if (isGlobal && funcsMap.count(name)) return 0;
+
+        scope->insert(name);
+        if (!varsMap.count(name)) varsMap[name] = make_shared<stack<VarSymbolPtr>>();
+
         varsMap[name]->push(make_shared<VarSymbol>(isConst, isGlobal, lens, values));
         return 1;
     }
 
     // 0 for false
     int insertFunc(const string &name, bool isVoid, const vector<int> &dims = {}) {
-        if (funcsMap.count(name)) return 0;
+        auto scope = symbolStack.top();
+        if (funcsMap.count(name) || scope->count(name)) return 0;
 
-        funcsMap.emplace(name, make_shared<FuncSymbol>(isVoid, dims));
+        funcsMap[name] = make_shared<FuncSymbol>(isVoid, dims);
         return 1;
     }
 
@@ -69,10 +76,13 @@ public:
 
     void endScope() {
         SymbolSetPtr set = symbolStack.top();
+
         for (const auto &i: *set) {
             varsMap[i]->pop();
             if (varsMap[i]->empty()) varsMap.erase(i);
         }
+
+        symbolStack.pop();
     }
 
     VarSymbolPtr getVar(const string &name) {

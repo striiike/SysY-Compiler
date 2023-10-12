@@ -4,7 +4,9 @@
 
 #pragma once
 
-#include <bits/stdc++.h>
+#include <vector>
+#include <utility>
+#include <memory>
 
 using namespace std;
 
@@ -29,21 +31,26 @@ enum class Exception {
 struct ErrorCtx {
     bool isConst;
     bool isGlobal;
+    bool isLeftValue;
     bool voidFunc;
-    bool inFunc;
+    bool afterFuncDef;
+    int loopNum = 0;
     int layerNum = 0;
-
-
 };
 
 struct ErrorRet {
     bool hasRet;
     int retLineNum;
+    int rbraceLineNum;
+    int dim;
+    bool undefined = false;
+
+    vector<int> dims{};
     //    ErrorRet()
 };
 
-//using ErrorCtxPtr = std::shared_ptr<ErrorCtx>;
-//using ErrorRetPtr = std::shared_ptr<ErrorRet>;
-using ErrorCtxPtr = ErrorCtx *;
-using ErrorRetPtr = ErrorRet *;
+using ErrorCtxPtr = std::shared_ptr<ErrorCtx>;
+using ErrorRetPtr = std::shared_ptr<ErrorRet>;
+//using ErrorCtxPtr = ErrorCtx *;
+//using ErrorRetPtr = ErrorRet *;
 

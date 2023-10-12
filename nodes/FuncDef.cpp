@@ -9,14 +9,24 @@ FuncDef::FuncDef(TokenNode funcType, TokenNode ident, FuncFParamsPtr funcFParams
 }
 
 void FuncDef::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
+    vector<int> dims{};
+    if (funcFParamsPtr) {
+        dims = funcFParamsPtr->getDims();
+    }
+    // no detail for check error
+    if (!symbol.insertFunc(ident.getValue(), funcType.getType() == VOIDTK, dims)) {
+        errorList.emplace_back(Exception::REDEFINED_IDENT, ident.getLineNum());
+    }
+
+    symbol.startScope();
+    ret = make_shared<ErrorRet>();
     if (funcFParamsPtr) funcFParamsPtr->checkError(ctx, ret);
-    ctx->inFunc = true;
+    ctx->afterFuncDef = true;
     ctx->voidFunc = (funcType.getType() == VOIDTK);
     blockPtr->checkError(ctx, ret);
-    ctx->inFunc = false;
 
-    // no detail for check error
-    if (!symbol.insertFunc(ident.getValue(), funcType.getType() == VOIDTK)) {
-        errorList.emplace_back(Exception::REDEFINED_IDENT, ident.getLineNum());
+
+    if (!ctx->voidFunc && !ret->hasRet) {
+        errorList.emplace_back(Exception::INT_RETURN_LACKED, ret->rbraceLineNum);
     }
 }

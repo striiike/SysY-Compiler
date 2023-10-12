@@ -8,8 +8,15 @@ MainFuncDef::MainFuncDef(TokenNode bType, TokenNode _main, BlockPtr blockPtr) :
 }
 
 void MainFuncDef::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
-    ctx->inFunc = true;
+    ctx->afterFuncDef = true;
     ctx->voidFunc = false;
+    symbol.startScope();
+
+    ret = make_shared<ErrorRet>();
     blockPtr->checkError(ctx, ret);
-    ctx->inFunc = false;
+    ctx->afterFuncDef = false;
+
+    if (!ret->hasRet) {
+        errorList.emplace_back(Exception::INT_RETURN_LACKED, ret->rbraceLineNum);
+    }
 }

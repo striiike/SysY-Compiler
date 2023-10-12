@@ -8,6 +8,8 @@
 #include "../Config.h"
 #include "../parser/Exception.hpp"
 #include <memory>
+#include <string>
+#include <fstream>
 
 class ASTNode {
 public:

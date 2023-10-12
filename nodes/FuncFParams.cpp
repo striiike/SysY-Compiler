@@ -8,11 +8,19 @@ FuncFParams::FuncFParams(std::vector<FuncFParamPtr> funcFParamPtrs) :
     print();
 }
 
+vector<int> FuncFParams::getDims() {
+    vector<int> dims{};
+    for (const auto& i : funcFParamPtrs) {
+        dims.push_back(i->getDim());
+    }
+    return dims;
+}
+
+
 void FuncFParams::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
-    symbol.startScope();
     for (const auto& i : funcFParamPtrs) {
         i->checkError(ctx, ret);
     }
-    symbol.endScope();
+//    symbol.endScope();
 }
 

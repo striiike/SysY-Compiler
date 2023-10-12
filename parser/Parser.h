@@ -7,7 +7,6 @@
 #include "TokenStream.hpp"
 #include "Exception.hpp"
 #include "../nodes/lib.h"
-#include <bits/stdc++.h>
 
 class Parser {
 private:

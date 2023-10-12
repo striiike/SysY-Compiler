@@ -10,6 +10,7 @@
 #include "../lexer/Lexer.h"
 #include "ASTNode.h"
 #include "UnaryExp.h"
+#include <algorithm>
 
 using namespace std;
 
@@ -40,10 +41,16 @@ public:
     };
 
     void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override {
-        leftOperand->checkError(ctx, ret);
+        vector<int> dims{};
+        auto _ret = make_shared<ErrorRet>();
+        leftOperand->checkError(ctx, _ret);
+        dims.push_back(_ret->dim);
         for (const auto &i: operands) {
-            i->checkError(ctx, ret);
+            _ret = make_shared<ErrorRet>();
+            i->checkError(ctx, _ret);
+            dims.push_back(_ret->dim);
         }
+        ret->dim = *min_element(dims.begin(), dims.end());
     }
 };
 

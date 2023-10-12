@@ -14,6 +14,8 @@ public:
     explicit FuncFParams(std::vector<FuncFParamPtr> funcFParamPtrs);
 
     void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+
+    vector<int> getDims();
 };
 
 
