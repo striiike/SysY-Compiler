@@ -12,12 +12,12 @@
 
 class BlockItem : public ASTNode {
 private:
-    DeclPtr declPtr;
-    StmtPtr stmtPtr;
+	DeclPtr declPtr;
+	StmtPtr stmtPtr;
 public:
-    BlockItem(DeclPtr declPtr, StmtPtr stmtPtr);
+	BlockItem(DeclPtr declPtr, StmtPtr stmtPtr);
 
-    void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 };
 
 

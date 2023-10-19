@@ -11,31 +11,30 @@
 #include "TokenNode.h"
 #include "ExpUniform.h"
 
-
 class Number : public ASTNode {
-    int num;
+	int num;
 public:
-    explicit Number(std::string num);
+	explicit Number(std::string num);
 
-    void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 };
 
 class Exp : public ASTNode {
-    bool isConst;
+	bool isConst;
 public:
-    AddExpPtr addExpPtr;
+	AddExpPtr addExpPtr;
 
-    explicit Exp(AddExpPtr sharedPtr, bool isConst);
+	explicit Exp(AddExpPtr sharedPtr, bool isConst);
 
-    void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 };
 
 class Cond : public ASTNode {
-    LOrExpPtr lOrExpPtr;
+	LOrExpPtr lOrExpPtr;
 public:
-    explicit Cond(LOrExpPtr lOrExpPtr);
+	explicit Cond(LOrExpPtr lOrExpPtr);
 
-    void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 };
 
 

@@ -7,51 +7,49 @@
 #include "../parser/Symbol.hpp"
 
 FuncRParams::FuncRParams(std::vector<ExpPtr> expPtrs) : expPtrs(std::move(expPtrs)) {
-    name = "<FuncRParams>";
-    print();
+	name = "<FuncRParams>";
+	print();
 }
 
 void FuncRParams::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
-    vector<int> dims{};
-    for (const auto &i: expPtrs) {
-        auto _ret = make_shared<ErrorRet>();
-        i->checkError(ctx, _ret);
-        dims.push_back(_ret->dim);
-    }
-    ret->dims = dims;
+	vector<int> dims{};
+	for (const auto &i : expPtrs) {
+		auto _ret = make_shared<ErrorRet>();
+		i->checkError(ctx, _ret);
+		dims.push_back(_ret->dim);
+	}
+	ret->dims = dims;
 }
 
 FunctionCall::FunctionCall(TokenNode ident, FuncRParamsPtr funcRParamsPtr)
-        : ident(std::move(ident)), funcRParamsPtr(std::move(funcRParamsPtr)) {
-    name = "<FunctionCall>";
+	: ident(std::move(ident)), funcRParamsPtr(std::move(funcRParamsPtr)) {
+	name = "<FunctionCall>";
 }
 
 void FunctionCall::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
-    auto funcPtr = symbol.getFunc(ident.getValue());
+	auto funcPtr = symbol.getFunc(ident.getValue());
 
+	vector<int> dims{};
+	if (funcPtr) {
+		dims = funcPtr->dims;
+		ret->dim = (funcPtr->isVoid) ? -1 : 0;
+	} else {
+		errorList.emplace_back(Exception::UNDEFINED_IDENT, ident.getLineNum());
+		ret->dim = 0;
+	}
 
-    vector<int> dims{};
-    if (funcPtr) {
-        dims = funcPtr->dims;
-        ret->dim = (funcPtr->isVoid) ? -1 : 0;
-    } else {
-        errorList.emplace_back(Exception::UNDEFINED_IDENT, ident.getLineNum());
-        ret->dim = 0;
-    }
+	if (funcRParamsPtr)
+		funcRParamsPtr->checkError(ctx, ret);
 
-
-    if (funcRParamsPtr)
-        funcRParamsPtr->checkError(ctx, ret);
-
-    if (dims.size() != ret->dims.size())
-        errorList.emplace_back(Exception::PARAMS_NUM_UNMATCHED, ident.getLineNum());
-    else if (!ret->undefined) {
-        for (int i = 0; i < dims.size(); ++i) {
-            if (dims[i] != ret->dims[i]) {
-                errorList.emplace_back(Exception::PARAM_TYPE_UNMATCHED, ident.getLineNum());
-                break;
-            }
-        }
-    }
+	if (dims.size() != ret->dims.size())
+		errorList.emplace_back(Exception::PARAMS_NUM_UNMATCHED, ident.getLineNum());
+	else if (!ret->undefined) {
+		for (int i = 0; i < dims.size(); ++i) {
+			if (dims[i] != ret->dims[i]) {
+				errorList.emplace_back(Exception::PARAM_TYPE_UNMATCHED, ident.getLineNum());
+				break;
+			}
+		}
+	}
 }
 

@@ -11,24 +11,24 @@
 #include <string>
 
 class TokenNode : public ASTNode {
-    std::string value;
-    int lineNum;
-    TokenType type;
+	std::string value;
+	int lineNum;
+	TokenType type;
 public:
-    explicit TokenNode(Token token) :
-            value(std::move(token.value)), type(token.type), lineNum(token.lineNum) {}
+	explicit TokenNode(Token token) :
+		value(std::move(token.value)), type(token.type), lineNum(token.lineNum) {}
 
-    TokenType getType() {
-        return type;
-    }
+	TokenType getType() {
+		return type;
+	}
 
-    string getValue() {
-        return value;
-    }
+	string getValue() {
+		return value;
+	}
 
-    int getLineNum() {
-        return lineNum;
-    }
+	int getLineNum() {
+		return lineNum;
+	}
 };
 
 

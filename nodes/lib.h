@@ -5,8 +5,6 @@
 #ifndef COMPILER_LIB_H
 #define COMPILER_LIB_H
 
-
-
 #include "BlockItem.h"
 #include "ComplexStmt.h"
 #include "Decl.h"
@@ -26,7 +24,5 @@
 #include "PrimaryExp.h"
 #include "LVal.h"
 #include "FunctionCall.h"
-
-
 
 #endif //COMPILER_LIB_H

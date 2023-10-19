@@ -8,19 +8,19 @@
 #include "TokenNode.h"
 
 class UnaryExp : public ASTNode {
-    std::vector<TokenType> unaryOps;
-    PrimaryExpPtr primaryExpPtr;
-    FunctionCallPtr functionCallPtr;
+	std::vector<TokenType> unaryOps;
+	PrimaryExpPtr primaryExpPtr;
+	FunctionCallPtr functionCallPtr;
 public:
-    UnaryExp(std::vector<TokenType> unaryOps, PrimaryExpPtr primaryExpPtr, FunctionCallPtr functionCallPtr);
+	UnaryExp(std::vector<TokenType> unaryOps, PrimaryExpPtr primaryExpPtr, FunctionCallPtr functionCallPtr);
 
-    // Getter methods remain unchanged
-    [[nodiscard]] const std::vector<TokenType> &getUnaryOps() const;
+	// Getter methods remain unchanged
+	[[nodiscard]] const std::vector<TokenType> &getUnaryOps() const;
 
-    [[nodiscard]] const PrimaryExpPtr &getPrimaryExpPtr() const;
+	[[nodiscard]] const PrimaryExpPtr &getPrimaryExpPtr() const;
 
-    [[nodiscard]] const FunctionCallPtr &getFunctionCallPtr() const;
+	[[nodiscard]] const FunctionCallPtr &getFunctionCallPtr() const;
 
-    void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 };
 

@@ -11,42 +11,42 @@
 using namespace std;
 
 enum class Exception {
-    INVALID_CHARACTER,  //
-    REDEFINED_IDENT,
-    UNDEFINED_IDENT,
-    PARAMS_NUM_UNMATCHED,
-    PARAM_TYPE_UNMATCHED,
-    VOID_RETURN_INT,
-    INT_RETURN_LACKED,
-    CONST_ASSIGNED,
-    SEMICN_LACKED,  // #
-    RPARENT_LACKED, // #
-    RBRACK_LACKED,  // #
-    FORMAT_CHAR_UNMATCHED,
-    BREAK_CONTINUE_OUT_LOOP,
-    UNDEFINED_ERROR,
-    CORRECT
+	INVALID_CHARACTER,  //
+	REDEFINED_IDENT,
+	UNDEFINED_IDENT,
+	PARAMS_NUM_UNMATCHED,
+	PARAM_TYPE_UNMATCHED,
+	VOID_RETURN_INT,
+	INT_RETURN_LACKED,
+	CONST_ASSIGNED,
+	SEMICN_LACKED,  // #
+	RPARENT_LACKED, // #
+	RBRACK_LACKED,  // #
+	FORMAT_CHAR_UNMATCHED,
+	BREAK_CONTINUE_OUT_LOOP,
+	UNDEFINED_ERROR,
+	CORRECT
 };
 
 struct ErrorCtx {
-    bool isConst;
-    bool isGlobal;
-    bool isLeftValue;
-    bool voidFunc;
-    bool afterFuncDef;
-    int loopNum = 0;
-    int layerNum = 0;
+	bool isConst;
+	bool isGlobal;
+	bool isLeftValue;
+	bool voidFunc;
+	bool afterFuncDef;
+	int loopNum = 0;
+	int layerNum = 0;
 };
 
 struct ErrorRet {
-    bool hasRet;
-    int retLineNum;
-    int rbraceLineNum;
-    int dim;
-    bool undefined = false;
+	bool hasRet;
+	int retLineNum;
+	int rbraceLineNum;
+	int dim;
+	bool undefined = false;
 
-    vector<int> dims{};
-    //    ErrorRet()
+	vector<int> dims{};
+	//    ErrorRet()
 };
 
 using ErrorCtxPtr = std::shared_ptr<ErrorCtx>;

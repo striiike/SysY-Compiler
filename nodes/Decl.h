@@ -4,7 +4,6 @@
 
 #pragma once
 
-
 #include <utility>
 #include <vector>
 #include "ASTNode.h"
@@ -12,13 +11,13 @@
 #include "Def.h"
 
 class Decl : public ASTNode {
-    bool isConst;
-    TokenNode bType;
-    std::vector<DefPtr> defPtrs;
+	bool isConst;
+	TokenNode bType;
+	std::vector<DefPtr> defPtrs;
 public :
-    Decl(bool isConst, TokenNode bType, std::vector<DefPtr> defPtrs);
+	Decl(bool isConst, TokenNode bType, std::vector<DefPtr> defPtrs);
 
-    void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 };
 
 

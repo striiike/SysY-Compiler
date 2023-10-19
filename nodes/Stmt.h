@@ -8,10 +8,9 @@
 
 #include "ASTNode.h"
 
-
 class Stmt : public ASTNode {
 public:
-    Stmt() {
-        name = "<Stmt>";
-    }
+	Stmt() {
+		name = "<Stmt>";
+	}
 };

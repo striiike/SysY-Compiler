@@ -5,7 +5,6 @@
 #ifndef COMPILER_FUNCDEF_H
 #define COMPILER_FUNCDEF_H
 
-
 #include <utility>
 
 #include "TokenNode.h"
@@ -14,14 +13,14 @@
 
 class FuncDef : public ASTNode {
 private:
-    TokenNode funcType;
-    TokenNode ident;
-    FuncFParamsPtr funcFParamsPtr;
-    BlockPtr blockPtr;
+	TokenNode funcType;
+	TokenNode ident;
+	FuncFParamsPtr funcFParamsPtr;
+	BlockPtr blockPtr;
 public:
-    FuncDef(TokenNode funcType, TokenNode ident, FuncFParamsPtr funcFParamsPtr, BlockPtr blockPtr);
+	FuncDef(TokenNode funcType, TokenNode ident, FuncFParamsPtr funcFParamsPtr, BlockPtr blockPtr);
 
-    void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 };
 
 #endif //COMPILER_FUNCDEF_H

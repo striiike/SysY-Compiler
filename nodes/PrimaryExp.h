@@ -6,18 +6,18 @@
 #include "ASTNode.h"
 
 class PrimaryExp : public ASTNode {
-    ExpPtr expPtr = nullptr;
-    LValPtr lValPtr = nullptr;
-    NumberPtr numberPtr = nullptr;
+	ExpPtr expPtr = nullptr;
+	LValPtr lValPtr = nullptr;
+	NumberPtr numberPtr = nullptr;
 public:
-    PrimaryExp(ExpPtr exp, LValPtr lVal, NumberPtr number);
+	PrimaryExp(ExpPtr exp, LValPtr lVal, NumberPtr number);
 
-    // Getter methods remain unchanged
-    ExpPtr getExpPtr();
+	// Getter methods remain unchanged
+	ExpPtr getExpPtr();
 
-    LValPtr getLValPtr();
+	LValPtr getLValPtr();
 
-    NumberPtr getNumberPtr();
+	NumberPtr getNumberPtr();
 
-    void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 };

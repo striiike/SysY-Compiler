@@ -9,14 +9,14 @@
 #include "ASTNode.h"
 
 class CompUnit : public ASTNode {
-    std::vector<DeclPtr> declPtrs;
-    std::vector<FuncDefPtr> funcDefPtrs;
-    MainFuncDefPtr mainFuncDefPtr;
+	std::vector<DeclPtr> declPtrs;
+	std::vector<FuncDefPtr> funcDefPtrs;
+	MainFuncDefPtr mainFuncDefPtr;
 public:
-    explicit CompUnit(std::vector<DeclPtr> declPtrs, std::vector<FuncDefPtr> funcDefPtrs,
-                      MainFuncDefPtr mainFuncDefPtr);
+	explicit CompUnit(std::vector<DeclPtr> declPtrs, std::vector<FuncDefPtr> funcDefPtrs,
+					  MainFuncDefPtr mainFuncDefPtr);
 
-    void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 };
 
 

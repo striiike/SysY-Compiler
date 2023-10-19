@@ -8,19 +8,19 @@
 #include "TokenNode.h"
 
 class FuncRParams : public ASTNode {
-    std::vector<ExpPtr> expPtrs;
+	std::vector<ExpPtr> expPtrs;
 public:
-    explicit FuncRParams(std::vector<ExpPtr> expPtrs);
+	explicit FuncRParams(std::vector<ExpPtr> expPtrs);
 
-    void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 };
 
 class FunctionCall : public ASTNode {
-    TokenNode ident;
-    FuncRParamsPtr funcRParamsPtr;
+	TokenNode ident;
+	FuncRParamsPtr funcRParamsPtr;
 public:
-    FunctionCall(TokenNode ident, FuncRParamsPtr funcRParamsPtr);
+	FunctionCall(TokenNode ident, FuncRParamsPtr funcRParamsPtr);
 
-    void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 };
 

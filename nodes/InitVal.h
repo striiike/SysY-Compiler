@@ -8,29 +8,28 @@
 #include <vector>
 #include "ASTNode.h"
 
-
 class InitVal : public ASTNode {
 public:
-    virtual void debug() {}
+	virtual void debug() {}
 };
 
 class ExpInitVal : public InitVal {
 private:
-    bool isConst;
-    ExpPtr expPtr;
+	bool isConst;
+	ExpPtr expPtr;
 public:
-    ExpInitVal(bool isConst, ExpPtr expPtr);
+	ExpInitVal(bool isConst, ExpPtr expPtr);
 
-    void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 };
 
 class ArrayInitVal : public InitVal {
 private:
-    bool isConst;
-    std::vector<InitValPtr> initValPtrs;
+	bool isConst;
+	std::vector<InitValPtr> initValPtrs;
 public:
-    explicit ArrayInitVal(bool isConst, std::vector<InitValPtr> initValPtrs);
+	explicit ArrayInitVal(bool isConst, std::vector<InitValPtr> initValPtrs);
 
-    void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 };
 

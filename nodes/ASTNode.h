@@ -13,45 +13,31 @@
 
 class ASTNode {
 public:
-    std::string name;
+	std::string name;
 
-    void print() const {
-        if (PARSER_DISPLAY && PARSER_SWITCH)
-            outfile << name << std::endl;
-    }
+	void print() const {
+		if (PARSER_DISPLAY && PARSER_SWITCH)
+			outfile << name << std::endl;
+	}
 
-    virtual void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
-    }
+	virtual void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
+	}
 };
 
 class MulExp;
-
 class AddExp;
-
 class RelExp;
-
 class EqExp;
-
 class LAndExp;
-
 class LOrExp;
-
 class Exp;
-
 class LVal;
-
 class PrimaryExp;
-
 class Number;
-
 class FunctionCall;
-
 class FuncRParams;
-
 class UnaryExp;
-
 class ConstExp;
-
 class Cond;
 
 using UnaryExpPtr = std::shared_ptr<UnaryExp>;
@@ -62,7 +48,6 @@ using EqExpPtr = std::shared_ptr<EqExp>;
 using LAndExpPtr = std::shared_ptr<LAndExp>;
 using LOrExpPtr = std::shared_ptr<LOrExp>;
 
-
 using ExpPtr = std::shared_ptr<Exp>;
 using LValPtr = std::shared_ptr<LVal>;
 using PrimaryExpPtr = std::shared_ptr<PrimaryExp>;
@@ -72,17 +57,11 @@ using FuncRParamsPtr = std::shared_ptr<FuncRParams>;
 using UnaryExpPtr = std::shared_ptr<UnaryExp>;
 using CondPtr = std::shared_ptr<Cond>;
 
-
 class Def;
-
 class InitVal;
-
 class ArrayInitVal;
-
 class ExpInitVal;
-
 class Decl;
-
 
 using DefPtr = std::shared_ptr<Def>;
 using InitValPtr = std::shared_ptr<InitVal>;
@@ -90,37 +69,21 @@ using ArrayInitValPtr = std::shared_ptr<ArrayInitVal>;
 using ExpInitValPtr = std::shared_ptr<ExpInitVal>;
 using DeclPtr = std::shared_ptr<Decl>;
 
-
 class Stmt;
-
 class SimpleStmt;
-
 class ComplexStmt;
-
 class BlockItem;
-
 class Block;
-
 class AssignStmt;
-
 class ExpStmt;
-
 class BreakStmt;
-
 class ContinueStmt;
-
 class ReturnStmt;
-
 class GetintStmt;
-
 class PrintfStmt;
-
 class IfStmt;
-
 class _ForStmt;
-
 class ForStmt;
-
 
 using StmtPtr = std::shared_ptr<Stmt>;
 using SimpleStmtPtr = std::shared_ptr<SimpleStmt>;

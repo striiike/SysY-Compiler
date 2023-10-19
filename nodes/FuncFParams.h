@@ -7,15 +7,15 @@
 #include <utility>
 #include "ASTNode.h"
 
-class FuncFParams : public ASTNode{
+class FuncFParams : public ASTNode {
 private:
-    std::vector<FuncFParamPtr> funcFParamPtrs;
+	std::vector<FuncFParamPtr> funcFParamPtrs;
 public:
-    explicit FuncFParams(std::vector<FuncFParamPtr> funcFParamPtrs);
+	explicit FuncFParams(std::vector<FuncFParamPtr> funcFParamPtrs);
 
-    void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 
-    vector<int> getDims();
+	vector<int> getDims();
 };
 
 

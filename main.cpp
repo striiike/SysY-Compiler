@@ -16,54 +16,53 @@ std::ofstream outfile("./output.txt");
 std::ofstream errfile("./error.txt");
 
 void parseLog(const std::string &str) {
-    if (PARSER_DISPLAY && PARSER_SWITCH) {
-        outfile << str << std::endl;
-    }
+	if (PARSER_DISPLAY && PARSER_SWITCH) {
+		outfile << str << std::endl;
+	}
 }
 
 map<Exception, char> exceptionToString = {
-        {Exception::INVALID_CHARACTER,       'a'},
-        {Exception::REDEFINED_IDENT,         'b'},
-        {Exception::UNDEFINED_IDENT,         'c'},
-        {Exception::PARAMS_NUM_UNMATCHED,    'd'},
-        {Exception::PARAM_TYPE_UNMATCHED,    'e'},
-        {Exception::VOID_RETURN_INT,         'f'},
-        {Exception::INT_RETURN_LACKED,       'g'},
-        {Exception::CONST_ASSIGNED,          'h'},
-        {Exception::SEMICN_LACKED,           'i'},
-        {Exception::RPARENT_LACKED,          'j'},
-        {Exception::RBRACK_LACKED,           'k'},
-        {Exception::FORMAT_CHAR_UNMATCHED,   'l'},
-        {Exception::BREAK_CONTINUE_OUT_LOOP, 'm'},
-        {Exception::UNDEFINED_ERROR,         'n'}
+	{Exception::INVALID_CHARACTER, 'a'},
+	{Exception::REDEFINED_IDENT, 'b'},
+	{Exception::UNDEFINED_IDENT, 'c'},
+	{Exception::PARAMS_NUM_UNMATCHED, 'd'},
+	{Exception::PARAM_TYPE_UNMATCHED, 'e'},
+	{Exception::VOID_RETURN_INT, 'f'},
+	{Exception::INT_RETURN_LACKED, 'g'},
+	{Exception::CONST_ASSIGNED, 'h'},
+	{Exception::SEMICN_LACKED, 'i'},
+	{Exception::RPARENT_LACKED, 'j'},
+	{Exception::RBRACK_LACKED, 'k'},
+	{Exception::FORMAT_CHAR_UNMATCHED, 'l'},
+	{Exception::BREAK_CONTINUE_OUT_LOOP, 'm'},
+	{Exception::UNDEFINED_ERROR, 'n'}
 };
 
 int main() {
 
-    std::ifstream infile("testfile.txt");
-    std::string code((std::istreambuf_iterator<char>(infile)), std::istreambuf_iterator<char>());
+	std::ifstream infile("testfile.txt");
+	std::string code((std::istreambuf_iterator<char>(infile)), std::istreambuf_iterator<char>());
 
+	Lexer lexer(code);
+	std::vector<Token> tokens = lexer.analyze();
 
-    Lexer lexer(code);
-    std::vector<Token> tokens = lexer.analyze();
+	TokenStream tokenStream(tokens);
+	Parser parser(tokenStream);
 
-    TokenStream tokenStream(tokens);
-    Parser parser(tokenStream);
+	auto AST = parser.parseCompUnit();
 
-    auto AST = parser.parseCompUnit();
+	auto ctx = make_shared<ErrorCtx>();
+	auto ret = make_shared<ErrorRet>();
+	AST.checkError(ctx, ret);
 
-    auto ctx = make_shared<ErrorCtx>();
-    auto ret = make_shared<ErrorRet>();
-    AST.checkError(ctx, ret);
+	std::sort(errorList.begin(), errorList.end(),
+			  [](const auto &left, const auto &right) {
+				  return left.second < right.second;
+			  });
+	errorList.erase(std::unique(errorList.begin(), errorList.end()), errorList.end());
 
-    std::sort(errorList.begin(), errorList.end(),
-              [](const auto &left, const auto &right) {
-                  return left.second < right.second;
-              });
-    errorList.erase(std::unique(errorList.begin(), errorList.end()), errorList.end());
-
-    for (const auto &pair: errorList) {
-        errfile << pair.second << " " << exceptionToString[pair.first] << std::endl;
-    }
-    return 0;
+	for (const auto &pair : errorList) {
+		errfile << pair.second << " " << exceptionToString[pair.first] << std::endl;
+	}
+	return 0;
 }
