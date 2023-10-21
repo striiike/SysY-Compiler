@@ -100,6 +100,15 @@ public:
 			return nullptr;
 		return funcsMap[name];
 	}
+
+	void clear() {
+		while (!symbolStack.empty())
+			symbolStack.pop();
+
+		varsMap.clear();
+		funcsMap.clear();
+	}
+
 };
 
 extern Symbol symbol;

@@ -14,3 +14,6 @@ void Decl::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 		i->checkError(ctx, ret);
 	ctx->isConst = false;
 }
+
+void Decl::llvmIr() {
+}

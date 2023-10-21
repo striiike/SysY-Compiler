@@ -12,3 +12,6 @@ void BlockItem::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	if (stmtPtr)
 		stmtPtr->checkError(ctx, ret);
 }
+void BlockItem::llvmIr() {
+
+}

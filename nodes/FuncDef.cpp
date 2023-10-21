@@ -30,3 +30,8 @@ void FuncDef::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 		errorList.emplace_back(Exception::INT_RETURN_LACKED, ret->rbraceLineNum);
 	}
 }
+
+void FuncDef::llvmIr() {
+//	ctx->isGlobal = false;
+
+}

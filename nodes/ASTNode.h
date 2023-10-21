@@ -5,8 +5,9 @@
 #pragma once
 
 #include <iostream>
-#include "../Config.h"
+#include "../config.h"
 #include "../parser/Exception.hpp"
+#include "../llvm-ir/IrBuilder.h"
 #include <memory>
 #include <string>
 #include <fstream>

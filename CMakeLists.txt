@@ -7,7 +7,7 @@ add_executable(compiler main.cpp
         lexer/Lexer.cpp
         lexer/Lexer.h
         parser/Parser.h
-        Config.h
+        config.h
         parser/TokenStream.hpp
         nodes/ASTNode.h
         nodes/ExpUniform.h
@@ -58,4 +58,20 @@ add_executable(compiler main.cpp
         nodes/FunctionCall.cpp
         nodes/ComplexStmt.cpp
         nodes/FunctionCall.cpp
+        utils/log.cpp
+        llvm-ir/Module.h
+        llvm-ir/Type.h
+        llvm-ir/Function.h
+        llvm-ir/Value.h
+        llvm-ir/User.h
+        llvm-ir/instruction/Instruction.h
+        llvm-ir/Constant.h
+        llvm-ir/BasicBlock.h
+        llvm-ir/GlobalVariable.h
+        llvm-ir/Use.h
+        llvm-ir/Type.cpp
+        llvm-ir/Initializer.h
+        llvm-ir/IrBuilder.h
+        llvm-ir/IrBuilder.cpp
+        parser/IrCtx.h
 )

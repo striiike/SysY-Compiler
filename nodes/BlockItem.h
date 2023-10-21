@@ -18,6 +18,8 @@ public:
 	BlockItem(DeclPtr declPtr, StmtPtr stmtPtr);
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+
+	void llvmIr();
 };
 
 

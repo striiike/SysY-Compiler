@@ -5,7 +5,7 @@
 #include "parser/Parser.h"
 #include "parser/Exception.hpp"
 #include "lexer/Lexer.h"
-#include "Config.h"
+#include "config.h"
 
 using namespace std;
 
@@ -51,18 +51,22 @@ int main() {
 
 	auto AST = parser.parseCompUnit();
 
-	auto ctx = make_shared<ErrorCtx>();
-	auto ret = make_shared<ErrorRet>();
-	AST.checkError(ctx, ret);
-
-	std::sort(errorList.begin(), errorList.end(),
-			  [](const auto &left, const auto &right) {
-				  return left.second < right.second;
-			  });
-	errorList.erase(std::unique(errorList.begin(), errorList.end()), errorList.end());
-
-	for (const auto &pair : errorList) {
-		errfile << pair.second << " " << exceptionToString[pair.first] << std::endl;
+	{
+		auto ctx = make_shared<ErrorCtx>();
+		auto ret = make_shared<ErrorRet>();
+		AST.checkError(ctx, ret);
+		std::sort(errorList.begin(), errorList.end(),
+				  [](const auto &left, const auto &right) {
+					  return left.second < right.second;
+				  });
+		errorList.erase(std::unique(errorList.begin(), errorList.end()), errorList.end());
+		for (const auto &pair : errorList) {
+			errfile << pair.second << " " << exceptionToString[pair.first] << std::endl;
+		}
 	}
+	symbol.clear();
+
+	AST.llvmIr();
+
 	return 0;
 }

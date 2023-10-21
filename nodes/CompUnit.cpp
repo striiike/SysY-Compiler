@@ -20,3 +20,14 @@ void CompUnit::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	mainFuncDefPtr->checkError(ctx, ret);
 	symbol.endScope();
 }
+
+void CompUnit::llvmIr() {
+	symbol.startScope();
+	for (const auto &i : declPtrs)
+		i->llvmIr();
+	for (const auto &i : funcDefPtrs)
+		i->llvmIr();
+	mainFuncDefPtr->llvmIr();
+	symbol.endScope();
+
+}

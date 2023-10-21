@@ -449,7 +449,7 @@ SimpleStmtPtr Parser::parseSimpleStmt() {
 	}
 
 
-	/// \very \servere \problem \!!
+	/// \very_servere_problem_!!
 	bool isAssignOrGetint = false;
 	PARSER_DISPLAY = false;
 	{

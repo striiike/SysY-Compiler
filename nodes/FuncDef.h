@@ -21,6 +21,7 @@ public:
 	FuncDef(TokenNode funcType, TokenNode ident, FuncFParamsPtr funcFParamsPtr, BlockPtr blockPtr);
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+	void llvmIr();
 };
 
 #endif //COMPILER_FUNCDEF_H

@@ -25,6 +25,7 @@ public :
 	IfStmt(CondPtr condPtr, StmtPtr stmtPtr, StmtPtr stmtElsePtr);
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+	void llvmIr();
 };
 
 class ForStmt : public ComplexStmt {
@@ -38,6 +39,7 @@ public :
 			_ForStmtPtr assignStmtPtr1, _ForStmtPtr assignStmtPtr2);
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+	void llvmIr();
 };
 
 class Block : public ComplexStmt {
@@ -48,4 +50,5 @@ public:
 	explicit Block(std::vector<BlockItemPtr> blockItemPtrs, TokenNode rbrace);
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+	void llvmIr();
 };

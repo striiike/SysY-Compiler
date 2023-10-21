@@ -19,6 +19,7 @@ public:
 	Def(bool isConst, TokenNode ident, std::vector<ExpPtr> expPtrs, InitValPtr initValPtr);
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+	void llvmIr();
 
 };
 

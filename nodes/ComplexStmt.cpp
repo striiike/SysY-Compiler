@@ -11,6 +11,9 @@ void IfStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	if (stmtElsePtr)
 		stmtElsePtr->checkError(ctx, ret);
 }
+void IfStmt::llvmIr() {
+
+}
 
 ForStmt::ForStmt(CondPtr condPtr, StmtPtr stmtPtr, _ForStmtPtr assignStmtPtr1, _ForStmtPtr assignStmtPtr2) :
 	condPtr(std::move(condPtr)), stmtPtr(std::move(stmtPtr)),
@@ -28,6 +31,9 @@ void ForStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	ctx->loopNum++;
 	stmtPtr->checkError(ctx, ret);
 	ctx->loopNum--;
+}
+void ForStmt::llvmIr() {
+
 }
 
 Block::Block(std::vector<BlockItemPtr> blockItemPtrs, TokenNode rbrace) :
@@ -50,4 +56,17 @@ void Block::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 
 	symbol.endScope();
 	ret->rbraceLineNum = rbrace.getLineNum();
+}
+
+void Block::llvmIr() {
+	if (!irBuilder.ctx.afterFuncDef)
+		symbol.startScope();
+	else
+		irBuilder.ctx.afterFuncDef = false;
+
+	for (const auto &i : blockItemPtrs) {
+		i->llvmIr();
+	}
+
+	symbol.endScope();
 }

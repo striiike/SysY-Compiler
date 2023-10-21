@@ -20,3 +20,15 @@ void MainFuncDef::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 		errorList.emplace_back(Exception::INT_RETURN_LACKED, ret->rbraceLineNum);
 	}
 }
+
+void MainFuncDef::llvmIr() {
+	irBuilder.ctx.isGlobal = false;
+	irBuilder.ctx.afterFuncDef = true;
+	irBuilder.ctx.voidFunc = false;
+	symbol.startScope();
+
+	blockPtr->llvmIr();
+
+	irBuilder.ctx.afterFuncDef = false;
+
+}

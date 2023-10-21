@@ -20,3 +20,6 @@ void Def::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 		errorList.emplace_back(Exception::REDEFINED_IDENT, ident.getLineNum());
 	}
 }
+void Def::llvmIr() {
+
+}

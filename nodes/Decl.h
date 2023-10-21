@@ -18,6 +18,7 @@ public :
 	Decl(bool isConst, TokenNode bType, std::vector<DefPtr> defPtrs);
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+	void llvmIr();
 };
 
 
