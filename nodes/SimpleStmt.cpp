@@ -12,6 +12,9 @@ void AssignStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	ctx->isLeftValue = false;
 	expPtr->checkError(ctx, ret);
 }
+void AssignStmt::llvmIr() {
+	SimpleStmt::llvmIr();
+}
 
 _ForStmt::_ForStmt(LValPtr lValPtr, ExpPtr expPtr)
 	: lValPtr(std::move(lValPtr)), expPtr(std::move(expPtr)) {
@@ -32,6 +35,9 @@ ExpStmt::ExpStmt(ExpPtr expPtr)
 void ExpStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	expPtr->checkError(ctx, ret);
 }
+void ExpStmt::llvmIr() {
+	SimpleStmt::llvmIr();
+}
 
 BreakStmt::BreakStmt(TokenNode _break)
 	: _break(std::move(_break)), SimpleStmt() {}
@@ -40,6 +46,9 @@ void BreakStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	if (!ctx->loopNum)
 		errorList.emplace_back(Exception::BREAK_CONTINUE_OUT_LOOP, _break.getLineNum());
 }
+void BreakStmt::llvmIr() {
+	SimpleStmt::llvmIr();
+}
 
 ContinueStmt::ContinueStmt(TokenNode _continue)
 	: _continue(std::move(_continue)), SimpleStmt() {}
@@ -47,6 +56,9 @@ ContinueStmt::ContinueStmt(TokenNode _continue)
 void ContinueStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	if (!ctx->loopNum)
 		errorList.emplace_back(Exception::BREAK_CONTINUE_OUT_LOOP, _continue.getLineNum());
+}
+void ContinueStmt::llvmIr() {
+	SimpleStmt::llvmIr();
 }
 
 ReturnStmt::ReturnStmt(TokenNode _return, ExpPtr expPtr)
@@ -63,6 +75,10 @@ void ReturnStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	ret->retLineNum = _return.getLineNum();
 }
 
+void ReturnStmt::llvmIr() {
+
+}
+
 GetintStmt::GetintStmt(LValPtr lValPtr, TokenNode _getint)
 	: lValPtr(std::move(lValPtr)), _getint(std::move(_getint)), SimpleStmt() {}
 
@@ -70,6 +86,9 @@ void GetintStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	ctx->isLeftValue = true;
 	lValPtr->checkError(ctx, ret);
 	ctx->isLeftValue = false;
+}
+void GetintStmt::llvmIr() {
+	SimpleStmt::llvmIr();
 }
 
 PrintfStmt::PrintfStmt(TokenNode _printf, TokenNode FormatString, std::vector<ExpPtr> expPtrs)
@@ -100,6 +119,9 @@ void PrintfStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 		errorList.emplace_back(Exception::FORMAT_CHAR_UNMATCHED, _printf.getLineNum());
 	for (const auto &i : expPtrs)
 		i->checkError(ctx, ret);
+}
+void PrintfStmt::llvmIr() {
+	SimpleStmt::llvmIr();
 }
 
 

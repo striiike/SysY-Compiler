@@ -74,4 +74,5 @@ add_executable(compiler main.cpp
         llvm-ir/IrBuilder.h
         llvm-ir/IrBuilder.cpp
         parser/IrCtx.h
+        llvm-ir/instruction/ReturnInst.h
 )

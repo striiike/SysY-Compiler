@@ -17,6 +17,7 @@ public:
 	explicit Number(std::string num);
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+	int evaluate();
 };
 
 class Exp : public ASTNode {
@@ -27,6 +28,7 @@ public:
 	explicit Exp(AddExpPtr sharedPtr, bool isConst);
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+	int evaluate();
 };
 
 class Cond : public ASTNode {

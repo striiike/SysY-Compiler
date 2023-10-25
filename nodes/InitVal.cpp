@@ -11,6 +11,10 @@ void ExpInitVal::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	expPtr->checkError(ctx, ret);
 }
 
+std::vector<int> ExpInitVal::evaluate() {
+	return vector<int>{expPtr->evaluate()};
+}
+
 ArrayInitVal::ArrayInitVal(bool isConst, std::vector<InitValPtr> initValPtrs) :
 	isConst(isConst), initValPtrs(std::move(initValPtrs)) {
 	name = isConst ? "<ConstInitVal>" : "<InitVal>";
@@ -21,4 +25,13 @@ void ArrayInitVal::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	for (const auto &i : initValPtrs) {
 		i->checkError(ctx, ret);
 	}
+}
+
+std::vector<int> ArrayInitVal::evaluate() {
+	vector<int> values{};
+	for (const auto &i : initValPtrs) {
+		vector<int> _ = i->evaluate();
+		values.insert(values.end(), _.begin(), _.end());
+	}
+	return values;
 }

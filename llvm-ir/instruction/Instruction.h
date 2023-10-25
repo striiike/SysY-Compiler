@@ -8,9 +8,12 @@
 #include "../BasicBlock.h"
 #include "../User.h"
 
+class BasicBlock;
 
-class Instruction : User{
-	BasicBlock *parent;
+class Instruction : public User{
+	BasicBlock *parent{};
+public:
+
 };
 
 #endif //COMPILER_LLVM_IR_INSTRUCTION_H

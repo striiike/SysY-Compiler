@@ -10,11 +10,9 @@
 #include "GlobalVariable.h"
 #include "Function.h"
 
-using namespace std;
-
 class Module {
-	std::vector<GlobalVariable *> globalList{};
-	std::list<Function *> functionList{};
+	std::vector<GlobalVariable *> globalList;
+	std::list<Function *> functionList;
 
 public:
 	Module() = default;
@@ -25,6 +23,19 @@ public:
 
 	void addFunction(Function *func) {
 		functionList.push_back(func);
+	}
+
+	std::string toString() {
+		std::string str;
+		for (auto i : globalList) {
+			str += i->toString();
+			str += "\n";
+		}
+		for (auto i : functionList) {
+			str += i->toString();
+			str += "\n";
+		}
+		return str;
 	}
 };
 

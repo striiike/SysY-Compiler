@@ -22,4 +22,30 @@ void Def::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 }
 void Def::llvmIr() {
 
+	Type *ty;
+	vector<int> lens{};
+	int num = 1;
+	lens.reserve(expPtrs.size());
+	for (auto &i : expPtrs) {
+		int val = i->evaluate();
+		lens.push_back(val);
+		num *= val;
+	}
+	if (expPtrs.empty()) {
+		ty = new IntegerType(32);
+	} else {
+		ty = new ArrayType(num, new IntegerType(32));
+	}
+
+	vector<int> initValue = initValPtr ? std::move(initValPtr->evaluate()) : vector<int>{};
+	auto *init = new Initializer(ty, initValue);
+
+	if (irBuilder.ctx.isGlobal) {
+		/// it \seems no need to llvmIr indexes
+		string name = irBuilder.genGlobalVarName(ident.getValue());
+		irBuilder.addGlobalVariable(new GlobalVariable(nullptr, name, init));
+	}
+
+	symbol.insertVar(isConst, ident.getValue(), lens, initValue);
+//	cout << "!!" + name << " " << num << " " << expPtrs.empty() << endl;
 }

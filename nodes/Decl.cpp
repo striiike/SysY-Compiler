@@ -16,4 +16,8 @@ void Decl::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 }
 
 void Decl::llvmIr() {
+	irBuilder.ctx.isConst = this->isConst;
+	for (const auto &i : defPtrs)
+		i->llvmIr();
+	irBuilder.ctx.isConst = false;
 }

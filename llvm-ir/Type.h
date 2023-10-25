@@ -5,8 +5,11 @@
 #ifndef COMPILER_LLVM_IR_TYPE_H
 #define COMPILER_LLVM_IR_TYPE_H
 
+#include <string>
+
 class Type {
 public:
+	virtual std::string toString() { return "!ub!"; }
 	virtual bool isVoid() { return false; }
 	virtual bool isInt1() { return false; }
 	virtual bool isInt32() { return false; }
@@ -25,6 +28,14 @@ public:
 	bool isInt1() override { return bitWidth == 1; }
 
 	bool isInt32() override { return bitWidth == 32; }
+
+	std::string toString() override {
+		if (bitWidth == 0)
+			return "void";
+		else if (bitWidth == 32)
+			return "i32";
+		return "!ub!";
+	}
 };
 
 class ArrayType : public Type {
@@ -42,6 +53,10 @@ public:
 	}
 
 	bool isArray() override { return true; }
+
+	std::string toString() override {
+		return "[" + std::to_string(num) + " x " + type->toString() + "]";
+	}
 };
 
 class PointerType : public Type {
@@ -54,6 +69,10 @@ public:
 	}
 
 	bool isPointer() override { return true; }
+
+	std::string toString() override {
+		return targetType->toString() + "*";
+	}
 };
 
 class FunctionType : public Type {

@@ -51,6 +51,34 @@ public:
 		}
 		ret->dim = *min_element(dims.begin(), dims.end());
 	}
+
+	// only for AddExp and MulExp
+	int evaluate() {
+		int res = leftOperand->evaluate();
+		for (int i = 0; i < operands.size(); ++i) {
+			switch (operators[i]) {
+			case PLUS:
+				res += operands[i]->evaluate();
+				break;
+			case MINU:
+				res -= operands[i]->evaluate();
+				break;
+			case MULT:
+				res *= operands[i]->evaluate();
+				break;
+			case DIV:
+				res /= operands[i]->evaluate();
+				break;
+			case MOD:
+				res %= operands[i]->evaluate();
+				break;
+			default:
+				res = 1145141919;
+				break;
+			}
+		}
+		return res;
+	}
 };
 
 class MulExp : public ExpUniform<UnaryExpPtr> {

@@ -35,6 +35,11 @@ struct IrRet {
 using IrCtxPtr = std::shared_ptr<IrCtx>;
 using IrRetPtr = std::shared_ptr<IrRet>;
 
+static std::string globalPrefix = "@g_";
+static std::string funcPrefix = "@f_";
+static std::string localVarPrefix = "tmp_";
+static std::string bbPrefix = "b";
+
 class IrBuilder {
 	int bbCnt;
 	int argsCnt;
@@ -59,8 +64,28 @@ public:
 		module->addFunction(func);
 	}
 
+	void addBasicBlock(BasicBlock *bb) {
+		curFunc->addBasicBlock(bb);
+		bb->setParent(curFunc);
+	}
+
 	void addGlobalVariable(GlobalVariable *globalVar) {
 		module->addGlobalVariable(globalVar);
+	}
+
+	std::string genFuncName(const std::string &name) {
+		if (name == "main") {
+			return "@main";
+		}
+		return funcPrefix + name;
+	}
+
+	std::string genBbName() {
+		return bbPrefix + "_" + to_string(bbCnt++);
+	}
+
+	std::string genGlobalVarName(const std::string &name) {
+		return globalPrefix + name + "_" + to_string((globalVarCnt++));
 	}
 
 	Function *getCurFunc() const { return curFunc; }

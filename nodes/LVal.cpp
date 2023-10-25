@@ -26,5 +26,15 @@ void LVal::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	}
 
 	ret->dim = (int)lens.size() - (int)array.size();
-	// cout << ident.getValue() << " is " << varPtr->lens.size() << " and " << array.size() << endl;
+}
+
+int LVal::evaluate() {
+	vector<int> index{};
+	index.reserve(array.size());
+	for (const auto &i : array) {
+		index.push_back(i->evaluate());
+	}
+	auto varPtr = symbol.getVar(ident.getValue());
+	int res = varPtr->getValue(index);
+	return res;
 }

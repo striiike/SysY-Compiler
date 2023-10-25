@@ -41,6 +41,10 @@ public:
 	void addBasicBlock(BasicBlock *bb) {
 		basicList.push_back(bb);
 	}
+
+	std::string toString() {
+		return "";
+	}
 };
 
 #endif //COMPILER_LLVM_IR_FUNCTION_H

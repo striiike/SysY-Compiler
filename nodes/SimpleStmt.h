@@ -22,6 +22,7 @@ public:
 	AssignStmt(LValPtr lValPtr, ExpPtr expPtr);
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+	void llvmIr() override;
 };
 
 class _ForStmt : public ASTNode {
@@ -41,6 +42,8 @@ public:
 	explicit ExpStmt(ExpPtr expPtr);
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+	void llvmIr() override;
+
 };
 
 class BreakStmt : public SimpleStmt {
@@ -50,6 +53,8 @@ public:
 	explicit BreakStmt(TokenNode _break);
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+	void llvmIr() override;
+
 };
 
 class ContinueStmt : public SimpleStmt {
@@ -59,6 +64,8 @@ public:
 	explicit ContinueStmt(TokenNode _continue);
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+	void llvmIr() override;
+
 
 };
 
@@ -70,6 +77,8 @@ public:
 	ReturnStmt(TokenNode _return, ExpPtr expPtr);
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+	void llvmIr() override;
+
 };
 
 class GetintStmt : public SimpleStmt {
@@ -80,6 +89,8 @@ public:
 	GetintStmt(LValPtr lValPtr, TokenNode _getint);
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+	void llvmIr() override;
+
 };
 
 class PrintfStmt : public SimpleStmt {
@@ -91,4 +102,6 @@ public:
 	PrintfStmt(TokenNode _printf, TokenNode FormatString, std::vector<ExpPtr> expPtrs);
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+	void llvmIr() override;
+
 };

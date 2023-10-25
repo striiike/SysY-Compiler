@@ -20,4 +20,5 @@ public:
 	NumberPtr getNumberPtr();
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+	int evaluate();
 };

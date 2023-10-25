@@ -22,12 +22,14 @@ void CompUnit::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 }
 
 void CompUnit::llvmIr() {
+	irBuilder.setModule(new Module());
 	symbol.startScope();
+	irBuilder.ctx.isGlobal = true;
 	for (const auto &i : declPtrs)
 		i->llvmIr();
-	for (const auto &i : funcDefPtrs)
-		i->llvmIr();
-	mainFuncDefPtr->llvmIr();
+//	for (const auto &i : funcDefPtrs)
+//		i->llvmIr();
+//	mainFuncDefPtr->llvmIr();
 	symbol.endScope();
 
 }

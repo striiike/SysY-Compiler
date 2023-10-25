@@ -14,15 +14,15 @@ UnaryExp::UnaryExp(std::vector<TokenType> unaryOps, PrimaryExpPtr primaryExpPtr,
 	print();
 }
 
-const std::vector<TokenType> &UnaryExp::getUnaryOps() const {
+std::vector<TokenType> &UnaryExp::getUnaryOps() {
 	return unaryOps;
 }
 
-const PrimaryExpPtr &UnaryExp::getPrimaryExpPtr() const {
+PrimaryExpPtr UnaryExp::getPrimaryExpPtr() {
 	return primaryExpPtr;
 }
 
-const FunctionCallPtr &UnaryExp::getFunctionCallPtr() const {
+FunctionCallPtr UnaryExp::getFunctionCallPtr() {
 	return functionCallPtr;
 }
 
@@ -34,4 +34,16 @@ void UnaryExp::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 		functionCallPtr->checkError(ctx, _ret);
 	}
 	ret->dim = _ret->dim;
+}
+
+int UnaryExp::evaluate() {
+	/// when evaluating in global variable analysis,
+	/// primaryExp is the \only possible one
+	int res = primaryExpPtr->evaluate();
+	size_t negationCount = std::count(unaryOps.begin(), unaryOps.end(), MINU);
+	return (negationCount % 2) ? -res : res;
+}
+
+void UnaryExp::llvmIr() {
+	ASTNode::llvmIr();
 }

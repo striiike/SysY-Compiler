@@ -6,12 +6,29 @@
 #define COMPILER_LLVM_IR_BASICBLOCK_H
 
 #include <list>
+#include <utility>
 #include "instruction/Instruction.h"
-#include "Function.h"
+//#include "Function.h"
+
+class Function;
+
 
 class BasicBlock : public Value {
 	std::list<Instruction *> instructionList;
-	Function *parent;
+	Function *parent{};
+
+public:
+	explicit BasicBlock(std::string name)
+		: Value(nullptr, std::move(name)) {}
+
+	void setParent(Function *func) {
+		parent = func;
+	}
+
+	void addInstruction(Instruction *inst) {
+		instructionList.push_back(inst);
+	}
+
 };
 
 #endif //COMPILER_LLVM_IR_BASICBLOCK_H

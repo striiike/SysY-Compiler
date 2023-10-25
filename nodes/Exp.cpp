@@ -11,6 +11,10 @@ void Number::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	ret->dim = 0;
 }
 
+int Number::evaluate() {
+	return num;
+}
+
 Exp::Exp(AddExpPtr sharedPtr, bool isConst) :
 	addExpPtr(std::move(sharedPtr)), isConst(isConst) {
 	name = isConst ? "<ConstExp>" : "<Exp>";
@@ -19,6 +23,12 @@ Exp::Exp(AddExpPtr sharedPtr, bool isConst) :
 
 void Exp::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	addExpPtr->checkError(ctx, ret);
+}
+
+
+// when computing global variable
+int Exp::evaluate() {
+	return addExpPtr->evaluate();
 }
 
 Cond::Cond(LOrExpPtr lOrExpPtr) : lOrExpPtr(std::move(lOrExpPtr)) {

@@ -23,6 +23,21 @@ public:
 	VarSymbol(bool isConst, bool isGlobal, vector<int> lens, vector<int> values) :
 		isConst(isConst), isGlobal(isGlobal), lens(std::move(lens)), values(std::move(values)) {}
 
+	// get value from indexes
+	int getValue(const vector<int> &index) {
+		if (values.empty())
+			return 0;
+		if (index.empty())
+			return values[0];
+
+		/// \manual for two dim
+		int coordinate = *index.end();
+		if (index.size() == 2)
+			coordinate += index[0] * lens[0];
+
+		return values[coordinate];
+	}
+
 };
 
 class FuncSymbol {

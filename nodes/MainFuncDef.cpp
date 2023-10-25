@@ -27,8 +27,17 @@ void MainFuncDef::llvmIr() {
 	irBuilder.ctx.voidFunc = false;
 	symbol.startScope();
 
+	Type *ty = new FunctionType();
+	auto name = irBuilder.genFuncName("main");
+	auto *func = new Function(ty, name);
+	irBuilder.addFunction(func);
+	irBuilder.setCurFunc(func);
+
+	auto bb = new BasicBlock(irBuilder.genBbName());
+	irBuilder.addBasicBlock(bb);
+	irBuilder.setCurBb(bb);
+
 	blockPtr->llvmIr();
 
 	irBuilder.ctx.afterFuncDef = false;
-
 }

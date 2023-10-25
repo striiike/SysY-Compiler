@@ -13,5 +13,6 @@ public:
 	LVal(TokenNode ident, std::vector<ExpPtr> array);
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+	int evaluate();
 };
 

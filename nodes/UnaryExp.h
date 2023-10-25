@@ -14,13 +14,16 @@ class UnaryExp : public ASTNode {
 public:
 	UnaryExp(std::vector<TokenType> unaryOps, PrimaryExpPtr primaryExpPtr, FunctionCallPtr functionCallPtr);
 
-	// Getter methods remain unchanged
-	[[nodiscard]] const std::vector<TokenType> &getUnaryOps() const;
+	std::vector<TokenType> &getUnaryOps();
 
-	[[nodiscard]] const PrimaryExpPtr &getPrimaryExpPtr() const;
+	PrimaryExpPtr getPrimaryExpPtr();
 
-	[[nodiscard]] const FunctionCallPtr &getFunctionCallPtr() const;
+	FunctionCallPtr getFunctionCallPtr();
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+
+	void llvmIr() override;
+
+	int evaluate();
 };
 

@@ -16,6 +16,11 @@ public:
 	GlobalVariable(Type *ty, std::string name, Initializer *init = nullptr)
 		: User(ty, std::move(name)), init(init) {}
 
+	// init exists under guarantee
+	std::string toString() {
+		return name + " = dso_local global " + init->toString();
+	}
+
 };
 
 #endif //COMPILER_LLVM_IR_GLOBALVARIABLE_H

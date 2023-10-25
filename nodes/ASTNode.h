@@ -23,6 +23,9 @@ public:
 
 	virtual void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	}
+
+	virtual void llvmIr() {
+	}
 };
 
 class MulExp;

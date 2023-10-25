@@ -10,6 +10,7 @@
 #include <list>
 #include <string>
 #include <utility>
+#include <fstream>
 
 class Value {
 protected:

@@ -31,3 +31,13 @@ void PrimaryExp::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 
 	ret->dim = _ret->dim;
 }
+
+int PrimaryExp::evaluate() {
+	if (expPtr)
+		return expPtr->evaluate();
+	else if (lValPtr)
+		return lValPtr->evaluate();
+	else if (numberPtr)
+		return numberPtr->evaluate();
+	return 0;
+}
