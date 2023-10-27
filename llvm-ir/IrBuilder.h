@@ -45,7 +45,7 @@ using IrRetPtr = std::shared_ptr<IrRet>;
 
 static std::string globalPrefix = "@g_";
 static std::string funcPrefix = "@f_";
-static std::string localVarPrefix = "tmp_";
+static std::string localVarPrefix = "%tmp_";
 static std::string bbPrefix = "b";
 
 class IrBuilder {

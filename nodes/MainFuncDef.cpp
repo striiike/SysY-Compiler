@@ -28,7 +28,7 @@ Value *MainFuncDef::llvmIr() {
 	irBuilder.ctx.voidFunc = false;
 	symbol.startScope();
 
-	Type *ty = new FunctionType();
+	Type *ty = bType.getType() == INTTK ? IntegerType::INT32 : IntegerType::VOID;
 	auto name = irBuilder.genFuncName("main");
 	auto *func = new Function(ty, name);
 	irBuilder.addFunction(func);

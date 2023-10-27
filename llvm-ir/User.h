@@ -10,6 +10,7 @@
 #include <vector>
 
 class User : public Value {
+protected:
 	std::vector<Value *> operandList;
 public:
 	User(Type *type, std::string name)

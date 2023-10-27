@@ -30,10 +30,11 @@ public:
 		instructionList.push_back(inst);
 	}
 
-	std::string toString() {
+	std::string toString() override {
 		std::stringstream ss;
 		ss << name + ":\n";
 		for (auto i : instructionList) {
+			ss << "\t";
 			ss << i->toString();
 			ss << "\n";
 		}

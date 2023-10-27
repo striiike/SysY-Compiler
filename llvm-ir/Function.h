@@ -22,7 +22,7 @@ public:
 		this->parent = PFunction;
 	}
 
-	std::string toString() {
+	std::string toString() override {
 		return "";
 	}
 };
@@ -47,7 +47,7 @@ public:
 		basicList.push_back(bb);
 	}
 
-	std::string toString() {
+	std::string toString() override {
 		std::stringstream ss;
 		ss << "define dso_local " + retType->toString() + " " + this->name + "(";
 		for (auto i : argumentList) {

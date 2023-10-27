@@ -25,6 +25,10 @@ public:
 		return type;
 	}
 
+	std::string getName() {
+		return this->name;
+	}
+
 	virtual std::string toString() {
 		return "!ub!";
 	}

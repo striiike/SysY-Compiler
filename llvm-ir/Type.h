@@ -16,6 +16,9 @@ public:
 	virtual bool isFunction() { return false; }
 	virtual bool isArray() { return false; }
 	virtual bool isPointer() { return false; }
+
+	virtual Type *getTargetType() { return nullptr; }
+	virtual Type *getEleType() { return nullptr; }
 };
 
 class IntegerType : public Type {
@@ -52,7 +55,7 @@ public:
 		return num;
 	}
 
-	Type *getType() {
+	Type *getEleType() override {
 		return type;
 	}
 
@@ -68,7 +71,7 @@ class PointerType : public Type {
 public:
 	explicit PointerType(Type *type) : targetType(type) {}
 
-	Type *getTargetType() const {
+	Type *getTargetType() override {
 		return targetType;
 	}
 

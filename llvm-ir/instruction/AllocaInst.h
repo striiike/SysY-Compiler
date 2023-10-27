@@ -18,7 +18,7 @@ public:
 		  Instruction(new PointerType(ty), std::move(name), InstType::ALLOCA) {}
 
 	std::string toString() override {
-		return name + " = alloca " + type->toString();
+		return name + " = alloca " + retType->toString();
 	}
 };
 
