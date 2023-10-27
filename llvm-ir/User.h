@@ -19,6 +19,10 @@ public:
 
 	void addOperand(Value *value) { operandList.push_back(value); }
 
+	Value *getOperand(int index) {
+		return operandList[index];
+	}
+
 };
 
 #endif //COMPILER_LLVM_IR_USER_H

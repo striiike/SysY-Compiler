@@ -12,9 +12,11 @@ void BlockItem::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	if (stmtPtr)
 		stmtPtr->checkError(ctx, ret);
 }
-void BlockItem::llvmIr() {
+
+Value *BlockItem::llvmIr() {
 	if (declPtr)
 		declPtr->llvmIr();
 	if (stmtPtr)
 		stmtPtr->llvmIr();
+	return nullptr;
 }

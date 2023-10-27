@@ -24,7 +24,8 @@ public:
 	virtual void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	}
 
-	virtual void llvmIr() {
+	virtual Value *llvmIr() {
+		return nullptr;
 	}
 };
 

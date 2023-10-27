@@ -22,7 +22,7 @@ public:
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 
-	void llvmIr() override;
+	Value *llvmIr() override;
 
 	int evaluate();
 };

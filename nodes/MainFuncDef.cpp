@@ -1,5 +1,6 @@
 #include "MainFuncDef.h"
 #include "ComplexStmt.h"
+#include "Block.h"
 
 MainFuncDef::MainFuncDef(TokenNode bType, TokenNode _main, BlockPtr blockPtr) :
 	bType(std::move(bType)), _main(std::move(_main)), blockPtr(std::move(blockPtr)) {
@@ -21,7 +22,7 @@ void MainFuncDef::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	}
 }
 
-void MainFuncDef::llvmIr() {
+Value *MainFuncDef::llvmIr() {
 	irBuilder.ctx.isGlobal = false;
 	irBuilder.ctx.afterFuncDef = true;
 	irBuilder.ctx.voidFunc = false;
@@ -40,4 +41,5 @@ void MainFuncDef::llvmIr() {
 	blockPtr->llvmIr();
 
 	irBuilder.ctx.afterFuncDef = false;
+	return nullptr;
 }

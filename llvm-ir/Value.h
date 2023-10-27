@@ -20,6 +20,14 @@ protected:
 public:
 	Value(Type *type, std::string name)
 		: type(type), name(std::move(name)) {}
+
+	Type *getType() {
+		return type;
+	}
+
+	virtual std::string toString() {
+		return "!ub!";
+	}
 };
 
 #endif //COMPILER_LLVM_IR_VALUE_H

@@ -21,7 +21,7 @@ void CompUnit::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	symbol.endScope();
 }
 
-void CompUnit::llvmIr() {
+Value *CompUnit::llvmIr() {
 	irBuilder.setModule(new Module());
 	symbol.startScope();
 	irBuilder.ctx.isGlobal = true;
@@ -29,7 +29,7 @@ void CompUnit::llvmIr() {
 		i->llvmIr();
 //	for (const auto &i : funcDefPtrs)
 //		i->llvmIr();
-//	mainFuncDefPtr->llvmIr();
+	mainFuncDefPtr->llvmIr();
 	symbol.endScope();
-
+	return nullptr;
 }

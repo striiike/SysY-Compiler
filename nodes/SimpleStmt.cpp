@@ -12,21 +12,9 @@ void AssignStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	ctx->isLeftValue = false;
 	expPtr->checkError(ctx, ret);
 }
-void AssignStmt::llvmIr() {
+
+Value *AssignStmt::llvmIr() {
 	SimpleStmt::llvmIr();
-}
-
-_ForStmt::_ForStmt(LValPtr lValPtr, ExpPtr expPtr)
-	: lValPtr(std::move(lValPtr)), expPtr(std::move(expPtr)) {
-	name = "<ForStmt>";
-	print();
-}
-
-void _ForStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
-	ctx->isLeftValue = true;
-	lValPtr->checkError(ctx, ret);
-	ctx->isLeftValue = false;
-	expPtr->checkError(ctx, ret);
 }
 
 ExpStmt::ExpStmt(ExpPtr expPtr)
@@ -35,7 +23,7 @@ ExpStmt::ExpStmt(ExpPtr expPtr)
 void ExpStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	expPtr->checkError(ctx, ret);
 }
-void ExpStmt::llvmIr() {
+Value *ExpStmt::llvmIr() {
 	SimpleStmt::llvmIr();
 }
 
@@ -46,7 +34,7 @@ void BreakStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	if (!ctx->loopNum)
 		errorList.emplace_back(Exception::BREAK_CONTINUE_OUT_LOOP, _break.getLineNum());
 }
-void BreakStmt::llvmIr() {
+Value *BreakStmt::llvmIr() {
 	SimpleStmt::llvmIr();
 }
 
@@ -57,7 +45,7 @@ void ContinueStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	if (!ctx->loopNum)
 		errorList.emplace_back(Exception::BREAK_CONTINUE_OUT_LOOP, _continue.getLineNum());
 }
-void ContinueStmt::llvmIr() {
+Value *ContinueStmt::llvmIr() {
 	SimpleStmt::llvmIr();
 }
 
@@ -75,7 +63,7 @@ void ReturnStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	ret->retLineNum = _return.getLineNum();
 }
 
-void ReturnStmt::llvmIr() {
+Value *ReturnStmt::llvmIr() {
 
 }
 
@@ -87,7 +75,7 @@ void GetintStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	lValPtr->checkError(ctx, ret);
 	ctx->isLeftValue = false;
 }
-void GetintStmt::llvmIr() {
+Value *GetintStmt::llvmIr() {
 	SimpleStmt::llvmIr();
 }
 
@@ -120,7 +108,8 @@ void PrintfStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	for (const auto &i : expPtrs)
 		i->checkError(ctx, ret);
 }
-void PrintfStmt::llvmIr() {
+
+Value *PrintfStmt::llvmIr() {
 	SimpleStmt::llvmIr();
 }
 

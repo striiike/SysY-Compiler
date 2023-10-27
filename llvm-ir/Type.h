@@ -29,6 +29,10 @@ public:
 
 	bool isInt32() override { return bitWidth == 32; }
 
+	static IntegerType *VOID;
+	static IntegerType *INT1;
+	static IntegerType *INT32;
+
 	std::string toString() override {
 		if (bitWidth == 0)
 			return "void";

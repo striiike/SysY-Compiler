@@ -31,7 +31,7 @@ public:
 			return values[0];
 
 		/// \manual for two dim
-		int coordinate = *index.end();
+		int coordinate = index.back();
 		if (index.size() == 2)
 			coordinate += index[0] * lens[0];
 

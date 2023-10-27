@@ -8,6 +8,7 @@
 #include "BasicBlock.h"
 #include <string>
 #include <utility>
+#include <sstream>
 
 class Function;
 
@@ -19,6 +20,10 @@ public:
 
 	void setFunction(Function *PFunction) {
 		this->parent = PFunction;
+	}
+
+	std::string toString() {
+		return "";
 	}
 };
 
@@ -43,7 +48,17 @@ public:
 	}
 
 	std::string toString() {
-		return "";
+		std::stringstream ss;
+		ss << "define dso_local " + retType->toString() + " " + this->name + "(";
+		for (auto i : argumentList) {
+			ss << i->toString();
+		}
+		ss << ") {\n";
+		for (auto i: basicList) {
+			ss << i->toString();
+		}
+		ss << "}";
+		return ss.str();
 	}
 };
 

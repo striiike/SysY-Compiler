@@ -17,7 +17,7 @@ public:
 					  MainFuncDefPtr mainFuncDefPtr);
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
-	void llvmIr() override;
+	Value *llvmIr() override;
 };
 
 

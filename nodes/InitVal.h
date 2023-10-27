@@ -12,7 +12,6 @@ class InitVal : public ASTNode {
 public:
 	virtual void debug() {}
 	virtual std::vector<int> evaluate() { return vector<int>{}; }
-	virtual bool isArray() { return false; }
 };
 
 class ExpInitVal : public InitVal {
@@ -35,6 +34,5 @@ public:
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 	std::vector<int> evaluate() override;
-	bool isArray() override { return true; }
 };
 

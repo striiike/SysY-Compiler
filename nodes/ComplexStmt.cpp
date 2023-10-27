@@ -1,5 +1,6 @@
 #include "ComplexStmt.h"
 #include "SimpleStmt.h"
+#include "LVal.h"
 
 IfStmt::IfStmt(CondPtr condPtr, StmtPtr stmtPtr, StmtPtr stmtElsePtr) :
 	condPtr(std::move(condPtr)), stmtPtr(std::move(stmtPtr)),
@@ -11,8 +12,21 @@ void IfStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	if (stmtElsePtr)
 		stmtElsePtr->checkError(ctx, ret);
 }
-void IfStmt::llvmIr() {
+Value *IfStmt::llvmIr() {
 
+}
+
+_ForStmt::_ForStmt(LValPtr lValPtr, ExpPtr expPtr)
+	: lValPtr(std::move(lValPtr)), expPtr(std::move(expPtr)) {
+	name = "<ForStmt>";
+	print();
+}
+
+void _ForStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
+	ctx->isLeftValue = true;
+	lValPtr->checkError(ctx, ret);
+	ctx->isLeftValue = false;
+	expPtr->checkError(ctx, ret);
 }
 
 ForStmt::ForStmt(CondPtr condPtr, StmtPtr stmtPtr, _ForStmtPtr assignStmtPtr1, _ForStmtPtr assignStmtPtr2) :
@@ -32,41 +46,6 @@ void ForStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	stmtPtr->checkError(ctx, ret);
 	ctx->loopNum--;
 }
-void ForStmt::llvmIr() {
+Value *ForStmt::llvmIr() {
 
-}
-
-Block::Block(std::vector<BlockItemPtr> blockItemPtrs, TokenNode rbrace) :
-	blockItemPtrs(std::move(blockItemPtrs)), rbrace(std::move(rbrace)) {
-	name = "<Block>";
-	print();
-}
-
-void Block::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
-	if (!ctx->afterFuncDef)
-		symbol.startScope();
-	else
-		ctx->afterFuncDef = false;
-
-	ctx->layerNum++;
-	for (const auto &i : blockItemPtrs) {
-		i->checkError(ctx, ret);
-	}
-	ctx->layerNum--;
-
-	symbol.endScope();
-	ret->rbraceLineNum = rbrace.getLineNum();
-}
-
-void Block::llvmIr() {
-	if (!irBuilder.ctx.afterFuncDef)
-		symbol.startScope();
-	else
-		irBuilder.ctx.afterFuncDef = false;
-
-	for (const auto &i : blockItemPtrs) {
-		i->llvmIr();
-	}
-
-	symbol.endScope();
 }

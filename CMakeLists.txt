@@ -65,7 +65,7 @@ add_executable(compiler main.cpp
         llvm-ir/Value.h
         llvm-ir/User.h
         llvm-ir/instruction/Instruction.h
-        llvm-ir/Constant.h
+        llvm-ir/constant/Constant.h
         llvm-ir/BasicBlock.h
         llvm-ir/GlobalVariable.h
         llvm-ir/Use.h
@@ -75,4 +75,12 @@ add_executable(compiler main.cpp
         llvm-ir/IrBuilder.cpp
         parser/IrCtx.h
         llvm-ir/instruction/ReturnInst.h
+        nodes/Block.h
+        nodes/Block.cpp
+        llvm-ir/instruction/AllocaInst.h
+        llvm-ir/instruction/AluInst.h
+        llvm-ir/constant/ConstantInt.h
+        llvm-ir/constant/ConstantArray.h
+        llvm-ir/instruction/StoreInst.h
+        llvm-ir/instruction/GEPInst.h
 )

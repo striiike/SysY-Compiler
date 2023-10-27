@@ -31,7 +31,7 @@ void FuncDef::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	}
 }
 
-void FuncDef::llvmIr() {
+Value *FuncDef::llvmIr() {
 //	ctx->isGlobal = false;
-
+	return nullptr;
 }

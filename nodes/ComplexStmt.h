@@ -25,8 +25,20 @@ public :
 	IfStmt(CondPtr condPtr, StmtPtr stmtPtr, StmtPtr stmtElsePtr);
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
-	void llvmIr() override;
+	Value *llvmIr() override;
 };
+
+
+class _ForStmt : public ASTNode {
+private:
+	LValPtr lValPtr;
+	ExpPtr expPtr;
+public:
+	_ForStmt(LValPtr lValPtr, ExpPtr expPtr);
+
+	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+};
+
 
 class ForStmt : public ComplexStmt {
 private:
@@ -39,16 +51,5 @@ public :
 			_ForStmtPtr assignStmtPtr1, _ForStmtPtr assignStmtPtr2);
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
-	void llvmIr() override;
-};
-
-class Block : public ComplexStmt {
-private:
-	std::vector<BlockItemPtr> blockItemPtrs;
-	TokenNode rbrace;
-public:
-	explicit Block(std::vector<BlockItemPtr> blockItemPtrs, TokenNode rbrace);
-
-	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
-	void llvmIr() override;
+	Value *llvmIr() override;
 };

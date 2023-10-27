@@ -17,6 +17,6 @@ public:
 	MainFuncDef(TokenNode bType, TokenNode _main, BlockPtr blockPtr);
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
-	void llvmIr() override;
+	Value *llvmIr() override;
 };
 

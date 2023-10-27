@@ -19,7 +19,10 @@ public:
 	Def(bool isConst, TokenNode ident, std::vector<ExpPtr> expPtrs, InitValPtr initValPtr);
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
-	void llvmIr() override;
+	Value *llvmIr() override;
+
+	void buildGlobalDef(const vector<int> &lens, int length);
+	void buildLocalDef(const vector<int> &lens, int length);
 
 };
 

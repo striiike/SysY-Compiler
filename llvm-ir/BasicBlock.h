@@ -8,6 +8,7 @@
 #include <list>
 #include <utility>
 #include "instruction/Instruction.h"
+#include <sstream>
 //#include "Function.h"
 
 class Function;
@@ -29,6 +30,15 @@ public:
 		instructionList.push_back(inst);
 	}
 
+	std::string toString() {
+		std::stringstream ss;
+		ss << name + ":\n";
+		for (auto i : instructionList) {
+			ss << i->toString();
+			ss << "\n";
+		}
+		return ss.str();
+	}
 };
 
 #endif //COMPILER_LLVM_IR_BASICBLOCK_H

@@ -44,6 +44,6 @@ int UnaryExp::evaluate() {
 	return (negationCount % 2) ? -res : res;
 }
 
-void UnaryExp::llvmIr() {
+Value *UnaryExp::llvmIr() {
 	ASTNode::llvmIr();
 }

@@ -66,8 +66,6 @@ int main() {
 	}
 	symbol.clear();
 
-	auto that = new Initializer(nullptr, vector<int> (2));
-
 	AST.llvmIr();
 	cout << irBuilder.getModule()->toString() << endl;
 	return 0;

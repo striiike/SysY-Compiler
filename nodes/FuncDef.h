@@ -10,6 +10,7 @@
 #include "TokenNode.h"
 #include "FuncFParams.h"
 #include "ComplexStmt.h"
+#include "Block.h"
 
 class FuncDef : public ASTNode {
 private:
@@ -21,7 +22,7 @@ public:
 	FuncDef(TokenNode funcType, TokenNode ident, FuncFParamsPtr funcFParamsPtr, BlockPtr blockPtr);
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
-	void llvmIr();
+	Value *llvmIr() override;
 };
 
 #endif //COMPILER_FUNCDEF_H
