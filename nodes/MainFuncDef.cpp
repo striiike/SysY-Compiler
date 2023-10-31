@@ -34,6 +34,8 @@ Value *MainFuncDef::llvmIr() {
 	irBuilder.addFunction(func);
 	irBuilder.setCurFunc(func);
 
+	symbol.insertFunc("main", bType.getType() == VOIDTK);
+
 	auto bb = new BasicBlock(irBuilder.genBbName());
 	irBuilder.addBasicBlock(bb);
 	irBuilder.setCurBb(bb);

@@ -5,11 +5,9 @@
 #ifndef COMPILER_LLVM_IR_USE_H
 #define COMPILER_LLVM_IR_USE_H
 
-#include "User.h"
-#include "Value.h"
-
 class User;
 class Value;
+
 class Use {
 	User *user;
 	Value *value;

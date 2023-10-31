@@ -13,7 +13,7 @@ class ConstantInt : public Constant {
 public:
 	explicit ConstantInt(int value, int bitWidth = 32)
 		: value(value), bitWidth(bitWidth),
-		  Constant(new IntegerType(bitWidth), to_string(value)) {}
+		  Constant(IntegerType::INT32, to_string(value)) {}
 
 	std::string toString() override {
 		return type->toString() + " " + std::to_string(value);

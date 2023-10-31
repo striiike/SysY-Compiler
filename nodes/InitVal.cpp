@@ -14,6 +14,9 @@ void ExpInitVal::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 std::vector<int> ExpInitVal::evaluate() {
 	return vector<int>{expPtr->evaluate()};
 }
+Value *ExpInitVal::llvmIr() {
+	return expPtr->llvmIr();
+}
 
 ArrayInitVal::ArrayInitVal(bool isConst, std::vector<InitValPtr> initValPtrs) :
 	isConst(isConst), initValPtrs(std::move(initValPtrs)) {
@@ -35,3 +38,12 @@ std::vector<int> ArrayInitVal::evaluate() {
 	}
 	return values;
 }
+vector<Value *> ArrayInitVal::llvmIrList() {
+	vector<Value *> irList{};
+	irList.reserve(initValPtrs.size());
+	for (const auto &i : initValPtrs) {
+		irList.push_back(i->llvmIr());
+	}
+	return irList;
+}
+

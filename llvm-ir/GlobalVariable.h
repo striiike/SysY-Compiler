@@ -8,18 +8,18 @@
 #include <utility>
 
 #include "User.h"
-#include "Initializer.h"
 #include "constant/Constant.h"
 
 class GlobalVariable : public User {
 	Constant *init;
+	bool isConst;
 public:
-	GlobalVariable(Type *ty, std::string name, Constant *init = nullptr)
-		: User(ty, std::move(name)), init(init) {}
+	GlobalVariable(Type *ty, std::string name, bool isConst, Constant *init = nullptr)
+		: User(ty, std::move(name)), init(init), isConst(isConst) {}
 
 	// init exists under guarantee
-	std::string toString() {
-		return name + " = dso_local global " + init->toString();
+	std::string toString() override {
+		return name + " = dso_local " + ((isConst) ? "constant" : "global") + " " + init->toString();
 	}
 
 };

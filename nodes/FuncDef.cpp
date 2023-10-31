@@ -32,6 +32,33 @@ void FuncDef::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 }
 
 Value *FuncDef::llvmIr() {
-//	ctx->isGlobal = false;
+	irBuilder.ctx.isGlobal = false;
+	irBuilder.ctx.afterFuncDef = true;
+	irBuilder.ctx.voidFunc = funcType.getType() == INTTK;
+	symbol.startScope();
+
+	Type *ty = funcType.getType() == INTTK ? IntegerType::INT32 : IntegerType::VOID;
+
+	auto name = irBuilder.genFuncName(ident.getValue());
+	auto *func = new Function(ty, name);
+	irBuilder.addFunction(func);
+	irBuilder.setCurFunc(func);
+
+	vector<int> dims{};
+	if (funcFParamsPtr) {
+		dims = funcFParamsPtr->getDims();
+	}
+	symbol.insertFunc(ident.getValue(), funcType.getType() == VOIDTK, dims, func);
+
+	auto bb = new BasicBlock(irBuilder.genBbName());
+	irBuilder.addBasicBlock(bb);
+	irBuilder.setCurBb(bb);
+
+	if (funcFParamsPtr)
+		funcFParamsPtr->llvmIr();
+	blockPtr->llvmIr();
+
+	irBuilder.ctx.afterFuncDef = false;
 	return nullptr;
+
 }

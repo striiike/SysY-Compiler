@@ -38,3 +38,65 @@ int LVal::evaluate() {
 	int res = varPtr->getValue(index);
 	return res;
 }
+
+Value *LVal::llvmIr() {
+
+	auto varSymbol = symbol.getVar(ident.getValue());
+	Value *val = varSymbol->getLlvmValue();
+	bool isPointer = array.size() != varSymbol->lens.size();
+
+	/// single-var
+	if (varSymbol->lens.empty()) {
+		if (varSymbol->isConst)
+			return new ConstantInt(varSymbol->getValue(vector<int>{}));
+		else {
+			auto *load = irBuilder.buildLoad(val);
+			return load;
+		}
+	} else if (isPointer) {
+		Value *realOff = new ConstantInt(0);
+		if (varSymbol->lens.size() == 2 && array.size() == 1) {
+			Value *arrOff = array[0]->llvmIr();
+			realOff = irBuilder.buildAlu(AluType::MUL, arrOff, new ConstantInt(varSymbol->lens[0]));
+		}
+		auto *gep = irBuilder.buildGEP(varSymbol->getLlvmValue(), realOff);
+		return gep;
+
+	} else {
+		Value *dim1 = array.back()->llvmIr();
+		/// @manual for 2 dimension
+		if (array.size() == 2) {
+			Value *mul = irBuilder.buildAlu(
+				AluType::MUL,
+				array[0]->llvmIr(),
+				new ConstantInt(varSymbol->lens.back()));
+			dim1 = irBuilder.buildAlu(AluType::ADD, mul, dim1);
+		}
+		auto *gep = irBuilder.buildGEP(val, dim1);
+		auto *load = irBuilder.buildLoad(gep);
+		return load;
+	}
+
+	return nullptr;
+}
+
+Value* LVal::llvmIrAddr() {
+	auto varSymbol = symbol.getVar(ident.getValue());
+	Value *addr = varSymbol->getLlvmValue();
+
+	if (array.empty()) {
+
+	} else  {
+		Value *dim1 = array.back()->llvmIr();
+		/// @manual for 2 dimension
+		if (array.size() == 2) {
+			Value *mul = irBuilder.buildAlu(
+				AluType::MUL,
+				array[0]->llvmIr(),
+				new ConstantInt(varSymbol->lens.back()));
+			dim1 = irBuilder.buildAlu(AluType::ADD, mul, dim1);
+		}
+		addr = irBuilder.buildGEP(addr, dim1);
+	}
+	return addr;
+}

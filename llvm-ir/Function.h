@@ -6,6 +6,7 @@
 #define COMPILER_LLVM_IR_FUNCTION_H
 
 #include "BasicBlock.h"
+#include "Type.h"
 #include <string>
 #include <utility>
 #include <sstream>
@@ -23,7 +24,7 @@ public:
 	}
 
 	std::string toString() override {
-		return "";
+		return getType()->toString() + " " + getName();
 	}
 };
 
@@ -32,6 +33,13 @@ class Function : public User {
 	std::list<BasicBlock *> basicList;
 	Type *retType;
 public:
+	static Function *getint;
+	static Function *putch;
+	static Function *putint;
+	static Function *putstr;
+
+	bool isLink = false;
+
 	Function(Type *ret, std::string name)
 		: User(new FunctionType(), std::move(name)) {
 		argumentList.clear();
@@ -47,14 +55,32 @@ public:
 		basicList.push_back(bb);
 	}
 
+	Type *getRetType() {
+		return retType;
+	}
+
 	std::string toString() override {
 		std::stringstream ss;
+
+		if (isLink) {
+			ss << "declare " + retType->toString() + " " + this->name + "(";
+			for (auto &i : argumentList) {
+				ss << i->getType()->toString();
+				if (&i != &argumentList.back())
+					ss << ", ";
+			}
+			ss << ")";
+			return ss.str();
+		}
+
 		ss << "define dso_local " + retType->toString() + " " + this->name + "(";
-		for (auto i : argumentList) {
+		for (auto &i : argumentList) {
 			ss << i->toString();
+			if (&i != &argumentList.back())
+				ss << ", ";
 		}
 		ss << ") {\n";
-		for (auto i: basicList) {
+		for (auto i : basicList) {
 			ss << i->toString();
 		}
 		ss << "}";

@@ -12,6 +12,7 @@ void IfStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	if (stmtElsePtr)
 		stmtElsePtr->checkError(ctx, ret);
 }
+
 Value *IfStmt::llvmIr() {
 
 }

@@ -23,3 +23,9 @@ void FuncFParams::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 //    symbol.endScope();
 }
 
+Value *FuncFParams::llvmIr() {
+	for (const auto &i : funcFParamPtrs) {
+		i->llvmIr();
+	}
+	return nullptr;
+}

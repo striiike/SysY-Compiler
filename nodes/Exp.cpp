@@ -15,6 +15,10 @@ int Number::evaluate() {
 	return num;
 }
 
+Value* Number::llvmIr() {
+	return new ConstantInt(num);
+}
+
 Exp::Exp(AddExpPtr sharedPtr, bool isConst) :
 	addExpPtr(std::move(sharedPtr)), isConst(isConst) {
 	name = isConst ? "<ConstExp>" : "<Exp>";
@@ -25,6 +29,9 @@ void Exp::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	addExpPtr->checkError(ctx, ret);
 }
 
+Value *Exp::llvmIr() {
+	return addExpPtr->llvmIr();
+}
 
 // when computing global variable
 int Exp::evaluate() {

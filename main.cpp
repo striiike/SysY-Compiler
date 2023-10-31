@@ -10,10 +10,11 @@
 using namespace std;
 
 bool PARSER_DISPLAY = true;
-bool PARSER_SWITCH = true;
+bool PARSER_SWITCH = false;
 
 std::ofstream outfile("./output.txt");
 std::ofstream errfile("./error.txt");
+std::ofstream llvmfile("./llvm_ir.txt");
 
 void parseLog(const std::string &str) {
 	if (PARSER_DISPLAY && PARSER_SWITCH) {
@@ -39,7 +40,6 @@ map<Exception, char> exceptionToString = {
 };
 
 int main() {
-
 	std::ifstream infile("testfile.txt");
 	std::string code((std::istreambuf_iterator<char>(infile)), std::istreambuf_iterator<char>());
 
@@ -51,22 +51,26 @@ int main() {
 
 	auto AST = parser.parseCompUnit();
 
-	{
-		auto ctx = make_shared<ErrorCtx>();
-		auto ret = make_shared<ErrorRet>();
-		AST.checkError(ctx, ret);
-		std::sort(errorList.begin(), errorList.end(),
-				  [](const auto &left, const auto &right) {
-					  return left.second < right.second;
-				  });
-		errorList.erase(std::unique(errorList.begin(), errorList.end()), errorList.end());
-		for (const auto &pair : errorList) {
-			errfile << pair.second << " " << exceptionToString[pair.first] << std::endl;
-		}
-	}
+//	{
+//		auto ctx = make_shared<ErrorCtx>();
+//		auto ret = make_shared<ErrorRet>();
+//		AST.checkError(ctx, ret);
+//		std::sort(errorList.begin(), errorList.end(),
+//				  [](const auto &left, const auto &right) {
+//					  return left.second < right.second;
+//				  });
+//		errorList.erase(std::unique(errorList.begin(), errorList.end()), errorList.end());
+//		for (const auto &pair : errorList) {
+//			errfile << pair.second << " " << exceptionToString[pair.first] << std::endl;
+//		}
+//	}
 	symbol.clear();
 
 	AST.llvmIr();
-	cout << irBuilder.getModule()->toString() << endl;
+
+
+	llvmfile << irBuilder.getModule()->toString() << endl;
+
+
 	return 0;
 }

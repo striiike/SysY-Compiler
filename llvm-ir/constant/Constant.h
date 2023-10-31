@@ -18,7 +18,7 @@ public:
 		return this->type;
 	}
 
-	virtual std::string toString() { return "?"; }
+	std::string toString() override { return "?"; }
 
 };
 

@@ -14,7 +14,11 @@ void AssignStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 }
 
 Value *AssignStmt::llvmIr() {
-	SimpleStmt::llvmIr();
+	auto *rvalue = expPtr->llvmIr();
+	auto *lval = lValPtr->llvmIrAddr();
+	irBuilder.buildStore(rvalue, lval);
+	/// no need for sysY
+	return nullptr;
 }
 
 ExpStmt::ExpStmt(ExpPtr expPtr)
@@ -24,7 +28,7 @@ void ExpStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	expPtr->checkError(ctx, ret);
 }
 Value *ExpStmt::llvmIr() {
-	SimpleStmt::llvmIr();
+	return expPtr->llvmIr();
 }
 
 BreakStmt::BreakStmt(TokenNode _break)
@@ -64,7 +68,9 @@ void ReturnStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 }
 
 Value *ReturnStmt::llvmIr() {
-
+	auto *ret = expPtr->llvmIr();
+	irBuilder.buildReturn(ret);
+	return nullptr;
 }
 
 GetintStmt::GetintStmt(LValPtr lValPtr, TokenNode _getint)
@@ -76,7 +82,11 @@ void GetintStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	ctx->isLeftValue = false;
 }
 Value *GetintStmt::llvmIr() {
-	SimpleStmt::llvmIr();
+	auto *rvalue = irBuilder.buildCall(Function::getint, vector<Value *>{});
+	auto *lval = lValPtr->llvmIrAddr();
+	irBuilder.buildStore(rvalue, lval);
+	/// no need for sysY
+	return nullptr;
 }
 
 PrintfStmt::PrintfStmt(TokenNode _printf, TokenNode FormatString, std::vector<ExpPtr> expPtrs)
@@ -109,8 +119,43 @@ void PrintfStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 		i->checkError(ctx, ret);
 }
 
+vector<string> splitStrings(const string &str) {
+	std::stringstream ss(str.substr(1, str.size() - 2));
+	std::vector<std::string> tokens;
+
+	std::string token;
+	while (getline(ss, token, '%')) {
+		tokens.push_back(token);
+		if (ss.peek() == 'd') {
+			tokens.emplace_back("%d");
+			ss.ignore();
+		}
+	}
+	tokens.erase(remove(tokens.begin(), tokens.end(), ""), tokens.end());
+
+	return tokens;
+}
+
 Value *PrintfStmt::llvmIr() {
-	SimpleStmt::llvmIr();
+	vector<Value *> args{};
+	args.reserve(expPtrs.size());
+	for (auto &i : expPtrs) {
+		args.push_back(i->llvmIr());
+	}
+
+	vector<string> strings = splitStrings(formatString.getValue());
+	int index = 0;
+	for (auto &i : strings) {
+		if (i == "%d") {
+			irBuilder.buildCall(Function::putint, vector<Value *>{args[index++]});
+		} else {
+			auto *str = new ConstantString(i);
+			auto *g = irBuilder.buildGlobalVar("", str, true);
+			auto *gep = irBuilder.buildGEP(g, new ConstantInt(0));
+			irBuilder.buildCall(Function::putstr, vector<Value *>{gep});
+		}
+	}
+	return nullptr;
 }
 
 

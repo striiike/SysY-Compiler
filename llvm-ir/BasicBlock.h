@@ -9,10 +9,10 @@
 #include <utility>
 #include "instruction/Instruction.h"
 #include <sstream>
+#include "Value.h"
 //#include "Function.h"
 
 class Function;
-
 
 class BasicBlock : public Value {
 	std::list<Instruction *> instructionList;

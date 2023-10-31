@@ -34,6 +34,7 @@ public:
 
 	static IntegerType *VOID;
 	static IntegerType *INT1;
+	static IntegerType *INT8;
 	static IntegerType *INT32;
 
 	std::string toString() override {
@@ -41,6 +42,10 @@ public:
 			return "void";
 		else if (bitWidth == 32)
 			return "i32";
+		else if (bitWidth == 1)
+			return "i1";
+		else if (bitWidth == 8)
+			return "i8";
 		return "!ub!";
 	}
 };

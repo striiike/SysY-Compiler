@@ -25,3 +25,30 @@ void FuncFParam::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 		errorList.emplace_back(Exception::REDEFINED_IDENT, ident.getLineNum());
 	}
 }
+
+Value *FuncFParam::llvmIr() {
+	vector<int> lens = {};
+	if (isArray)
+		lens.push_back(0);
+	for (auto &i : expPtrs) {
+		lens.push_back(i->evaluate());
+	}
+
+	Type *ty;
+	if (isArray) {
+		ty = new PointerType(IntegerType::INT32);
+	} else {
+		ty = IntegerType::INT32;
+	}
+
+	auto *arg = irBuilder.buildArgument(ident.getValue(), ty);
+	if (!isArray) {
+		auto *alloc = irBuilder.buildAlloc(ident.getValue(), IntegerType::INT32);
+		irBuilder.buildStore(arg, alloc);
+		symbol.insertVar(false, ident.getValue(), lens, vector<int>{}, alloc);
+	} else {
+		symbol.insertVar(false, ident.getValue(), lens, vector<int>{}, arg);
+	}
+
+	return nullptr;
+}

@@ -7,13 +7,13 @@
 
 #include <utility>
 
-#include "../BasicBlock.h"
 #include "../User.h"
+#include "../Type.h"
 
 class BasicBlock;
 
 enum InstType {
-	ALLOCA, RETURN, STORE, GEP, ALU
+	ALLOCA, RETURN, STORE, GEP, ALU, LOAD, CALL
 };
 
 class Instruction : public User {

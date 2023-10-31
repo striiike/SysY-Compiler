@@ -21,6 +21,15 @@ void FuncRParams::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	ret->dims = dims;
 }
 
+vector<Value *> FuncRParams::llvmIrList() {
+	vector<Value *> args{};
+	args.reserve(expPtrs.size());
+	for (const auto &i : expPtrs) {
+		args.push_back(i->llvmIr());
+	}
+	return args;
+}
+
 FunctionCall::FunctionCall(TokenNode ident, FuncRParamsPtr funcRParamsPtr)
 	: ident(std::move(ident)), funcRParamsPtr(std::move(funcRParamsPtr)) {
 	name = "<FunctionCall>";
@@ -53,3 +62,9 @@ void FunctionCall::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	}
 }
 
+Value *FunctionCall::llvmIr() {
+	vector<Value *> args = funcRParamsPtr->llvmIrList();
+	auto funcPtr = symbol.getFunc(ident.getValue());
+	auto *call = irBuilder.buildCall((Function *)funcPtr->getLlvmValue(), args);
+	return call;
+}

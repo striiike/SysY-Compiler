@@ -5,12 +5,13 @@
 #ifndef COMPILER_LLVM_IR_VALUE_H
 #define COMPILER_LLVM_IR_VALUE_H
 
-#include "Use.h"
-#include "Type.h"
 #include <list>
 #include <string>
 #include <utility>
 #include <fstream>
+
+class Use;
+class Type;
 
 class Value {
 protected:
@@ -30,7 +31,7 @@ public:
 	}
 
 	virtual std::string toString() {
-		return "!ub!";
+		return " !ub! ";
 	}
 };
 

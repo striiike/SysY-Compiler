@@ -83,4 +83,7 @@ add_executable(compiler main.cpp
         llvm-ir/constant/ConstantArray.h
         llvm-ir/instruction/StoreInst.h
         llvm-ir/instruction/GEPInst.h
+        llvm-ir/instruction/LoadInst.h
+        llvm-ir/instruction/CallInst.h
+        llvm-ir/constant/ConstantString.h
 )

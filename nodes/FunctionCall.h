@@ -13,6 +13,7 @@ public:
 	explicit FuncRParams(std::vector<ExpPtr> expPtrs);
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+	vector<Value *> llvmIrList();
 };
 
 class FunctionCall : public ASTNode {
@@ -22,5 +23,6 @@ public:
 	FunctionCall(TokenNode ident, FuncRParamsPtr funcRParamsPtr);
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+	Value *llvmIr() override;
 };
 

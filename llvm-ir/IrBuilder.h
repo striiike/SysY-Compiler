@@ -12,10 +12,14 @@
 #include "constant/Constant.h"
 #include "constant/ConstantInt.h"
 #include "constant/ConstantArray.h"
+#include "constant/ConstantString.h"
 #include "instruction/AllocaInst.h"
 #include "instruction/StoreInst.h"
 #include "instruction/GEPInst.h"
 #include "instruction/AluInst.h"
+#include "instruction/ReturnInst.h"
+#include "instruction/LoadInst.h"
+#include "instruction/CallInst.h"
 
 using namespace std;
 
@@ -45,8 +49,9 @@ using IrRetPtr = std::shared_ptr<IrRet>;
 
 static std::string globalPrefix = "@g_";
 static std::string funcPrefix = "@f_";
-static std::string localVarPrefix = "%tmp_";
+static std::string localVarPrefix = "%t_";
 static std::string bbPrefix = "b";
+static std::string argPrefix = "%a_";
 
 class IrBuilder {
 	int bbCnt;
@@ -99,6 +104,11 @@ public:
 
 	std::string genLocalVarName(const std::string &name = "") {
 		return localVarPrefix + name + "_" + to_string((localVarCnt++));
+//		return localVarPrefix + to_string((localVarCnt++));
+	}
+
+	std::string genArgName(const std::string &name = "") {
+		return argPrefix + name + "_" + to_string((argsCnt++));
 	}
 
 	Function *getCurFunc() const { return curFunc; }
@@ -113,10 +123,18 @@ public:
 
 	void setModule(Module *Module) { module = Module; }
 
-	void buildGlobalVar(const string &ident, Constant *constant, bool isConst) {
+	Value *buildGlobalVar(const string &ident, Constant *constant, bool isConst) {
 		string name = genGlobalVarName(ident);
-		auto *globalVar = new GlobalVariable(constant->getType(), name, constant);
+		auto *globalVar = new GlobalVariable(new PointerType(constant->getType()), name, isConst, constant);
 		module->addGlobalVariable(globalVar);
+		return globalVar;
+	}
+
+	Value *buildArgument(const string &ident, Type *ty) {
+		string name = genArgName(ident);
+		auto *arg = new Argument(ty, name);
+		curFunc->addArgument(arg);
+		return arg;
 	}
 
 	Value *buildAlloc(const string &ident, Type *ty) {
@@ -131,11 +149,44 @@ public:
 		curBb->addInstruction(store);
 	}
 
-	Value *buildGEP(Value *base, Value *ptrOff, Value *arrOff) {
+	Value *buildLoad(Value *addr) {
 		string name = genLocalVarName();
-		auto *gep = new GEPInst(name, base, ptrOff, arrOff);
+		auto *load = new LoadInst(name, addr);
+		curBb->addInstruction(load);
+		return load;
+	}
+
+	Value *buildGEP(Value *base, Value *ptrOff, Value *arrOff = nullptr) {
+		string name = genLocalVarName();
+		Instruction *gep;
+		if (base->getType()->getTargetType()->isArray())
+			gep = new GEPInst(name, base, new ConstantInt(0), ptrOff);
+		else
+			gep = new GEPInst(name, base, ptrOff, arrOff);
+
 		curBb->addInstruction(gep);
 		return gep;
+	}
+
+	/// contains @add, @sub, @sidv, @srem, @mul
+	Value *buildAlu(AluType ty, Value *op1, Value *op2) {
+		string name = genLocalVarName();
+		auto *alu = new AluInst(name, ty, op1, op2);
+		curBb->addInstruction(alu);
+		return alu;
+	}
+
+	Value *buildReturn(Value *ret) {
+		auto *retInst = new ReturnInst("returnInst", ret);
+		curBb->addInstruction(retInst);
+		return retInst;
+	}
+
+	Value *buildCall(Function *func, vector<Value *> args) {
+		string name = genLocalVarName();
+		auto *call = new CallInst(name, func, args);
+		curBb->addInstruction(call);
+		return call;
 	}
 
 };

@@ -16,6 +16,7 @@ public:
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 
 	vector<int> getDims();
+	Value *llvmIr() override;
 };
 
 

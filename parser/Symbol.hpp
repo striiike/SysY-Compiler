@@ -6,12 +6,15 @@
 
 #include <utility>
 #include "Exception.hpp"
+//#include "../llvm-ir/Value.h"
 #include <set>
 #include <stack>
 #include <map>
 #include <iostream>
 
 using namespace std;
+
+class Value;
 
 class VarSymbol {
 public:
@@ -20,8 +23,14 @@ public:
 	vector<int> lens;  // at most 2 dimensions
 	vector<int> values;     // save it in 1 dimension
 
-	VarSymbol(bool isConst, bool isGlobal, vector<int> lens, vector<int> values) :
-		isConst(isConst), isGlobal(isGlobal), lens(std::move(lens)), values(std::move(values)) {}
+	Value *llvmValue;
+
+	VarSymbol(bool isConst, bool isGlobal,
+			  vector<int> lens, vector<int> values,
+			  Value *llvm = nullptr)
+		: isConst(isConst), isGlobal(isGlobal),
+		  lens(std::move(lens)), values(std::move(values)),
+		  llvmValue(llvm) {}
 
 	// get value from indexes
 	int getValue(const vector<int> &index) {
@@ -38,15 +47,25 @@ public:
 		return values[coordinate];
 	}
 
+	Value *getLlvmValue() {
+		return llvmValue;
+	}
+
 };
 
 class FuncSymbol {
 public:
 	bool isVoid;
 	vector<int> dims;       // stand for the types
+	Value *llvmValue;
 
-	FuncSymbol(bool isVoid, vector<int> dims) :
-		isVoid(isVoid), dims(std::move(dims)) {}
+	FuncSymbol(bool isVoid, vector<int> dims, Value *llvmValue = nullptr) :
+		isVoid(isVoid), dims(std::move(dims)), llvmValue(llvmValue) {}
+
+	Value *getLlvmValue() {
+		return llvmValue;
+	}
+
 };
 
 using SymbolSetPtr = shared_ptr<set<string>>;
@@ -61,7 +80,9 @@ public:
 	Symbol() = default;
 
 	// 0 for false
-	int insertVar(bool isConst, const string &name, const vector<int> &lens, const vector<int> &values = {}) {
+	int insertVar(bool isConst, const string &name,
+				  const vector<int> &lens, const vector<int> &values = {},
+				  Value *llvm = nullptr) {
 		auto scope = symbolStack.top();
 		if (scope->count(name))
 			return 0;
@@ -74,17 +95,17 @@ public:
 		if (!varsMap.count(name))
 			varsMap[name] = make_shared<stack<VarSymbolPtr>>();
 
-		varsMap[name]->push(make_shared<VarSymbol>(isConst, isGlobal, lens, values));
+		varsMap[name]->push(make_shared<VarSymbol>(isConst, isGlobal, lens, values, llvm));
 		return 1;
 	}
 
 	// 0 for false
-	int insertFunc(const string &name, bool isVoid, const vector<int> &dims = {}) {
+	int insertFunc(const string &name, bool isVoid, const vector<int> &dims = {}, Value* func = nullptr) {
 		auto scope = symbolStack.top();
 		if (funcsMap.count(name) || scope->count(name))
 			return 0;
 
-		funcsMap[name] = make_shared<FuncSymbol>(isVoid, dims);
+		funcsMap[name] = make_shared<FuncSymbol>(isVoid, dims, func);
 		return 1;
 	}
 

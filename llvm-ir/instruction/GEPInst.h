@@ -25,17 +25,22 @@ public:
 		std::move(name), GEP) {
 
 		this->targetType = base->getType()->getTargetType();
+		/// @@@@@@ @sad @@@@@@
+		if (targetType == IntegerType::INT32)
+			this->type = new PointerType(IntegerType::INT32);
+
 		this->addOperand(base);
 		this->addOperand(ptrOff);
-		this->addOperand(arrOff);
+		if (arrOff)
+			this->addOperand(arrOff);
 	}
 
 	std::string toString() override {
 		return name + " = getelementptr inbounds " +
 			targetType->toString() + ", " +
 			getOperand(0)->getType()->toString() + " " + getOperand(0)->getName() + ", " +
-			getOperand(1)->getType()->toString() + " " + getOperand(1)->getName() + ", " +
-			getOperand(2)->getType()->toString() + " " + getOperand(2)->getName();
+			getOperand(1)->getType()->toString() + " " + getOperand(1)->getName() +
+			((getOperand(2)) ? ", " + getOperand(2)->getType()->toString() + " " + getOperand(2)->getName() : "");
 	}
 };
 

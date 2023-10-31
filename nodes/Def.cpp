@@ -34,26 +34,31 @@ void Def::buildGlobalDef(const vector<int> &lens, int length) {
 		constant = new ConstantArray(initValue, length);
 	}
 
-	irBuilder.buildGlobalVar(ident.getValue(), constant, isConst);
-	symbol.insertVar(isConst, ident.getValue(), lens, initValue);
+	auto *globalVar = irBuilder.buildGlobalVar(ident.getValue(), constant, isConst);
+	symbol.insertVar(isConst, ident.getValue(), lens, initValue, globalVar);
 }
 
 void Def::buildLocalDef(const vector<int> &lens, int length) {
 	vector<int> initValue{};
+	Value *alloca = nullptr;
 
 	if (isConst) {
 
 		Constant *constant;
 		if (expPtrs.empty()) {
 			/// \SEEMS_NO \TODO
+			/// sysY limits that initial can be evaluated.
+			if (initValPtr) {
+				initValue = initValPtr->evaluate();
+				alloca = new ConstantInt(initValue[0]);
+			}
 		} else {
-			Value *alloca = irBuilder.buildAlloc(ident.getValue(), new ArrayType(length, IntegerType::INT32));
+			alloca = irBuilder.buildAlloc(ident.getValue(), new ArrayType(length, IntegerType::INT32));
 			if (initValPtr) {
 				initValue = initValPtr->evaluate();
 				for (int i = 0; i < length; ++i) {
 					Value *gep = irBuilder.buildGEP(
 						alloca,
-						new ConstantInt(0),
 						new ConstantInt(i)
 					);
 					irBuilder.buildStore(new ConstantInt(initValue[i]), gep);
@@ -64,17 +69,28 @@ void Def::buildLocalDef(const vector<int> &lens, int length) {
 	} else {
 
 		if (expPtrs.empty()) {
-			Value *alloca = irBuilder.buildAlloc(ident.getValue(), IntegerType::INT32);
+			alloca = irBuilder.buildAlloc(ident.getValue(), IntegerType::INT32);
 			if (initValPtr) {
 				Value *value = initValPtr->llvmIr();
 				irBuilder.buildStore(value, alloca);
 			}
 		} else {
-			/// \TODO
+			/// \SEEMS_NO \TODO
+			alloca = irBuilder.buildAlloc(ident.getValue(), new ArrayType(length, IntegerType::INT32));
+			if (initValPtr) {
+				vector<Value *> irList = initValPtr->llvmIrList();
+				for (int i = 0; i < length; ++i) {
+					Value *gep = irBuilder.buildGEP(
+						alloca,
+						new ConstantInt(i)
+					);
+					irBuilder.buildStore(irList[i], gep);
+				}
+			}
 		}
 
 	}
-	symbol.insertVar(isConst, ident.getValue(), lens, initValue);
+	symbol.insertVar(isConst, ident.getValue(), lens, initValue, alloca);
 }
 
 Value *Def::llvmIr() {

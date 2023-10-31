@@ -14,5 +14,7 @@ public:
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 	int evaluate();
+	Value *llvmIr() override;
+	Value *llvmIrAddr();
 };
 

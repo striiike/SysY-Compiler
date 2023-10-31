@@ -41,3 +41,13 @@ int PrimaryExp::evaluate() {
 		return numberPtr->evaluate();
 	return 0;
 }
+
+Value *PrimaryExp::llvmIr() {
+	if (expPtr)
+		return expPtr->llvmIr();
+	else if (lValPtr)
+		return lValPtr->llvmIr();
+	else if (numberPtr)
+		return numberPtr->llvmIr();
+	return nullptr;
+}

@@ -45,5 +45,15 @@ int UnaryExp::evaluate() {
 }
 
 Value *UnaryExp::llvmIr() {
-	ASTNode::llvmIr();
+	Value *ret;
+	if (primaryExpPtr)
+		ret = primaryExpPtr->llvmIr();
+	else if (functionCallPtr)
+		ret = functionCallPtr->llvmIr();
+
+	size_t negationCount = std::count(unaryOps.begin(), unaryOps.end(), MINU);
+	if (negationCount % 2) {
+		ret = irBuilder.buildAlu(AluType::SUB, new ConstantInt(0), ret);
+	}
+	return ret;
 }

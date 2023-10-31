@@ -27,8 +27,8 @@ Value *CompUnit::llvmIr() {
 	irBuilder.ctx.isGlobal = true;
 	for (const auto &i : declPtrs)
 		i->llvmIr();
-//	for (const auto &i : funcDefPtrs)
-//		i->llvmIr();
+	for (const auto &i : funcDefPtrs)
+		i->llvmIr();
 	mainFuncDefPtr->llvmIr();
 	symbol.endScope();
 	return nullptr;

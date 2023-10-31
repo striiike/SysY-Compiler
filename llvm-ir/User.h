@@ -9,6 +9,8 @@
 #include <utility>
 #include <vector>
 
+class Value;
+
 class User : public Value {
 protected:
 	std::vector<Value *> operandList;

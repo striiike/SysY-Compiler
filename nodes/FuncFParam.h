@@ -17,5 +17,6 @@ public:
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 
 	int getDim();
+	Value *llvmIr() override;
 };
 

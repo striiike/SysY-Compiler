@@ -18,6 +18,8 @@ public:
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 	int evaluate();
+
+	Value *llvmIr() override;
 };
 
 class Exp : public ASTNode {
@@ -29,6 +31,7 @@ public:
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 	int evaluate();
+	Value *llvmIr() override;
 };
 
 class Cond : public ASTNode {

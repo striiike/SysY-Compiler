@@ -26,6 +26,7 @@ using namespace std;
 
 template<typename T>
 class ExpUniform : public ASTNode {
+protected:
 	T leftOperand;
 	vector<TokenType> operators;
 	vector<T> operands;
@@ -57,40 +58,64 @@ public:
 		int res = leftOperand->evaluate();
 		for (int i = 0; i < operands.size(); ++i) {
 			switch (operators[i]) {
-			case PLUS:
-				res += operands[i]->evaluate();
+			case PLUS: res += operands[i]->evaluate();
 				break;
-			case MINU:
-				res -= operands[i]->evaluate();
+			case MINU: res -= operands[i]->evaluate();
 				break;
-			case MULT:
-				res *= operands[i]->evaluate();
+			case MULT: res *= operands[i]->evaluate();
 				break;
-			case DIV:
-				res /= operands[i]->evaluate();
+			case DIV: res /= operands[i]->evaluate();
 				break;
-			case MOD:
-				res %= operands[i]->evaluate();
+			case MOD: res %= operands[i]->evaluate();
 				break;
-			default:
-				res = 1145141919;
+			default: res = 1145141919;
 				break;
 			}
 		}
 		return res;
 	}
+
 };
 
 class MulExp : public ExpUniform<UnaryExpPtr> {
 public:
 	MulExp(UnaryExpPtr leftOperand, vector<TokenType> operators,
 		   vector<UnaryExpPtr> operands);
+
+	Value *llvmIr() override {
+		auto *sum = leftOperand->llvmIr();
+		for (int i = 0; i < operators.size(); ++i) {
+			if (operators[i] == TokenType::MULT) {
+				sum = irBuilder.buildAlu(AluType::MUL, sum, operands[i]->llvmIr());
+			}
+			if (operators[i] == TokenType::DIV) {
+				sum = irBuilder.buildAlu(AluType::SDIV, sum, operands[i]->llvmIr());
+			}
+			if (operators[i] == TokenType::MOD) {
+				sum = irBuilder.buildAlu(AluType::SREM, sum, operands[i]->llvmIr());
+			}
+		}
+		return sum;
+	}
 };
 
 class AddExp : public ExpUniform<MulExpPtr> {
 public:
 	AddExp(MulExpPtr leftOperand, vector<TokenType> operators,
 		   vector<MulExpPtr> operands);
+
+	Value *llvmIr() override {
+		auto *sum = leftOperand->llvmIr();
+		for (int i = 0; i < operators.size(); ++i) {
+			if (operators[i] == TokenType::PLUS) {
+				sum = irBuilder.buildAlu(AluType::ADD, sum, operands[i]->llvmIr());
+			}
+			if (operators[i] == TokenType::MINU) {
+				sum = irBuilder.buildAlu(AluType::SUB, sum, operands[i]->llvmIr());
+			}
+		}
+		return sum;
+	}
 };
 
 class RelExp : public ExpUniform<AddExpPtr> {
