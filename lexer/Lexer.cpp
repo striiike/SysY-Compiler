@@ -71,6 +71,18 @@ void Lexer::tokenize() {
 	}
 }
 
+
+void replaceEnter(std::string& s) {
+	std::string target = "\\n";
+	std::string replacement = "\n";
+
+	size_t startPos = 0;
+	while ((startPos = s.find(target, startPos)) != std::string::npos) {
+		s.replace(startPos, target.length(), replacement);
+		startPos += replacement.length();
+	}
+}
+
 void Lexer::tokenizeString() {
 	std::string str;
 	str.push_back(next());  // Skip the opening quote
@@ -78,6 +90,7 @@ void Lexer::tokenizeString() {
 		str.push_back(next());
 	}
 	str.push_back(next());  // Skip the closing quote
+	replaceEnter(str);
 	tokens.push_back({STRCON, str, curLineNum});
 }
 

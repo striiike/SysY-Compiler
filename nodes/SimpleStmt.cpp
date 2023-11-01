@@ -68,8 +68,11 @@ void ReturnStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 }
 
 Value *ReturnStmt::llvmIr() {
-	auto *ret = expPtr->llvmIr();
-	irBuilder.buildReturn(ret);
+	if (expPtr) {
+		auto *ret = expPtr->llvmIr();
+		irBuilder.buildReturn(ret);
+	} else
+		irBuilder.buildReturn(new Value(IntegerType::VOID, ""));
 	return nullptr;
 }
 
@@ -125,7 +128,7 @@ vector<string> splitStrings(const string &str) {
 
 	std::string token;
 	while (getline(ss, token, '%')) {
-		tokens.push_back(token);
+		tokens.push_back({token + "\0"});
 		if (ss.peek() == 'd') {
 			tokens.emplace_back("%d");
 			ss.ignore();

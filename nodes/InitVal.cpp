@@ -42,7 +42,12 @@ vector<Value *> ArrayInitVal::llvmIrList() {
 	vector<Value *> irList{};
 	irList.reserve(initValPtrs.size());
 	for (const auto &i : initValPtrs) {
-		irList.push_back(i->llvmIr());
+		if (i->isArray()) {
+			auto res = i->llvmIrList();
+			irList.insert(irList.end(), res.begin(), res.end());
+		} else {
+			irList.push_back(i->llvmIr());
+		}
 	}
 	return irList;
 }

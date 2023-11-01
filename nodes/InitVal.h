@@ -13,6 +13,7 @@ public:
 	virtual void debug() {}
 	virtual std::vector<int> evaluate() { return vector<int>{}; }
 	virtual std::vector<Value *> llvmIrList() { return vector<Value *>{}; }
+	virtual bool isArray() { return false; }
 };
 
 class ExpInitVal : public InitVal {
@@ -37,5 +38,6 @@ public:
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 	std::vector<int> evaluate() override;
 	vector<Value *> llvmIrList() override;
+	bool isArray() override { return true; }
 };
 
