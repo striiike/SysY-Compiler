@@ -31,10 +31,10 @@ public:
 		ss << "call " + getType()->toString() + " " + getOperand(0)->getName();
 		ss << "(";
 		if (operandList.size() > 1) {
-			ss << operandList[1]->getType()->toString() + " " + operandList[1]->getName();
+			ss << operandList[1]->toLlvmString();
 
 			for (int i = 2; i < operandList.size(); ++i) {
-				ss << ", " << operandList[i]->getType()->toString() + " " + operandList[i]->getName();
+				ss << ", " << operandList[i]->toLlvmString();
 			}
 		}
 		ss << ")";

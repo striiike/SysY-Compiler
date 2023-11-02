@@ -17,7 +17,7 @@ public:
 	}
 
 	std::string toString() override {
-		return "ret " + getOperand(0)->getType()->toString() + " " + getOperand(0)->getName();
+		return "ret " + getOperand(0)->toLlvmString();
 	}
 };
 

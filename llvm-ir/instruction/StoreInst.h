@@ -19,8 +19,8 @@ public:
 
 	std::string toString() override {
 		return "store " +
-			operandList[0]->getType()->toString() + " " + getOperand(0)->getName() + ", " +
-			operandList[1]->getType()->toString() + " " + getOperand(1)->getName();
+			getOperand(0)->toLlvmString() + ", " +
+			getOperand(1)->toLlvmString();
 	}
 };
 

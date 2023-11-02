@@ -17,7 +17,7 @@ public:
 
 	std::string toString() override {
 		return name + " = load " + type->toString() + ", " +
-			getOperand(0)->getType()->toString() + " " + getOperand(0)->getName();
+			getOperand(0)->toLlvmString();
 	}
 };
 

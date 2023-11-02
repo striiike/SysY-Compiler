@@ -11,7 +11,7 @@
 #include "Instruction.h"
 
 enum AluType {
-	ADD, SUB, MUL, SDIV, ICMP, SREM
+	ADD, SUB, MUL, SDIV, SREM
 };
 
 class AluInst : public Instruction {
@@ -22,7 +22,6 @@ public:
 		{SUB, "sub"},
 		{MUL, "mul"},
 		{SDIV, "sdiv"},
-		{ICMP, "icmp"},
 		{SREM, "srem"}
 	};
 	//	add 	<result> = add <ty> <op1>, <op2>
@@ -41,7 +40,7 @@ public:
 
 	std::string toString() override {
 		return name + " = " + aluTypeMap[aluType] + " " +
-			getOperand(0)->getType()->toString() + " " + getOperand(0)->getName() + ", " +
+			getOperand(0)->toLlvmString() + ", " +
 			getOperand(1)->getName();
 
 	}

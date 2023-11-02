@@ -38,9 +38,9 @@ public:
 	std::string toString() override {
 		return name + " = getelementptr inbounds " +
 			targetType->toString() + ", " +
-			getOperand(0)->getType()->toString() + " " + getOperand(0)->getName() + ", " +
-			getOperand(1)->getType()->toString() + " " + getOperand(1)->getName() +
-			((getOperand(2)) ? ", " + getOperand(2)->getType()->toString() + " " + getOperand(2)->getName() : "");
+			getOperand(0)->toLlvmString() + ", " +
+			getOperand(1)->toLlvmString() +
+			((getOperand(2)) ? ", " + getOperand(2)->toLlvmString() : "");
 	}
 };
 

@@ -10,6 +10,7 @@
 #include <utility>
 #include <fstream>
 
+#include "Type.h"
 class Use;
 class Type;
 
@@ -32,6 +33,10 @@ public:
 
 	virtual std::string toString() {
 		return " !ub! ";
+	}
+
+	std::string toLlvmString() {
+		return type->toString() + " " + name;
 	}
 };
 

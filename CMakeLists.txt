@@ -86,4 +86,6 @@ add_executable(compiler main.cpp
         llvm-ir/instruction/LoadInst.h
         llvm-ir/instruction/CallInst.h
         llvm-ir/constant/ConstantString.h
+        llvm-ir/instruction/BrInst.h
+        llvm-ir/instruction/IcmpInst.h
 )
