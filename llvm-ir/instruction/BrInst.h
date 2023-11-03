@@ -15,13 +15,13 @@ public:
 		addOperand(condition);
 		addOperand((Value *)bb1);
 		addOperand((Value *)bb2);
-		jump = true;
+		jump = false;
 	}
 
-	BrInst(BasicBlock *bb)
+	explicit BrInst(BasicBlock *bb)
 		: Instruction(IntegerType::VOID, "jump", InstType::BRANCH) {
 		addOperand((Value *)bb);
-		jump = false;
+		jump = true;
 	}
 
 	std::string toString() override {

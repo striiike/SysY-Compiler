@@ -14,7 +14,36 @@ void IfStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 }
 
 Value *IfStmt::llvmIr() {
+	BasicBlock *thenBb, *elseBb, *endBb;
+	thenBb = irBuilder.buildBb();
+	if (stmtElsePtr)
+		elseBb = irBuilder.buildBb();
+	endBb = irBuilder.buildBb();
 
+	irBuilder.ctx.thenBb = thenBb;
+	irBuilder.ctx.endBb = (stmtElsePtr) ? elseBb : endBb;
+
+	condPtr->llvmIr();
+
+	irBuilder.setCurBb(thenBb);
+	irBuilder.addBasicBlock(thenBb);
+	stmtPtr->llvmIr();
+	irBuilder.buildBrInst(endBb);
+
+	if (stmtElsePtr) {
+		irBuilder.setCurBb(elseBb);
+		irBuilder.addBasicBlock(elseBb);
+		stmtElsePtr->llvmIr();
+		irBuilder.buildBrInst(endBb);
+	}
+
+	irBuilder.setCurBb(endBb);
+	irBuilder.addBasicBlock(endBb);
+
+	irBuilder.ctx.thenBb = nullptr;
+	irBuilder.ctx.endBb = nullptr;
+
+	return nullptr;
 }
 
 _ForStmt::_ForStmt(LValPtr lValPtr, ExpPtr expPtr)

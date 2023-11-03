@@ -20,6 +20,9 @@
 #include "instruction/ReturnInst.h"
 #include "instruction/LoadInst.h"
 #include "instruction/CallInst.h"
+#include "instruction/ZextInst.h"
+#include "instruction/BrInst.h"
+#include "instruction/IcmpInst.h"
 
 using namespace std;
 
@@ -31,6 +34,9 @@ struct IrCtx {
 	bool afterFuncDef;
 	int loopNum = 0;
 	int layerNum = 0;
+
+
+	BasicBlock *thenBb, *elseBb, *endBb;
 };
 
 struct IrRet {
@@ -123,6 +129,12 @@ public:
 
 	void setModule(Module *Module) { module = Module; }
 
+	BasicBlock *buildBb() {
+		string name = genBbName();
+		auto *bb = new BasicBlock(name);
+		return bb;
+	}
+
 	Value *buildGlobalVar(const string &ident, Constant *constant, bool isConst) {
 		string name = genGlobalVarName(ident);
 		auto *globalVar = new GlobalVariable(new PointerType(constant->getType()), name, isConst, constant);
@@ -187,6 +199,32 @@ public:
 		auto *call = new CallInst(name, func, args);
 		curBb->addInstruction(call);
 		return call;
+	}
+
+	Value *buildZext(Value *val, Type* tar) {
+		string name = genLocalVarName();
+		auto *zext = new ZextInst(name, val, tar);
+		curBb->addInstruction(zext);
+		return zext;
+	}
+
+	Value *buildIcmpInst(IcmpType ty, Value *op1, Value *op2) {
+		string name = genLocalVarName();
+		auto *cmp = new IcmpInst(name, ty, op1, op2);
+		curBb->addInstruction(cmp);
+		return cmp;
+	}
+
+	Value *buildBrInst(Value *cond, BasicBlock* bb1, BasicBlock* bb2) {
+		auto *br = new BrInst(cond, bb1, bb2);
+		curBb->addInstruction(br);
+		return nullptr;
+	}
+
+	Value *buildBrInst(BasicBlock* bb) {
+		auto *br = new BrInst(bb);
+		curBb->addInstruction(br);
+		return nullptr;
 	}
 
 };

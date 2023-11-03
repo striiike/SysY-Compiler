@@ -63,7 +63,9 @@ void FunctionCall::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 }
 
 Value *FunctionCall::llvmIr() {
-	vector<Value *> args = funcRParamsPtr->llvmIrList();
+	vector<Value *> args{};
+	if (funcRParamsPtr)
+		args = funcRParamsPtr->llvmIrList();
 	auto funcPtr = symbol.getFunc(ident.getValue());
 	auto *call = irBuilder.buildCall((Function *)funcPtr->getLlvmValue(), args);
 	return call;

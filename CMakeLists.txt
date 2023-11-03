@@ -88,4 +88,5 @@ add_executable(compiler main.cpp
         llvm-ir/constant/ConstantString.h
         llvm-ir/instruction/BrInst.h
         llvm-ir/instruction/IcmpInst.h
+        llvm-ir/instruction/ZextInst.h
 )

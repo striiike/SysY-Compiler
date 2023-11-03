@@ -122,21 +122,121 @@ class RelExp : public ExpUniform<AddExpPtr> {
 public:
 	RelExp(AddExpPtr leftOperand, vector<TokenType> operators,
 		   vector<AddExpPtr> operands);
+
+	Value *llvmIr() override {
+		Value *val = leftOperand->llvmIr();
+		for (int i = 0; i < operators.size(); ++i) {
+			if (val->getType()->isInt1())
+				val = irBuilder.buildZext(val, IntegerType::INT32);
+			Value *cmpVal = operands[i]->llvmIr();
+			if (operators[i] == TokenType::LSS) {
+				val = irBuilder.buildIcmpInst(IcmpType::LT, val, cmpVal);
+			}
+			if (operators[i] == TokenType::LEQ) {
+				val = irBuilder.buildIcmpInst(IcmpType::LE, val, cmpVal);
+			}
+			if (operators[i] == TokenType::GRE) {
+				val = irBuilder.buildIcmpInst(IcmpType::GT, val, cmpVal);
+			}
+			if (operators[i] == TokenType::GEQ) {
+				val = irBuilder.buildIcmpInst(IcmpType::GE, val, cmpVal);
+			}
+		}
+		return val;
+	}
 };
 
 class EqExp : public ExpUniform<RelExpPtr> {
 public:
 	EqExp(RelExpPtr leftOperand, vector<TokenType> operators, vector<RelExpPtr> operands);
+
+	Value *llvmIr() override {
+		Value *val = leftOperand->llvmIr();
+		for (int i = 0; i < operators.size(); ++i) {
+			if (val->getType()->isInt1())
+				val = irBuilder.buildZext(val, IntegerType::INT32);
+			Value *cmpVal = operands[i]->llvmIr();
+			if (operators[i] == TokenType::EQL) {
+				val = irBuilder.buildIcmpInst(IcmpType::EQ, val, cmpVal);
+			}
+			if (operators[i] == TokenType::NEQ) {
+				val = irBuilder.buildIcmpInst(IcmpType::NE, val, cmpVal);
+			}
+		}
+		return val;
+	}
 };
 
 class LAndExp : public ExpUniform<EqExpPtr> {
 public:
 	LAndExp(EqExpPtr leftOperand, vector<TokenType> operators,
 			vector<EqExpPtr> operands);
+
+	/// it needs a @exit label & a @failure label
+	/// @failure is next LOrExp entry
+	/// @exit
+	Value *llvmIrAnd(BasicBlock *failure) {
+		if (operands.empty()) {
+			auto *val = leftOperand->llvmIr();
+			irBuilder.buildBrInst(val, irBuilder.ctx.thenBb, failure);
+		} else {
+			auto *val = leftOperand->llvmIr();
+			BasicBlock *bb = irBuilder.buildBb();
+			irBuilder.buildBrInst(val, bb, failure);
+			irBuilder.setCurBb(bb);
+			irBuilder.addBasicBlock(bb);
+
+			int len = (int)operators.size();
+			for (int i = 0; i < len; ++i) {
+				if (i == len - 1) {
+					val = leftOperand->llvmIr();
+					irBuilder.buildBrInst(val, irBuilder.ctx.thenBb, failure);
+				} else {
+					val = leftOperand->llvmIr();
+					bb = irBuilder.buildBb();
+					irBuilder.buildBrInst(val, bb, failure);
+					irBuilder.setCurBb(bb);
+					irBuilder.addBasicBlock(bb);
+				}
+			}
+		}
+
+		return nullptr;
+	}
 };
 
 class LOrExp : public ExpUniform<LAndExpPtr> {
 public:
 	LOrExp(LAndExpPtr leftOperand, vector<TokenType> operators,
 		   vector<LAndExpPtr> operands);
+
+	/// it needs a @success label & a @next label
+	/// @success is @thenBb
+	/// @exit 	 is @elseBb or @follow
+	Value *llvmIr() override {
+		if (operands.empty()) {
+			leftOperand->llvmIrAnd(irBuilder.ctx.endBb);
+
+		} else {
+			BasicBlock *bb = irBuilder.buildBb();
+			leftOperand->llvmIrAnd(bb);
+			irBuilder.setCurBb(bb);
+			irBuilder.addBasicBlock(bb);
+
+			int len = (int)operators.size();
+			for (int i = 0; i < len; ++i) {
+				if (i == len - 1) {
+					operands[i]->llvmIrAnd(irBuilder.ctx.endBb);
+				} else {
+					bb = irBuilder.buildBb();
+					operands[i]->llvmIrAnd(bb);
+					irBuilder.setCurBb(bb);
+					irBuilder.addBasicBlock(bb);
+				}
+			}
+
+		}
+
+		return nullptr;
+	}
 };

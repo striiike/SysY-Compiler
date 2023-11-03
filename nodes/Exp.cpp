@@ -15,7 +15,7 @@ int Number::evaluate() {
 	return num;
 }
 
-Value* Number::llvmIr() {
+Value *Number::llvmIr() {
 	return new ConstantInt(num);
 }
 
@@ -47,3 +47,6 @@ void Cond::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	lOrExpPtr->checkError(ctx, ret);
 }
 
+Value *Cond::llvmIr() {
+	return lOrExpPtr->llvmIr();
+}

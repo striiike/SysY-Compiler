@@ -40,6 +40,7 @@ public:
 	explicit Cond(LOrExpPtr lOrExpPtr);
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+	Value *llvmIr() override;
 };
 
 
