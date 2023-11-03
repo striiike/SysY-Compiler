@@ -18,9 +18,8 @@ enum InstType {
 
 class Instruction : public User {
 	BasicBlock *parent{};
-	InstType instType;
 public:
-
+	InstType instType;
 	/// @name for return reg, @ty for inst type, @parent for bb, @params for operands
 
 	Instruction(Type *ty, std::string name, InstType instTy)

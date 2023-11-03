@@ -30,6 +30,12 @@ public:
 		instructionList.push_back(inst);
 	}
 
+	bool lastReturn() {
+		if (instructionList.empty())
+			return false;
+		return instructionList.back()->instType == InstType::RETURN;
+	}
+
 	std::string toString() override {
 		std::stringstream ss;
 		ss << name + ":\n";

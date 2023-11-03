@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <memory>
+#include <stack>
 #include "Function.h"
 #include "Module.h"
 #include "constant/Constant.h"
@@ -35,8 +36,7 @@ struct IrCtx {
 	int loopNum = 0;
 	int layerNum = 0;
 
-
-	BasicBlock *thenBb, *elseBb, *endBb;
+	BasicBlock *thenBb, *condBb, *endBb;
 };
 
 struct IrRet {
@@ -71,6 +71,9 @@ class IrBuilder {
 	Module *module{};
 public:
 	IrCtx ctx = IrCtx();
+
+	std::stack<BasicBlock *> condStack{};
+	std::stack<BasicBlock *> endStack{};
 
 	IrBuilder()
 		: bbCnt(0), argsCnt(0), globalVarCnt(0), strLiteralCnt(0), localVarCnt(0) {}
@@ -201,7 +204,7 @@ public:
 		return call;
 	}
 
-	Value *buildZext(Value *val, Type* tar) {
+	Value *buildZext(Value *val, Type *tar) {
 		string name = genLocalVarName();
 		auto *zext = new ZextInst(name, val, tar);
 		curBb->addInstruction(zext);
@@ -215,18 +218,24 @@ public:
 		return cmp;
 	}
 
-	Value *buildBrInst(Value *cond, BasicBlock* bb1, BasicBlock* bb2) {
+	Value *buildBrInst(Value *cond, BasicBlock *bb1, BasicBlock *bb2) {
 		auto *br = new BrInst(cond, bb1, bb2);
 		curBb->addInstruction(br);
 		return nullptr;
 	}
 
-	Value *buildBrInst(BasicBlock* bb) {
+	Value *buildBrInst(BasicBlock *bb) {
 		auto *br = new BrInst(bb);
 		curBb->addInstruction(br);
 		return nullptr;
 	}
 
+	void fillInReturn() {
+		if (!curBb->lastReturn()) {
+			Value *val = new ConstantInt(0, ctx.voidFunc ? 0 : 32);
+			buildReturn(val);
+		}
+	}
 };
 
 extern IrBuilder irBuilder;

@@ -16,6 +16,8 @@ public:
 		  Constant(IntegerType::INT32, to_string(value)) {}
 
 	std::string toString() override {
+		if (type->isVoid())
+			return "void";
 		return type->toString() + " " + std::to_string(value);
 	}
 };

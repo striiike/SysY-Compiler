@@ -34,7 +34,7 @@ void FuncDef::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 Value *FuncDef::llvmIr() {
 	irBuilder.ctx.isGlobal = false;
 	irBuilder.ctx.afterFuncDef = true;
-	irBuilder.ctx.voidFunc = funcType.getType() == INTTK;
+	irBuilder.ctx.voidFunc = funcType.getType() == VOIDTK;
 	symbol.startScope();
 
 	Type *ty = funcType.getType() == INTTK ? IntegerType::INT32 : IntegerType::VOID;
@@ -57,6 +57,8 @@ Value *FuncDef::llvmIr() {
 	if (funcFParamsPtr)
 		funcFParamsPtr->llvmIr();
 	blockPtr->llvmIr();
+
+	irBuilder.fillInReturn();
 
 	irBuilder.ctx.afterFuncDef = false;
 	return nullptr;

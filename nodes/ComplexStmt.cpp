@@ -59,6 +59,14 @@ void _ForStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	expPtr->checkError(ctx, ret);
 }
 
+Value *_ForStmt::llvmIr() {
+	auto *rvalue = expPtr->llvmIr();
+	auto *lval = lValPtr->llvmIrAddr();
+	irBuilder.buildStore(rvalue, lval);
+	/// no need for sysY
+	return nullptr;
+}
+
 ForStmt::ForStmt(CondPtr condPtr, StmtPtr stmtPtr, _ForStmtPtr assignStmtPtr1, _ForStmtPtr assignStmtPtr2) :
 	condPtr(std::move(condPtr)), stmtPtr(std::move(stmtPtr)),
 	assignStmtPtr1(std::move(assignStmtPtr1)),
@@ -77,5 +85,48 @@ void ForStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	ctx->loopNum--;
 }
 Value *ForStmt::llvmIr() {
+	if (assignStmtPtr1)
+		assignStmtPtr1->llvmIr();
 
+	BasicBlock *condBb, *bodyBb, *endBb;
+	condBb = irBuilder.buildBb();
+	irBuilder.buildBrInst(condBb);
+
+	irBuilder.setCurBb(condBb);
+	irBuilder.addBasicBlock(condBb);
+
+	bodyBb = irBuilder.buildBb();
+	endBb = irBuilder.buildBb();
+
+
+	irBuilder.condStack.push(condBb);
+	irBuilder.endStack.push(endBb);
+	irBuilder.ctx.condBb = condBb;
+	irBuilder.ctx.thenBb = bodyBb;
+	irBuilder.ctx.endBb = endBb;
+
+	if (condPtr)
+		condPtr->llvmIr();
+	else
+		irBuilder.buildBrInst(bodyBb);
+
+	irBuilder.setCurBb(bodyBb);
+	irBuilder.addBasicBlock(bodyBb);
+	if (stmtPtr)
+		stmtPtr->llvmIr();
+	if (assignStmtPtr2)
+		assignStmtPtr2->llvmIr();
+	irBuilder.buildBrInst(condBb);
+
+	irBuilder.setCurBb(endBb);
+	irBuilder.addBasicBlock(endBb);
+
+
+	irBuilder.condStack.pop();
+	irBuilder.endStack.pop();
+	irBuilder.ctx.thenBb = nullptr;
+	irBuilder.ctx.condBb = nullptr;
+	irBuilder.ctx.endBb = nullptr;
+
+	return nullptr;
 }

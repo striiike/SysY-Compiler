@@ -39,7 +39,8 @@ void BreakStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 		errorList.emplace_back(Exception::BREAK_CONTINUE_OUT_LOOP, _break.getLineNum());
 }
 Value *BreakStmt::llvmIr() {
-	SimpleStmt::llvmIr();
+	irBuilder.buildBrInst(irBuilder.endStack.top());
+	return nullptr;
 }
 
 ContinueStmt::ContinueStmt(TokenNode _continue)
@@ -50,7 +51,8 @@ void ContinueStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 		errorList.emplace_back(Exception::BREAK_CONTINUE_OUT_LOOP, _continue.getLineNum());
 }
 Value *ContinueStmt::llvmIr() {
-	SimpleStmt::llvmIr();
+	irBuilder.buildBrInst(irBuilder.condStack.top());
+	return nullptr;
 }
 
 ReturnStmt::ReturnStmt(TokenNode _return, ExpPtr expPtr)

@@ -37,6 +37,7 @@ public:
 	_ForStmt(LValPtr lValPtr, ExpPtr expPtr);
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
+	Value *llvmIr() override;
 };
 
 

@@ -510,7 +510,7 @@ ComplexStmtPtr Parser::parseComplexStmt() {
 		_ForStmtPtr assignStmtPtr2 = nullptr;
 
 		if (tokenStream.peek()->type != RPARENT) {
-			assignStmtPtr1 = parse_ForStmt();
+			assignStmtPtr2 = parse_ForStmt();
 		}
 		tokenStream.check(RPARENT, Exception::RPARENT_LACKED);
 		return std::make_shared<ForStmt>(condPtr, parseStmt(), assignStmtPtr1, assignStmtPtr2);
