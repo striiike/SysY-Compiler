@@ -201,10 +201,10 @@ public:
 			int len = (int)operators.size();
 			for (int i = 0; i < len; ++i) {
 				if (i == len - 1) {
-					val = leftOperand->llvmIr();
+					val = operands[i]->llvmIr();
 					irBuilder.buildBrInst(val, irBuilder.ctx.thenBb, failure);
 				} else {
-					val = leftOperand->llvmIr();
+					val = operands[i]->llvmIr();
 					bb = irBuilder.buildBb();
 					irBuilder.buildBrInst(val, bb, failure);
 					irBuilder.setCurBb(bb);

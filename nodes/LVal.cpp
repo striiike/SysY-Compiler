@@ -57,7 +57,7 @@ Value *LVal::llvmIr() {
 		Value *realOff = new ConstantInt(0);
 		if (varSymbol->lens.size() == 2 && array.size() == 1) {
 			Value *arrOff = array[0]->llvmIr();
-			realOff = irBuilder.buildAlu(AluType::MUL, arrOff, new ConstantInt(varSymbol->lens[0]));
+			realOff = irBuilder.buildAlu(AluType::MUL, arrOff, new ConstantInt(varSymbol->lens[1]));
 		}
 		auto *gep = irBuilder.buildGEP(varSymbol->getLlvmValue(), realOff);
 		return gep;
