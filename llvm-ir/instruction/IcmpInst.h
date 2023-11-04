@@ -27,6 +27,7 @@ public:
 
 	IcmpInst(std::string name, IcmpType ty, Value *op1, Value *op2)
 		: Instruction(IntegerType::INT1, std::move(name), InstType::ICMP) {
+		icmpType = ty;
 		addOperand(op1);
 		addOperand(op2);
 	}

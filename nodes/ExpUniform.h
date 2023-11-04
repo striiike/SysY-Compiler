@@ -129,6 +129,8 @@ public:
 			if (val->getType()->isInt1())
 				val = irBuilder.buildZext(val, IntegerType::INT32);
 			Value *cmpVal = operands[i]->llvmIr();
+			if (cmpVal->getType()->isInt1())
+				cmpVal = irBuilder.buildZext(cmpVal, IntegerType::INT32);
 			if (operators[i] == TokenType::LSS) {
 				val = irBuilder.buildIcmpInst(IcmpType::LT, val, cmpVal);
 			}
@@ -151,19 +153,29 @@ public:
 	EqExp(RelExpPtr leftOperand, vector<TokenType> operators, vector<RelExpPtr> operands);
 
 	Value *llvmIr() override {
-		Value *val = leftOperand->llvmIr();
-		for (int i = 0; i < operators.size(); ++i) {
-			if (val->getType()->isInt1())
-				val = irBuilder.buildZext(val, IntegerType::INT32);
-			Value *cmpVal = operands[i]->llvmIr();
-			if (operators[i] == TokenType::EQL) {
-				val = irBuilder.buildIcmpInst(IcmpType::EQ, val, cmpVal);
+		if (operands.empty()) {
+			Value *val = leftOperand->llvmIr();
+			if (val->getType()->isInt32()) {
+				val = irBuilder.buildIcmpInst(IcmpType::NE, val, new ConstantInt(0));
 			}
-			if (operators[i] == TokenType::NEQ) {
-				val = irBuilder.buildIcmpInst(IcmpType::NE, val, cmpVal);
+			return val;
+		} else {
+			Value *val = leftOperand->llvmIr();
+			for (int i = 0; i < operators.size(); ++i) {
+				if (val->getType()->isInt1())
+					val = irBuilder.buildZext(val, IntegerType::INT32);
+				Value *cmpVal = operands[i]->llvmIr();
+				if (cmpVal->getType()->isInt1())
+					cmpVal = irBuilder.buildZext(cmpVal, IntegerType::INT32);
+				if (operators[i] == TokenType::EQL) {
+					val = irBuilder.buildIcmpInst(IcmpType::EQ, val, cmpVal);
+				}
+				if (operators[i] == TokenType::NEQ) {
+					val = irBuilder.buildIcmpInst(IcmpType::NE, val, cmpVal);
+				}
 			}
+			return val;
 		}
-		return val;
 	}
 };
 

@@ -72,7 +72,7 @@ class IrBuilder {
 public:
 	IrCtx ctx = IrCtx();
 
-	std::stack<BasicBlock *> condStack{};
+	std::stack<BasicBlock *> incStack{};
 	std::stack<BasicBlock *> endStack{};
 
 	IrBuilder()
@@ -232,7 +232,11 @@ public:
 
 	void fillInReturn() {
 		if (!curBb->lastReturn()) {
-			Value *val = new ConstantInt(0, ctx.voidFunc ? 0 : 32);
+			Value *val;
+			if (ctx.voidFunc)
+				val = new Value(IntegerType::VOID, "");
+			else
+				val = new ConstantInt(0);
 			buildReturn(val);
 		}
 	}

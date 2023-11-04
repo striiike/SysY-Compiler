@@ -55,5 +55,10 @@ Value *UnaryExp::llvmIr() {
 	if (negationCount % 2) {
 		ret = irBuilder.buildAlu(AluType::SUB, new ConstantInt(0), ret);
 	}
+	size_t notCount = std::count(unaryOps.begin(), unaryOps.end(), NOT);
+	if (notCount % 2) {
+		ret = irBuilder.buildIcmpInst(IcmpType::NE, ret, new ConstantInt(0));
+		ret = irBuilder.buildZext(ret, IntegerType::INT32);
+	}
 	return ret;
 }

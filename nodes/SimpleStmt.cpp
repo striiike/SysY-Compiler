@@ -51,7 +51,7 @@ void ContinueStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 		errorList.emplace_back(Exception::BREAK_CONTINUE_OUT_LOOP, _continue.getLineNum());
 }
 Value *ContinueStmt::llvmIr() {
-	irBuilder.buildBrInst(irBuilder.condStack.top());
+	irBuilder.buildBrInst(irBuilder.incStack.top());
 	return nullptr;
 }
 

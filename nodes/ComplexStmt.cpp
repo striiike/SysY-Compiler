@@ -88,7 +88,7 @@ Value *ForStmt::llvmIr() {
 	if (assignStmtPtr1)
 		assignStmtPtr1->llvmIr();
 
-	BasicBlock *condBb, *bodyBb, *endBb;
+	BasicBlock *condBb, *bodyBb, *endBb, *incBb;
 	condBb = irBuilder.buildBb();
 	irBuilder.buildBrInst(condBb);
 
@@ -96,10 +96,11 @@ Value *ForStmt::llvmIr() {
 	irBuilder.addBasicBlock(condBb);
 
 	bodyBb = irBuilder.buildBb();
+	incBb = irBuilder.buildBb();
 	endBb = irBuilder.buildBb();
 
 
-	irBuilder.condStack.push(condBb);
+	irBuilder.incStack.push(incBb);
 	irBuilder.endStack.push(endBb);
 	irBuilder.ctx.condBb = condBb;
 	irBuilder.ctx.thenBb = bodyBb;
@@ -114,6 +115,13 @@ Value *ForStmt::llvmIr() {
 	irBuilder.addBasicBlock(bodyBb);
 	if (stmtPtr)
 		stmtPtr->llvmIr();
+
+
+	irBuilder.buildBrInst(incBb);
+	irBuilder.setCurBb(incBb);
+	irBuilder.addBasicBlock(incBb);
+
+
 	if (assignStmtPtr2)
 		assignStmtPtr2->llvmIr();
 	irBuilder.buildBrInst(condBb);
@@ -122,7 +130,7 @@ Value *ForStmt::llvmIr() {
 	irBuilder.addBasicBlock(endBb);
 
 
-	irBuilder.condStack.pop();
+	irBuilder.incStack.pop();
 	irBuilder.endStack.pop();
 	irBuilder.ctx.thenBb = nullptr;
 	irBuilder.ctx.condBb = nullptr;
