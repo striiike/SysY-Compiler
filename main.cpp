@@ -71,7 +71,7 @@ int main() {
 
 	AST.llvmIr();
 //	cout << irBuilder.getModule()->toString() << endl;
-	llvmfile << irBuilder.getModule()->toString() << endl;
+//	llvmfile << irBuilder.getModule()->toString() << endl;
 
 //	auto *mid = new MidEnd();
 //	mid->run(irBuilder.getModule());
@@ -81,7 +81,7 @@ int main() {
 	(new Mem2Reg())->run(irBuilder.getModule());
 
 
-//	llvmfile << irBuilder.getModule()->toString() << endl;
+	llvmfile << irBuilder.getModule()->toString() << endl;
 
 
 	llvmfile_m2r << irBuilder.getModule()->toString() << endl;

@@ -26,7 +26,7 @@ public:
 	void addValueFromBb(Value *val, BasicBlock *bb) {
 		size_t index = std::find(preBbs->begin(), preBbs->end(), bb) - preBbs->begin();
 		operandList[index] = val;
-		useList.push_back(new Use(this, val));
+		val->useList.push_back(new Use(this, val));
 	}
 
 	std::string toString() override {

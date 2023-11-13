@@ -13,6 +13,7 @@
 #include "../llvm-ir/IrBuilder.h"
 
 #include <set>
+#include <iostream>
 
 /// algorithm from https://buaa-se-compiling.github.io/miniSysY-tutorial/challenge/mem2reg/help.html
 /// @defAndUse  ->  @insertPhi  ->  @rename
@@ -27,6 +28,12 @@ void Mem2Reg::run(Module *module) {
 			for (auto it = instList->begin(); it!=instList->end();) {
 				auto inst = *it;
 
+
+				if (inst->name=="%t_len_0")
+					int a=24;
+
+
+
 				if (inst->instType==InstType::ALLOCA &&
 					dynamic_cast<AllocaInst *>(inst)->retType==IntegerType::INT32) {
 
@@ -39,6 +46,7 @@ void Mem2Reg::run(Module *module) {
 				} else {
 					++it;
 				}
+//				cout << irBuilder.getModule()->toString() << endl;
 			}
 
 //			auto instList = basicBlock->instructionList;
@@ -135,6 +143,7 @@ void Mem2Reg::rename(BasicBlock *entry) {
 	for (auto it = instList->begin(); it!=instList->end();) {
 		auto inst = (Instruction *)(*it);
 		if (inst->instType==InstType::LOAD && useInsts->count(inst)) {
+
 			inst->replaceOld2New(!reach->empty() ? reach->top() : new ConstantInt(0,0));
 			it = instList->erase(it);
 		} else if (inst->instType==InstType::STORE && defInsts->count(inst)) {
