@@ -34,7 +34,7 @@ public:
 
 	std::string toString() override {
 		return name + " = icmp " + icmpTypeMap[icmpType] + " " +
-			getOperand(0)->toLlvmString() + ", " +  getOperand(1)->getName();
+			getOperand(0)->toLlvmString() + ", " + getOperand(1)->getName();
 	}
 
 };

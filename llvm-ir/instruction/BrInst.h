@@ -8,6 +8,9 @@
 #include "Instruction.h"
 
 class BrInst : public Instruction {
+public:
+	// jump -> br label %x
+	// not jump -> br i1 %n label %x label %y
 	bool jump;
 public:
 	BrInst(Value *condition, BasicBlock *bb1, BasicBlock *bb2)

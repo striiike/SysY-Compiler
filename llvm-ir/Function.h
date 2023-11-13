@@ -10,6 +10,7 @@
 #include <string>
 #include <utility>
 #include <sstream>
+#include <unordered_map>
 
 class Function;
 
@@ -29,9 +30,21 @@ public:
 };
 
 class Function : public User {
+public:
 	std::vector<Argument *> argumentList;
 	std::list<BasicBlock *> basicList;
 	Type *retType;
+
+	// CFG
+	unordered_map<BasicBlock *, vector<BasicBlock *> *>
+		*preMap = new unordered_map<BasicBlock *, vector<BasicBlock *> *>();
+	unordered_map<BasicBlock *, vector<BasicBlock *> *>
+		*sucMap = new unordered_map<BasicBlock *, vector<BasicBlock *> *>();
+
+	// dominateTree
+	unordered_map<BasicBlock *, vector<BasicBlock *> *>
+		*dominateTree = new unordered_map<BasicBlock *, vector<BasicBlock *> *>();
+
 public:
 	static Function *getint;
 	static Function *putch;
@@ -66,7 +79,7 @@ public:
 			ss << "declare " + retType->toString() + " " + this->name + "(";
 			for (auto &i : argumentList) {
 				ss << i->getType()->toString();
-				if (&i != &argumentList.back())
+				if (&i!=&argumentList.back())
 					ss << ", ";
 			}
 			ss << ")";
@@ -76,7 +89,7 @@ public:
 		ss << "define dso_local " + retType->toString() + " " + this->name + "(";
 		for (auto &i : argumentList) {
 			ss << i->toString();
-			if (&i != &argumentList.back())
+			if (&i!=&argumentList.back())
 				ss << ", ";
 		}
 		ss << ") {\n";

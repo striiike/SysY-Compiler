@@ -22,7 +22,7 @@ public:
 		std::string replacement = "\\0a";
 
 		size_t startPos = 0;
-		while ((startPos = s.find(target, startPos)) != std::string::npos) {
+		while ((startPos = s.find(target, startPos))!=std::string::npos) {
 			s.replace(startPos, target.length(), replacement);
 			startPos += replacement.length();
 		}
@@ -34,7 +34,7 @@ public:
 		std::string replacement = "\n";
 
 		size_t startPos = 0;
-		while ((startPos = s.find(target, startPos)) != std::string::npos) {
+		while ((startPos = s.find(target, startPos))!=std::string::npos) {
 			s.replace(startPos, target.length(), replacement);
 			startPos += replacement.length();
 		}

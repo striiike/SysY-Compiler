@@ -25,7 +25,7 @@ public:
 
 	std::string toString() override {
 		std::stringstream ss;
-		if (getType() != IntegerType::VOID) {
+		if (getType()!=IntegerType::VOID) {
 			ss << getName() + " = ";
 		}
 		ss << "call " + getType()->toString() + " " + getOperand(0)->getName();

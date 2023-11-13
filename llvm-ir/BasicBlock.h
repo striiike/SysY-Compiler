@@ -11,12 +11,25 @@
 #include <sstream>
 #include "Value.h"
 //#include "Function.h"
+using namespace std;
 
 class Function;
 
 class BasicBlock : public Value {
+public:
 	std::list<Instruction *> instructionList;
 	Function *parent{};
+
+	// CFG
+	vector<BasicBlock *> *preBbs{};
+	vector<BasicBlock *> *sucBbs{};
+
+	/// dominateTree
+	BasicBlock *immDominator = nullptr;
+	vector<BasicBlock *> *childBbs{};
+
+	/// DF
+	vector<BasicBlock *> *DF{};
 
 public:
 	explicit BasicBlock(std::string name)
@@ -26,14 +39,18 @@ public:
 		parent = func;
 	}
 
-	void addInstruction(Instruction *inst) {
-		instructionList.push_back(inst);
+	void addInstruction(Instruction *inst, bool head = false) {
+		if (head)
+			instructionList.push_front(inst);
+		else
+			instructionList.push_back(inst);
+		inst->parent = this;
 	}
 
 	bool lastReturn() {
 		if (instructionList.empty())
 			return false;
-		return instructionList.back()->instType == InstType::RETURN;
+		return instructionList.back()->instType==InstType::RETURN;
 	}
 
 	std::string toString() override {
@@ -45,6 +62,10 @@ public:
 			ss << "\n";
 		}
 		return ss.str();
+	}
+
+	Instruction *getEndInst() {
+		return instructionList.back();
 	}
 };
 

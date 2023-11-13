@@ -10,6 +10,7 @@
 #include "Instruction.h"
 
 class AllocaInst : public Instruction {
+public:
 	Type *retType;
 public:
 	// <result> = alloca <type>

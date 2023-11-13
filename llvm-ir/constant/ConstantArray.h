@@ -25,7 +25,7 @@ public:
 			std::stringstream ss;
 			for (int &value : array) {
 				ss << "i32 " << value;
-				if (&value != &array.back()) {
+				if (&value!=&array.back()) {
 					ss << ", ";
 				}
 			}

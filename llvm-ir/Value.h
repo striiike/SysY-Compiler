@@ -11,11 +11,15 @@
 #include <fstream>
 
 #include "Type.h"
+
+#include <cassert>
+#include <algorithm>
+
 class Use;
 class Type;
 
 class Value {
-protected:
+public:
 	Type *type;
 	std::list<Use *> useList;
 	std::string name;
@@ -38,6 +42,11 @@ public:
 	std::string toLlvmString() {
 		return type->toString() + " " + name;
 	}
+
+	/// modify all users that use @this value to @new value
+	void replaceOld2New(Value *_new);
 };
+
+
 
 #endif //COMPILER_LLVM_IR_VALUE_H

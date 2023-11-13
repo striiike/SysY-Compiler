@@ -9,6 +9,7 @@ class User;
 class Value;
 
 class Use {
+public:
 	User *user;
 	Value *value;
 public:

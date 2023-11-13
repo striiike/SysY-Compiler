@@ -6,6 +6,7 @@
 #define COMPILER_LLVM_IR_INSTRUCTION_GEPINST_H
 
 #include <utility>
+#include <sstream>
 
 #include "Instruction.h"
 class GEPInst : public Instruction {
@@ -18,7 +19,7 @@ public:
 	/// normally is int32, because I flatten all the high level arrays.
 
 	/// for example
-	/// %13 = getelementptr inbounds [40 x i32], [40 x i32]* %12, i64 0, i64 1
+	/// %13 = getelementptr inbounds [40 x i32], [40 x i32]* %12, i32 0, i32 1
 	GEPInst(std::string name, Value *base, Value *ptrOff, Value *arrOff)
 		: Instruction(
 		new PointerType(base->getType()->getTargetType()->getEleType()),
@@ -26,7 +27,7 @@ public:
 
 		this->targetType = base->getType()->getTargetType();
 		/// @@@@@@ @sad @@@@@@
-		if (targetType == IntegerType::INT32)
+		if (targetType==IntegerType::INT32)
 			this->type = new PointerType(IntegerType::INT32);
 
 		this->addOperand(base);
@@ -36,11 +37,16 @@ public:
 	}
 
 	std::string toString() override {
-		return name + " = getelementptr inbounds " +
+		std::stringstream ss;
+		ss << name + " = getelementptr inbounds " +
 			targetType->toString() + ", " +
 			getOperand(0)->toLlvmString() + ", " +
-			getOperand(1)->toLlvmString() +
-			((getOperand(2)) ? ", " + getOperand(2)->toLlvmString() : "");
+			getOperand(1)->toLlvmString();
+
+		if (getOperand(2)) {
+			ss << ", " + getOperand(2)->toLlvmString();
+		}
+		return ss.str();
 	}
 };
 

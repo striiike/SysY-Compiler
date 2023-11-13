@@ -26,11 +26,11 @@ class IntegerType : public Type {
 public:
 	explicit IntegerType(int width) : bitWidth(width) {}
 
-	bool isVoid() override { return bitWidth == 0; }
+	bool isVoid() override { return bitWidth==0; }
 
-	bool isInt1() override { return bitWidth == 1; }
+	bool isInt1() override { return bitWidth==1; }
 
-	bool isInt32() override { return bitWidth == 32; }
+	bool isInt32() override { return bitWidth==32; }
 
 	static IntegerType *VOID;
 	static IntegerType *INT1;
@@ -38,13 +38,13 @@ public:
 	static IntegerType *INT32;
 
 	std::string toString() override {
-		if (bitWidth == 0)
+		if (bitWidth==0)
 			return "void";
-		else if (bitWidth == 32)
+		else if (bitWidth==32)
 			return "i32";
-		else if (bitWidth == 1)
+		else if (bitWidth==1)
 			return "i1";
-		else if (bitWidth == 8)
+		else if (bitWidth==8)
 			return "i8";
 		return "!ub!";
 	}

@@ -4,61 +4,60 @@ project(compiler)
 set(CMAKE_CXX_STANDARD 17)
 
 add_executable(compiler main.cpp
-        lexer/Lexer.cpp
-        lexer/Lexer.h
-        parser/Parser.h
+        frontend/lexer/Lexer.cpp
+        frontend/lexer/Lexer.h
+        frontend/parser/Parser.h
         config.h
-        parser/TokenStream.hpp
-        nodes/ASTNode.h
-        nodes/ExpUniform.h
-        nodes/Exp.h
-        nodes/TokenNode.h
-        nodes/Decl.h
-        nodes/Decl.h
-        nodes/Def.h
-        nodes/InitVal.h
-        nodes/BlockItem.h
-        nodes/SimpleStmt.h
-        nodes/ComplexStmt.h
-        nodes/Stmt.h
-        nodes/FuncDef.h
-        nodes/MainFuncDef.h
-        nodes/FuncFParams.h
-        nodes/CompUnit.h
-        nodes/lib.h
-        nodes/BlockItem.cpp
-        nodes/ComplexStmt.cpp
-        nodes/CompUnit.cpp
-        nodes/Decl.cpp
-        nodes/Def.cpp
-        nodes/Exp.cpp
-        nodes/ExpUniform.cpp
-        nodes/FuncDef.cpp
-        nodes/FuncFParam.cpp
-        nodes/FuncFParams.cpp
-        nodes/InitVal.cpp
-        nodes/MainFuncDef.cpp
-        nodes/SimpleStmt.cpp
-        nodes/Stmt.cpp
-        nodes/TokenNode.cpp
-        parser/Parser.cpp
-        parser/Exception.hpp
-        parser/lib.hpp
-        parser/Symbol.hpp
-        parser/Symbol.cpp
-        nodes/CompUnit.h
-        nodes/BlockItem.cpp
-        nodes/UnaryExp.h
-        nodes/UnaryExp.cpp
-        nodes/PrimaryExp.h
-        nodes/PrimaryExp.cpp
-        nodes/LVal.h
-        nodes/LVal.cpp
-        nodes/FunctionCall.h
-        nodes/FunctionCall.cpp
-        nodes/ComplexStmt.cpp
-        nodes/FunctionCall.cpp
-        utils/log.cpp
+        frontend/parser/TokenStream.hpp
+        frontend/nodes-include/ASTNode.h
+        frontend/nodes-include/ExpUniform.h
+        frontend/nodes-include/Exp.h
+        frontend/nodes-include/TokenNode.h
+        frontend/nodes-include/Decl.h
+        frontend/nodes-include/Decl.h
+        frontend/nodes-include/Def.h
+        frontend/nodes-include/InitVal.h
+        frontend/nodes-include/BlockItem.h
+        frontend/nodes-include/SimpleStmt.h
+        frontend/nodes-include/ComplexStmt.h
+        frontend/nodes-include/Stmt.h
+        frontend/nodes-include/FuncDef.h
+        frontend/nodes-include/MainFuncDef.h
+        frontend/nodes-include/FuncFParams.h
+        frontend/nodes-include/CompUnit.h
+        frontend/nodes-include/lib.h
+        frontend/nodes/BlockItem.cpp
+        frontend/nodes/ComplexStmt.cpp
+        frontend/nodes/CompUnit.cpp
+        frontend/nodes/Decl.cpp
+        frontend/nodes/Def.cpp
+        frontend/nodes/Exp.cpp
+        frontend/nodes/ExpUniform.cpp
+        frontend/nodes/FuncDef.cpp
+        frontend/nodes/FuncFParam.cpp
+        frontend/nodes/FuncFParams.cpp
+        frontend/nodes/InitVal.cpp
+        frontend/nodes/MainFuncDef.cpp
+        frontend/nodes/SimpleStmt.cpp
+        frontend/nodes/Stmt.cpp
+        frontend/nodes/TokenNode.cpp
+        frontend/parser/Parser.cpp
+        frontend/parser/Exception.hpp
+        frontend/parser/lib.hpp
+        frontend/parser/Symbol.hpp
+        frontend/parser/Symbol.cpp
+        frontend/nodes-include/CompUnit.h
+        frontend/nodes/BlockItem.cpp
+        frontend/nodes-include/UnaryExp.h
+        frontend/nodes/UnaryExp.cpp
+        frontend/nodes-include/PrimaryExp.h
+        frontend/nodes/PrimaryExp.cpp
+        frontend/nodes-include/LVal.h
+        frontend/nodes/LVal.cpp
+        frontend/nodes-include/FunctionCall.h
+        frontend/nodes/FunctionCall.cpp
+        frontend/nodes/ComplexStmt.cpp
+        frontend/nodes/FunctionCall.cpp
         llvm-ir/Module.h
         llvm-ir/Type.h
         llvm-ir/Function.h
@@ -70,13 +69,11 @@ add_executable(compiler main.cpp
         llvm-ir/GlobalVariable.h
         llvm-ir/Use.h
         llvm-ir/Type.cpp
-        llvm-ir/Initializer.h
         llvm-ir/IrBuilder.h
         llvm-ir/IrBuilder.cpp
-        parser/IrCtx.h
         llvm-ir/instruction/ReturnInst.h
-        nodes/Block.h
-        nodes/Block.cpp
+        frontend/nodes-include/Block.h
+        frontend/nodes/Block.cpp
         llvm-ir/instruction/AllocaInst.h
         llvm-ir/instruction/AluInst.h
         llvm-ir/constant/ConstantInt.h
@@ -89,4 +86,12 @@ add_executable(compiler main.cpp
         llvm-ir/instruction/BrInst.h
         llvm-ir/instruction/IcmpInst.h
         llvm-ir/instruction/ZextInst.h
+        midend/DFBuilder.h
+        midend/DFBuilder.cpp
+        midend/MidEnd.h
+        midend/Mem2Reg.h
+        midend/Mem2Reg.cpp
+        llvm-ir/instruction/PhiInst.h
+        llvm-ir/Value.cpp
+        llvm-ir/User.cpp
 )

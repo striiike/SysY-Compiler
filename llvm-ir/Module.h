@@ -7,10 +7,11 @@
 
 #include <list>
 #include <vector>
-	#include "GlobalVariable.h"
-	#include "Function.h"
+#include "GlobalVariable.h"
+#include "Function.h"
 
 class Module {
+public:
 	std::vector<GlobalVariable *> globalList;
 	std::list<Function *> functionList;
 

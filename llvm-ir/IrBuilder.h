@@ -24,6 +24,7 @@
 #include "instruction/ZextInst.h"
 #include "instruction/BrInst.h"
 #include "instruction/IcmpInst.h"
+#include "instruction/PhiInst.h"
 
 using namespace std;
 
@@ -97,7 +98,7 @@ public:
 	}
 
 	std::string genFuncName(const std::string &name) {
-		if (name == "main") {
+		if (name=="main") {
 			return "@main";
 		}
 		return funcPrefix + name;
@@ -152,10 +153,11 @@ public:
 		return arg;
 	}
 
+	// for mem2reg
 	Value *buildAlloc(const string &ident, Type *ty) {
 		string name = genLocalVarName(ident);
 		auto *alloca = new AllocaInst(ty, name);
-		curBb->addInstruction(alloca);
+		curBb->addInstruction(alloca, true);
 		return alloca;
 	}
 
@@ -228,6 +230,13 @@ public:
 		auto *br = new BrInst(bb);
 		curBb->addInstruction(br);
 		return nullptr;
+	}
+
+	Value *buildPhiInst(vector<BasicBlock*> *bbs, BasicBlock *to) {
+		string name = genLocalVarName();
+		auto *phi = new PhiInst(bbs, name);
+		to->addInstruction(phi, true);
+		return phi;
 	}
 
 	void fillInReturn() {

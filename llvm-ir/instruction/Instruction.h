@@ -13,10 +13,11 @@
 class BasicBlock;
 
 enum InstType {
-	ALLOCA, RETURN, STORE, GEP, ALU, LOAD, CALL, ICMP, BRANCH, ZEXT
+	ALLOCA, RETURN, STORE, GEP, ALU, LOAD, CALL, ICMP, BRANCH, ZEXT, PHI
 };
 
 class Instruction : public User {
+public:
 	BasicBlock *parent{};
 public:
 	InstType instType;

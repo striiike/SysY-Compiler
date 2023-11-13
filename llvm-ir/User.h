@@ -8,8 +8,9 @@
 #include "Value.h"
 #include <utility>
 #include <vector>
+#include <cassert>
 
-class Value;
+#include "Use.h"
 
 class User : public Value {
 protected:
@@ -20,11 +21,18 @@ public:
 		operandList.clear();
 	}
 
-	void addOperand(Value *value) { operandList.push_back(value); }
+	void addOperand(Value *value) {
+		assert(value!=nullptr);
+		operandList.push_back(value);
+		value->useList.push_back(new Use(this, value));
+	}
 
 	Value *getOperand(int index) {
+		if (index >= operandList.size()) return nullptr;
 		return operandList[index];
 	}
+
+	void updateOld2New(Value *old, Value *_new);
 
 };
 

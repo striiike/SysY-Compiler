@@ -4,7 +4,7 @@
 
 #pragma once
 #include <map>
-#include "parser/Exception.hpp"
+#include "frontend//parser/Exception.hpp"
 
 extern bool PARSER_DISPLAY;
 extern bool PARSER_SWITCH;
