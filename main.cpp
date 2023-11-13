@@ -70,12 +70,20 @@ int main() {
 	symbol.clear();
 
 	AST.llvmIr();
-	cout << irBuilder.getModule()->toString() << endl;
+//	cout << irBuilder.getModule()->toString() << endl;
 	llvmfile << irBuilder.getModule()->toString() << endl;
 
-	auto *mid = new MidEnd();
-	mid->run(irBuilder.getModule());
+//	auto *mid = new MidEnd();
+//	mid->run(irBuilder.getModule());
+
+	(new DFBuilder(&(irBuilder.getModule()->functionList)))->run();
+	cout << irBuilder.getModule()->toString() << endl;
+	(new Mem2Reg())->run(irBuilder.getModule());
+
+
 //	llvmfile << irBuilder.getModule()->toString() << endl;
+
+
 	llvmfile_m2r << irBuilder.getModule()->toString() << endl;
 	cout << irBuilder.getModule()->toString() << endl;
 

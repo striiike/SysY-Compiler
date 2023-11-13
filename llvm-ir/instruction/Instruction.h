@@ -26,6 +26,12 @@ public:
 	Instruction(Type *ty, std::string name, InstType instTy)
 		: User(ty, std::move(name)), instType(instTy) {
 	}
+
+	void removeUse() {
+		for (auto i : operandList) {
+			i->useList.remove_if([this](Use *u) { return (u->user)==this; });
+		}
+	}
 };
 
 #endif //COMPILER_LLVM_IR_INSTRUCTION_H

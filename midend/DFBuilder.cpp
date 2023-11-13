@@ -13,8 +13,6 @@ DFBuilder::DFBuilder(list<Function *> *functions) {
 	this->functions = functions;
 }
 
-
-
 void DFBuilder::run() {
 
 	for (auto i : *functions) {
@@ -127,6 +125,10 @@ void DFBuilder::removeDeadBasicBlock(Function *function) {
 	dfsNotDead(function->basicList.front(), notDead);
 	for (auto it = function->basicList.begin(); it!=function->basicList.end();) {
 		if (!notDead->count(*it)) {
+			/// clear all @use relationship
+			for (auto inst : (*it)->instructionList) {
+				inst->removeUse();
+			}
 			(*it)->instructionList.clear();
 			delete *it;
 			it = function->basicList.erase(it);

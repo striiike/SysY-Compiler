@@ -21,6 +21,7 @@ class Type;
 class Value {
 public:
 	Type *type;
+	/// here use means @used_by other users
 	std::list<Use *> useList;
 	std::string name;
 public:

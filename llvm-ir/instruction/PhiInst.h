@@ -6,6 +6,7 @@
 #define COMPILER_LLVM_IR_INSTRUCTION_PHIINST_H
 
 #include "Instruction.h"
+#include "../BasicBlock.h"
 #include <utility>
 #include <vector>
 #include <sstream>
