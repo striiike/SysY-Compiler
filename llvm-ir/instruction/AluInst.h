@@ -15,14 +15,15 @@ enum AluType {
 };
 
 class AluInst : public Instruction {
+public:
 	AluType aluType;
 public:
 	std::map<AluType, std::string> aluTypeMap = {
-		{ADD, "add"},
-		{SUB, "sub"},
-		{MUL, "mul"},
-		{SDIV, "sdiv"},
-		{SREM, "srem"}
+		{AluType::ADD, "add"},
+		{AluType::SUB, "sub"},
+		{AluType::MUL, "mul"},
+		{AluType::SDIV, "sdiv"},
+		{AluType::SREM, "srem"}
 	};
 	//	add 	<result> = add <ty> <op1>, <op2>
 	//	sub		<result> = sub <ty> <op1>, <op2>

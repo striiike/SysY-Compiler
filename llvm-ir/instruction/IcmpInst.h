@@ -14,6 +14,7 @@ enum IcmpType {
 };
 
 class IcmpInst : public Instruction {
+public:
 	IcmpType icmpType;
 public:
 	std::map<IcmpType, std::string> icmpTypeMap = {

@@ -94,4 +94,11 @@ add_executable(compiler main.cpp
         llvm-ir/instruction/PhiInst.h
         llvm-ir/Value.cpp
         llvm-ir/User.cpp
+        backend/MipsInst.h
+        backend/MipsParser.h
+        backend/MipsBuilder.cpp
+        backend/MipsComponent.cpp
+        backend/MipsInst.cpp
+        backend/MipsOperand.cpp
+        backend/MipsParser.cpp
 )

@@ -34,6 +34,7 @@ public:
 
 	void updateOld2New(Value *old, Value *_new);
 
+
 };
 
 #endif //COMPILER_LLVM_IR_USER_H

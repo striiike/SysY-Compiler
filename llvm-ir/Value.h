@@ -46,6 +46,9 @@ public:
 
 	/// modify all users that use @this value to @new value
 	void replaceOld2New(Value *_new);
+
+	virtual bool isGlobal() {return false;}
+
 };
 
 

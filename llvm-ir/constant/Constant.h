@@ -20,6 +20,10 @@ public:
 
 	std::string toString() override { return "?"; }
 
+	virtual bool isInt() { return false; }
+	virtual bool isArr() { return false; }
+	virtual bool isStr() { return false; }
+
 };
 
 #endif //COMPILER_LLVM_IR_CONSTANT_H

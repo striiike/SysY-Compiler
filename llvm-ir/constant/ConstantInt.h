@@ -8,6 +8,7 @@
 #include "Constant.h"
 
 class ConstantInt : public Constant {
+public:
 	int value;
 	int bitWidth; // for 1 or 32
 public:
@@ -20,6 +21,8 @@ public:
 			return "void";
 		return type->toString() + " " + std::to_string(value);
 	}
+
+	bool isInt() override { return true; }
 };
 
 #endif //COMPILER_LLVM_IR_CONSTANT_CONSTANTINT_H

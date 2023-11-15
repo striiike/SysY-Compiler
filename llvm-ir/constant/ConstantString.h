@@ -11,6 +11,7 @@
 #include "../Type.h"
 
 class ConstantString : public Constant {
+public:
 	string str;
 public:
 	explicit ConstantString(string s)
@@ -44,5 +45,7 @@ public:
 	std::string toString() override {
 		return type->toString() + " c\"" + llvmString(str) + "\"";
 	}
+
+	bool isStr() override { return true; }
 };
 #endif //COMPILER_LLVM_IR_CONSTANT_CONSTANTSTRING_H

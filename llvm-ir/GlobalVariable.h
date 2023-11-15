@@ -11,6 +11,7 @@
 #include "constant/Constant.h"
 
 class GlobalVariable : public User {
+public:
 	Constant *init;
 	bool isConst;
 public:
@@ -22,6 +23,7 @@ public:
 		return name + " = dso_local " + ((isConst) ? "constant" : "global") + " " + init->toString();
 	}
 
+	bool isGlobal() override { return true; }
 };
 
 #endif //COMPILER_LLVM_IR_GLOBALVARIABLE_H

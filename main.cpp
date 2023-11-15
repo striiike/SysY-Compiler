@@ -7,6 +7,7 @@
 #include "frontend/lexer/Lexer.h"
 #include "config.h"
 #include "midend/MidEnd.h"
+#include "backend/MipsParser.h"
 
 using namespace std;
 
@@ -54,19 +55,19 @@ int main() {
 
 	auto AST = parser.parseCompUnit();
 
-	{
-		auto ctx = make_shared<ErrorCtx>();
-		auto ret = make_shared<ErrorRet>();
-		AST.checkError(ctx, ret);
-		std::sort(errorList.begin(), errorList.end(),
-				  [](const auto &left, const auto &right) {
-					  return left.second < right.second;
-				  });
-		errorList.erase(std::unique(errorList.begin(), errorList.end()), errorList.end());
-		for (const auto &pair : errorList) {
-			errfile << pair.second << " " << exceptionToString[pair.first] << std::endl;
-		}
-	}
+//	{
+//		auto ctx = make_shared<ErrorCtx>();
+//		auto ret = make_shared<ErrorRet>();
+//		AST.checkError(ctx, ret);
+//		std::sort(errorList.begin(), errorList.end(),
+//				  [](const auto &left, const auto &right) {
+//					  return left.second < right.second;
+//				  });
+//		errorList.erase(std::unique(errorList.begin(), errorList.end()), errorList.end());
+//		for (const auto &pair : errorList) {
+//			errfile << pair.second << " " << exceptionToString[pair.first] << std::endl;
+//		}
+//	}
 	symbol.clear();
 
 	AST.llvmIr();
@@ -76,16 +77,21 @@ int main() {
 //	auto *mid = new MidEnd();
 //	mid->run(irBuilder.getModule());
 
-	(new DFBuilder(&(irBuilder.getModule()->functionList)))->run();
-	cout << irBuilder.getModule()->toString() << endl;
-	(new Mem2Reg())->run(irBuilder.getModule());
+//	(new DFBuilder(&(irBuilder.getModule()->functionList)))->run();
+//	cout << irBuilder.getModule()->toString() << endl;
+//	(new Mem2Reg())->run(irBuilder.getModule());
 
 
 	llvmfile << irBuilder.getModule()->toString() << endl;
 
 
-	llvmfile_m2r << irBuilder.getModule()->toString() << endl;
-	cout << irBuilder.getModule()->toString() << endl;
+//	llvmfile_m2r << irBuilder.getModule()->toString() << endl;
+//	cout << irBuilder.getModule()->toString() << endl;
+
+	auto mipsParser = new MipsParser(irBuilder.getModule());
+	mipsParser->parseModule();
+
+	mipsParser->mipsBuilder->mipsModule->print(cout);
 
 	return 0;
 }
