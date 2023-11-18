@@ -1,6 +1,7 @@
 #include "../nodes-include/ComplexStmt.h"
 #include "../nodes-include/SimpleStmt.h"
 #include "../nodes-include/LVal.h"
+#include "../nodes-include/Exp.h"
 
 IfStmt::IfStmt(CondPtr condPtr, StmtPtr stmtPtr, StmtPtr stmtElsePtr) :
 	condPtr(std::move(condPtr)), stmtPtr(std::move(stmtPtr)),

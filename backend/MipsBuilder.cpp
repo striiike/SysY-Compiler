@@ -6,7 +6,6 @@
 #include "../llvm-ir/Function.h"
 #include "../llvm-ir/constant/Constant.h"
 #include "../llvm-ir/constant/ConstantInt.h"
-#include "../llvm-ir/constant/Constant.h"
 
 
 void MipsBuilder::buildFunc(Function *function) {

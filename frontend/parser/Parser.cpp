@@ -24,7 +24,7 @@ DeclPtr Parser::parseDecl() {
 	}
 
 	tokenStream.check(SEMICN, Exception::SEMICN_LACKED);
-	return std::make_shared<Decl>(isConst, bType, defPtrs);
+	return new Decl(isConst, bType, defPtrs);
 }
 
 DefPtr Parser::parseDef(bool isConst) {
@@ -40,9 +40,9 @@ DefPtr Parser::parseDef(bool isConst) {
 	}
 	if (tokenStream.peek()->type==ASSIGN) {
 		auto assign = tokenStream.next();
-		return std::make_shared<Def>(isConst, ident, constExpPtrs, parseInitVal(isConst));
+		return new Def(isConst, ident, constExpPtrs, parseInitVal(isConst));
 	}
-	return std::make_shared<Def>(isConst, ident, constExpPtrs, nullptr);
+	return new Def(isConst, ident, constExpPtrs, nullptr);
 }
 
 InitValPtr Parser::parseInitVal(bool isConst) {
@@ -52,7 +52,7 @@ InitValPtr Parser::parseInitVal(bool isConst) {
 }
 
 ExpInitValPtr Parser::parseExpInitVal(bool isConst) {
-	return std::make_shared<ExpInitVal>(isConst, isConst ? parseConstExp() : parseExp());
+	return new ExpInitVal(isConst, isConst ? parseConstExp() : parseExp());
 }
 
 ArrayInitValPtr Parser::parseArrayInitVal(bool isConst) {
@@ -62,7 +62,7 @@ ArrayInitValPtr Parser::parseArrayInitVal(bool isConst) {
 	if (tokenStream.peek()->type==RBRACE) {
 		// '}'
 		auto right = tokenStream.next();
-		return std::make_shared<ArrayInitVal>(isConst, initValPtrs);
+		return new ArrayInitVal(isConst, initValPtrs);
 	}
 	initValPtrs.push_back(parseInitVal(isConst));
 	while (!tokenStream.reachEnd()) {
@@ -74,19 +74,19 @@ ArrayInitValPtr Parser::parseArrayInitVal(bool isConst) {
 
 	// '}'
 	auto right = tokenStream.next();
-	return std::make_shared<ArrayInitVal>(isConst, initValPtrs);
+	return new ArrayInitVal(isConst, initValPtrs);
 }
 
 ExpPtr Parser::parseExp() {
-	return std::make_shared<Exp>(std::move(parseAddExp()), false);
+	return new Exp(std::move(parseAddExp()), false);
 }
 
 ExpPtr Parser::parseConstExp() {
-	return std::make_shared<Exp>(std::move(parseAddExp()), true);
+	return new Exp(std::move(parseAddExp()), true);
 }
 
 CondPtr Parser::parseCond() {
-	return std::make_shared<Cond>(std::move(parseLOrExp()));
+	return new Cond(std::move(parseLOrExp()));
 }
 
 LValPtr Parser::parseLVal() {
@@ -103,7 +103,7 @@ LValPtr Parser::parseLVal() {
 		tokenStream.check(RBRACK, Exception::RBRACK_LACKED);
 		array.push_back(expPtr);
 	}
-	return std::make_shared<LVal>(ident, array);
+	return new LVal(ident, array);
 }
 
 PrimaryExpPtr Parser::parsePrimaryExp() {
@@ -114,17 +114,17 @@ PrimaryExpPtr Parser::parsePrimaryExp() {
 		auto left = tokenStream.next();
 		ExpPtr expPtr = parseExp();
 		tokenStream.check(RPARENT, Exception::RPARENT_LACKED);
-		return std::make_shared<PrimaryExp>(expPtr, nullptr, nullptr);
+		return new PrimaryExp(expPtr, nullptr, nullptr);
 	}
-	case IDENFR:return std::make_shared<PrimaryExp>(nullptr, parseLVal(), nullptr);
-	case INTCON:return std::make_shared<PrimaryExp>(nullptr, nullptr, parseNumber());
+	case IDENFR:return new PrimaryExp(nullptr, parseLVal(), nullptr);
+	case INTCON:return new PrimaryExp(nullptr, nullptr, parseNumber());
 	default:return nullptr;
 	}
 }
 
 NumberPtr Parser::parseNumber() {
 	string str = tokenStream.next()->value;
-	return make_shared<Number>(str);
+	return new Number(str);
 }
 
 FunctionCallPtr Parser::parseFunctionCall() {
@@ -132,13 +132,13 @@ FunctionCallPtr Parser::parseFunctionCall() {
 	auto left = tokenStream.next();
 
 	auto token = tokenStream.peek()->type;
-	FuncRParamsPtr funcRParamsPtr;
+	FuncRParamsPtr funcRParamsPtr = nullptr;
 	if (token==IDENFR || token==LPARENT || token==INTCON
 		|| token==PLUS || token==MINU || token==NOT) {
 		funcRParamsPtr = parseFuncRParams();
 	}
 	tokenStream.check(RPARENT, Exception::RPARENT_LACKED);
-	return make_shared<FunctionCall>(ident, funcRParamsPtr);
+	return new FunctionCall(ident, funcRParamsPtr);
 }
 
 FuncRParamsPtr Parser::parseFuncRParams() {
@@ -151,7 +151,7 @@ FuncRParamsPtr Parser::parseFuncRParams() {
 		tokenStream.next();
 		expPtrs.push_back(parseExp());
 	}
-	return make_shared<FuncRParams>(expPtrs);
+	return new FuncRParams(expPtrs);
 }
 
 UnaryExpPtr Parser::parseUnaryExp() {
@@ -167,13 +167,13 @@ UnaryExpPtr Parser::parseUnaryExp() {
 	auto token1 = tokenStream.peek()->type;
 	auto token2 = tokenStream.peek(1)->type;
 	if (token1==IDENFR && token2==LPARENT) {
-		auto ret = make_shared<UnaryExp>(unaryOps, nullptr, parseFunctionCall());
+		auto ret = new UnaryExp(unaryOps, nullptr, parseFunctionCall());
 		for (int i = 0; i < unaryOps.size(); i++) {
 			parseLog("<UnaryExp>");
 		}
 		return ret;
 	} else {
-		auto ret = make_shared<UnaryExp>(unaryOps, parsePrimaryExp(), nullptr);
+		auto ret = new UnaryExp(unaryOps, parsePrimaryExp(), nullptr);
 		for (int i = 0; i < unaryOps.size(); i++) {
 			parseLog("<UnaryExp>");
 		}
@@ -196,7 +196,7 @@ MulExpPtr Parser::parseMulExp() {
 		operands.push_back(parseUnaryExp());
 	}
 
-	return std::make_shared<MulExp>(std::move(leftOperand), std::move(operators), std::move(operands));
+	return new MulExp(std::move(leftOperand), std::move(operators), std::move(operands));
 }
 
 AddExpPtr Parser::parseAddExp() {
@@ -213,7 +213,7 @@ AddExpPtr Parser::parseAddExp() {
 		operands.push_back(parseMulExp());
 	}
 
-	return std::make_shared<AddExp>(std::move(leftOperand), std::move(operators), std::move(operands));
+	return new AddExp(std::move(leftOperand), std::move(operators), std::move(operands));
 }
 
 RelExpPtr Parser::parseRelExp() {
@@ -230,7 +230,7 @@ RelExpPtr Parser::parseRelExp() {
 		operands.push_back(parseAddExp());
 	}
 
-	return std::make_shared<RelExp>(std::move(leftOperand), std::move(operators), std::move(operands));
+	return new RelExp(std::move(leftOperand), std::move(operators), std::move(operands));
 }
 
 EqExpPtr Parser::parseEqExp() {
@@ -247,7 +247,7 @@ EqExpPtr Parser::parseEqExp() {
 		operands.push_back(parseRelExp());
 	}
 
-	return std::make_shared<EqExp>(std::move(leftOperand), std::move(operators), std::move(operands));
+	return new EqExp(std::move(leftOperand), std::move(operators), std::move(operands));
 }
 
 LAndExpPtr Parser::parseLAndExp() {
@@ -264,7 +264,7 @@ LAndExpPtr Parser::parseLAndExp() {
 		operands.push_back(parseEqExp());
 	}
 
-	return std::make_shared<LAndExp>(std::move(leftOperand), std::move(operators), std::move(operands));
+	return new LAndExp(std::move(leftOperand), std::move(operators), std::move(operands));
 }
 
 LOrExpPtr Parser::parseLOrExp() {
@@ -282,7 +282,7 @@ LOrExpPtr Parser::parseLOrExp() {
 		operands.push_back(parseLAndExp());
 	}
 
-	return std::make_shared<LOrExp>(std::move(leftOperand), std::move(operators), std::move(operands));
+	return new LOrExp(std::move(leftOperand), std::move(operators), std::move(operands));
 }
 
 FuncDefPtr Parser::parseFuncDef() {
@@ -296,7 +296,7 @@ FuncDefPtr Parser::parseFuncDef() {
 		funcFParamsPtr = parseFuncFParams();
 	}
 	tokenStream.check(RPARENT, Exception::RPARENT_LACKED);
-	return std::make_shared<FuncDef>(funcType, ident, funcFParamsPtr, parseBlock());
+	return new FuncDef(funcType, ident, funcFParamsPtr, parseBlock());
 }
 
 MainFuncDefPtr Parser::parseMainFuncDef() {
@@ -305,7 +305,7 @@ MainFuncDefPtr Parser::parseMainFuncDef() {
 	auto left = tokenStream.next();
 	tokenStream.check(RPARENT, Exception::RPARENT_LACKED);
 
-	return std::make_shared<MainFuncDef>(_int, _main, parseBlock());
+	return new MainFuncDef(_int, _main, parseBlock());
 }
 
 FuncFParamsPtr Parser::parseFuncFParams() {
@@ -317,7 +317,7 @@ FuncFParamsPtr Parser::parseFuncFParams() {
 		auto comma = tokenStream.next();
 		funcFParamPtrs.push_back(parseFuncFParam());
 	}
-	return std::make_shared<FuncFParams>(funcFParamPtrs);
+	return new FuncFParams(funcFParamPtrs);
 }
 
 FuncFParamPtr Parser::parseFuncFParam() {
@@ -329,7 +329,7 @@ FuncFParamPtr Parser::parseFuncFParam() {
 	std::vector<ExpPtr> constExpPtrs{};
 
 	if (tokenStream.peek()->type!=LBRACK)
-		return std::make_shared<FuncFParam>(bType, ident, false, constExpPtrs);
+		return new FuncFParam(bType, ident, false, constExpPtrs);
 	auto left = tokenStream.next();
 	tokenStream.check(RBRACK, Exception::RBRACK_LACKED);
 	while (!tokenStream.reachEnd()) {
@@ -339,7 +339,7 @@ FuncFParamPtr Parser::parseFuncFParam() {
 		constExpPtrs.push_back(parseConstExp());
 		tokenStream.check(RBRACK, Exception::RBRACK_LACKED);
 	}
-	return std::make_shared<FuncFParam>(bType, ident, true, constExpPtrs);
+	return new FuncFParam(bType, ident, true, constExpPtrs);
 }
 
 BlockPtr Parser::parseBlock() {
@@ -351,22 +351,22 @@ BlockPtr Parser::parseBlock() {
 		blockItemPtrs.push_back(parseBlockItem());
 	}
 	TokenNode right(*tokenStream.next());
-	return std::make_shared<Block>(blockItemPtrs, right);
+	return new Block(blockItemPtrs, right);
 }
 
 BlockItemPtr Parser::parseBlockItem() {
 	TokenType token = tokenStream.peek()->type;
 	if (token==CONSTTK || token==INTTK) {
-		return std::make_shared<BlockItem>(parseDecl(), nullptr);
+		return new BlockItem(parseDecl(), nullptr);
 	}
-	return std::make_shared<BlockItem>(nullptr, parseStmt());
+	return new BlockItem(nullptr, parseStmt());
 }
 
 StmtPtr Parser::parseStmt() {
 	if (tokenStream.peek()->type==SEMICN) {
 		auto semicn = tokenStream.next();
 		parseLog("<Stmt>");
-		return std::make_shared<Stmt>();
+		return new Stmt();
 	}
 	if (tokenStream.peek()->type==IFTK ||
 		tokenStream.peek()->type==FORTK ||
@@ -403,9 +403,9 @@ SimpleStmtPtr Parser::parseAssignOrGetintStmt(const LValPtr &lValPtr) {
 		TokenNode _getint(*tokenStream.next());
 		auto left = tokenStream.next();
 		tokenStream.check(RPARENT, Exception::RPARENT_LACKED);
-		return std::make_shared<GetintStmt>(lValPtr, _getint);
+		return new GetintStmt(lValPtr, _getint);
 	}
-	return std::make_shared<AssignStmt>(lValPtr, parseExp());
+	return new AssignStmt(lValPtr, parseExp());
 }
 
 SimpleStmtPtr Parser::parseSimpleStmt() {
@@ -413,12 +413,12 @@ SimpleStmtPtr Parser::parseSimpleStmt() {
 	if (token.type==BREAKTK) {
 		TokenNode _break(token);
 		tokenStream.next();
-		return std::make_shared<BreakStmt>(_break);
+		return new BreakStmt(_break);
 	}
 	if (token.type==CONTINUETK) {
 		TokenNode _continue(token);
 		tokenStream.next();
-		return std::make_shared<ContinueStmt>(_continue);
+		return new ContinueStmt(_continue);
 	}
 	if (token.type==RETURNTK) {
 		TokenNode _return(token);
@@ -430,7 +430,7 @@ SimpleStmtPtr Parser::parseSimpleStmt() {
 			|| type==PLUS || type==MINU || type==NOT) {
 			expPtr = parseExp();
 		}
-		return std::make_shared<ReturnStmt>(_return, expPtr);
+		return new ReturnStmt(_return, expPtr);
 	}
 	if (token.type==PRINTFTK) {
 		TokenNode _printf(token);
@@ -445,7 +445,7 @@ SimpleStmtPtr Parser::parseSimpleStmt() {
 			expPtrs.push_back(parseExp());
 		}
 		tokenStream.check(RPARENT, Exception::RPARENT_LACKED);
-		return std::make_shared<PrintfStmt>(_printf, formatStringToken, expPtrs);
+		return new PrintfStmt(_printf, formatStringToken, expPtrs);
 	}
 
 
@@ -471,14 +471,14 @@ SimpleStmtPtr Parser::parseSimpleStmt() {
 	if (isAssignOrGetint) {
 		return parseAssignOrGetintStmt(parseLVal());
 	} else {
-		return std::make_shared<ExpStmt>(parseExp());
+		return new ExpStmt(parseExp());
 	}
 }
 
 _ForStmtPtr Parser::parse_ForStmt() {
 	LValPtr lValPtr = parseLVal();
 	auto assign = tokenStream.next();
-	return std::make_shared<_ForStmt>(lValPtr, parseExp());
+	return new _ForStmt(lValPtr, parseExp());
 }
 
 ComplexStmtPtr Parser::parseComplexStmt() {
@@ -490,9 +490,9 @@ ComplexStmtPtr Parser::parseComplexStmt() {
 		StmtPtr stmtPtr1 = parseStmt();
 		if (tokenStream.peek()->type==ELSETK) {
 			auto _else = tokenStream.next();
-			return std::make_shared<IfStmt>(condPtr, stmtPtr1, parseStmt());
+			return new IfStmt(condPtr, stmtPtr1, parseStmt());
 		}
-		return std::make_shared<IfStmt>(condPtr, stmtPtr1, nullptr);
+		return new IfStmt(condPtr, stmtPtr1, nullptr);
 	}
 	if (tokenStream.peek()->type==FORTK) {
 		auto _for = tokenStream.next();
@@ -513,7 +513,7 @@ ComplexStmtPtr Parser::parseComplexStmt() {
 			assignStmtPtr2 = parse_ForStmt();
 		}
 		tokenStream.check(RPARENT, Exception::RPARENT_LACKED);
-		return std::make_shared<ForStmt>(condPtr, parseStmt(), assignStmtPtr1, assignStmtPtr2);
+		return new ForStmt(condPtr, parseStmt(), assignStmtPtr1, assignStmtPtr2);
 	}
 	if (tokenStream.peek()->type==LBRACE) {
 		return parseBlock();

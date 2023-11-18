@@ -27,29 +27,12 @@ public:
 
 	VarSymbol(bool isConst, bool isGlobal,
 			  vector<int> lens, vector<int> values,
-			  Value *llvm = nullptr)
-		: isConst(isConst), isGlobal(isGlobal),
-		  lens(std::move(lens)), values(std::move(values)),
-		  llvmValue(llvm) {}
+			  Value *llvm = nullptr);
 
 	// get value from indexes
-	int getValue(const vector<int> &index) {
-		if (values.empty())
-			return 0;
-		if (index.empty())
-			return values[0];
+	int getValue(const vector<int> &index);
 
-		/// \manual for two dim
-		int coordinate = index.back();
-		if (index.size()==2)
-			coordinate += index[0]*lens[0];
-
-		return values[coordinate];
-	}
-
-	Value *getLlvmValue() {
-		return llvmValue;
-	}
+	Value *getLlvmValue() const;
 
 };
 
@@ -59,12 +42,9 @@ public:
 	vector<int> dims;       // stand for the types
 	Value *llvmValue;
 
-	FuncSymbol(bool isVoid, vector<int> dims, Value *llvmValue = nullptr) :
-		isVoid(isVoid), dims(std::move(dims)), llvmValue(llvmValue) {}
+	FuncSymbol(bool isVoid, vector<int> dims, Value *llvmValue = nullptr);
 
-	Value *getLlvmValue() {
-		return llvmValue;
-	}
+	Value *getLlvmValue() const;
 
 };
 
@@ -82,68 +62,20 @@ public:
 	// 0 for false
 	int insertVar(bool isConst, const string &name,
 				  const vector<int> &lens, const vector<int> &values = {},
-				  Value *llvm = nullptr) {
-		auto scope = symbolStack.top();
-		if (scope->count(name))
-			return 0;
-
-		bool isGlobal = symbolStack.size()==1;
-		if (isGlobal && funcsMap.count(name))
-			return 0;
-
-		scope->insert(name);
-		if (!varsMap.count(name))
-			varsMap[name] = make_shared<stack<VarSymbolPtr>>();
-
-		varsMap[name]->push(make_shared<VarSymbol>(isConst, isGlobal, lens, values, llvm));
-		return 1;
-	}
+				  Value *llvm = nullptr);
 
 	// 0 for false
-	int insertFunc(const string &name, bool isVoid, const vector<int> &dims = {}, Value *func = nullptr) {
-		auto scope = symbolStack.top();
-		if (funcsMap.count(name) || scope->count(name))
-			return 0;
+	int insertFunc(const string &name, bool isVoid, const vector<int> &dims = {}, Value *func = nullptr);
 
-		funcsMap[name] = make_shared<FuncSymbol>(isVoid, dims, func);
-		return 1;
-	}
+	void startScope();
 
-	void startScope() {
-		symbolStack.push(make_shared<set<string>>());
-	}
+	void endScope();
 
-	void endScope() {
-		SymbolSetPtr set = symbolStack.top();
+	VarSymbolPtr getVar(const string &name);
 
-		for (const auto &i : *set) {
-			varsMap[i]->pop();
-			if (varsMap[i]->empty())
-				varsMap.erase(i);
-		}
+	FuncSymbolPtr getFunc(const string &name);
 
-		symbolStack.pop();
-	}
-
-	VarSymbolPtr getVar(const string &name) {
-		if (!varsMap.count(name))
-			return nullptr;
-		return varsMap[name]->top();
-	}
-
-	FuncSymbolPtr getFunc(const string &name) {
-		if (!funcsMap.count(name))
-			return nullptr;
-		return funcsMap[name];
-	}
-
-	void clear() {
-		while (!symbolStack.empty())
-			symbolStack.pop();
-
-		varsMap.clear();
-		funcsMap.clear();
-	}
+	void clear();
 
 };
 

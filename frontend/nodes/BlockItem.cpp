@@ -1,8 +1,10 @@
 #include "../nodes-include/BlockItem.h"
+#include "../nodes-include/Decl.h"
+#include "../nodes-include/Stmt.h"
 
 BlockItem::BlockItem(DeclPtr declPtr, StmtPtr stmtPtr) :
-	declPtr(std::move(declPtr)),
-	stmtPtr(std::move(stmtPtr)) {
+	declPtr(declPtr),
+	stmtPtr(stmtPtr) {
 	name = "<BlockItem>";
 }
 

@@ -6,6 +6,7 @@
 #define COMPILER_NODES_BLOCK_H
 
 #include "ComplexStmt.h"
+#include "TokenNode.h"
 
 class Block : public ComplexStmt {
 private:
