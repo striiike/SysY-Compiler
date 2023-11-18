@@ -7,10 +7,11 @@
 #include <iostream>
 #include "../../config.h"
 #include "../parser/Exception.hpp"
-#include "../../llvm-ir/IrBuilder.h"
 #include <memory>
 #include <string>
 #include <fstream>
+
+class Value;
 
 class ASTNode {
 public:

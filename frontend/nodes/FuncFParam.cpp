@@ -1,6 +1,8 @@
 #include "../nodes-include/FuncFParam.h"
 #include "../nodes-include/Exp.h"
 #include "../parser/Symbol.hpp"
+#include "../../llvm-ir/IrBuilder.h"
+
 
 FuncFParam::FuncFParam(TokenNode bType, TokenNode ident, bool isArray, std::vector<ExpPtr> expPtrs)
 	: bType(std::move(bType)),

@@ -11,10 +11,6 @@ IntegerType *IntegerType::INT1 = new IntegerType(1);
 IntegerType *IntegerType::INT8 = new IntegerType(8);
 IntegerType *IntegerType::INT32 = new IntegerType(32);
 
-Function *Function::getint = new Function(IntegerType::INT32, "@getint");
-Function *Function::putch = new Function(IntegerType::VOID, "@putch");
-Function *Function::putint = new Function(IntegerType::VOID, "@putint");
-Function *Function::putstr = new Function(IntegerType::VOID, "@putstr");
 
 void IrBuilder::addFunction(Function *func) {
 	module->addFunction(func);
@@ -81,7 +77,7 @@ Value *IrBuilder::buildLoad(Value *addr) {
 Value *IrBuilder::buildGEP(Value *base, Value *ptrOff, Value *arrOff) {
 	string name = genLocalVarName();
 	Instruction *gep;
-	if (base->getType()->getTargetType()->isArray())
+	if (base->type->getTargetType()->isArray())
 		gep = new GEPInst(name, base, new ConstantInt(0), ptrOff);
 	else
 		gep = new GEPInst(name, base, ptrOff, arrOff);

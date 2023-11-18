@@ -1,5 +1,6 @@
 #include "../nodes-include/Exp.h"
 #include "../parser/Symbol.hpp"
+#include "../nodes-include/ExpUniform.h"
 
 Number::Number(std::string num) :
 	num(std::stoi(num)) {

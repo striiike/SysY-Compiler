@@ -101,4 +101,7 @@ add_executable(compiler main.cpp
         backend/MipsInst.cpp
         backend/MipsOperand.cpp
         backend/MipsParser.cpp
+        llvm-ir/BasicBlock.cpp
+        llvm-ir/Function.cpp
+        llvm-ir/Module.cpp
 )

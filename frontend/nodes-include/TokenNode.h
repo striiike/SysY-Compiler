@@ -6,8 +6,6 @@
 
 #include "ASTNode.h"
 #include "../lexer/Lexer.h"
-#include <utility>
-#include <vector>
 #include <string>
 
 class TokenNode : public ASTNode {

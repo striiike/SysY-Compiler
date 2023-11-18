@@ -3,6 +3,8 @@
 //
 
 #include "../nodes-include/Block.h"
+#include "../parser/Symbol.hpp"
+#include "../../llvm-ir/IrBuilder.h"
 
 Block::Block(std::vector<BlockItemPtr> blockItemPtrs, TokenNode rbrace) :
 	blockItemPtrs(std::move(blockItemPtrs)), rbrace(std::move(rbrace)) {

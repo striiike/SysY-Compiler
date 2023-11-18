@@ -1,4 +1,5 @@
 #include "../nodes-include/Decl.h"
+#include "../../llvm-ir/IrBuilder.h"
 
 Decl::Decl(bool isConst, TokenNode bType, std::vector<DefPtr> defPtrs) :
 	isConst(isConst),

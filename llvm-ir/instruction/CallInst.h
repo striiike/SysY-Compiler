@@ -25,10 +25,10 @@ public:
 
 	std::string toString() override {
 		std::stringstream ss;
-		if (getType()!=IntegerType::VOID) {
-			ss << getName() + " = ";
+		if (type!=IntegerType::VOID) {
+			ss << name + " = ";
 		}
-		ss << "call " + getType()->toString() + " " + getOperand(0)->getName();
+		ss << "call " + type->toString() + " " + getOperand(0)->name;
 		ss << "(";
 		if (operandList.size() > 1) {
 			ss << operandList[1]->toLlvmString();

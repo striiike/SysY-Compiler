@@ -22,10 +22,10 @@ public:
 	/// %13 = getelementptr inbounds [40 x i32], [40 x i32]* %12, i32 0, i32 1
 	GEPInst(std::string name, Value *base, Value *ptrOff, Value *arrOff)
 		: Instruction(
-		new PointerType(base->getType()->getTargetType()->getEleType()),
+		new PointerType(base->type->getTargetType()->getEleType()),
 		std::move(name), GEP) {
 
-		this->targetType = base->getType()->getTargetType();
+		this->targetType = base->type->getTargetType();
 		/// @@@@@@ @sad @@@@@@
 		if (targetType==IntegerType::INT32)
 			this->type = new PointerType(IntegerType::INT32);

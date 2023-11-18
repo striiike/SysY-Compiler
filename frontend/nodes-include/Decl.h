@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include <utility>
-#include <vector>
 #include "ASTNode.h"
 #include "TokenNode.h"
 #include "Def.h"

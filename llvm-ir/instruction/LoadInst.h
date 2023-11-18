@@ -11,7 +11,7 @@
 class LoadInst : public Instruction {
 public:
 	LoadInst(std::string name, Value *addr)
-		: Instruction(addr->getType()->getTargetType(), std::move(name), InstType::LOAD) {
+		: Instruction(addr->type->getTargetType(), std::move(name), InstType::LOAD) {
 		addOperand(addr);
 	}
 

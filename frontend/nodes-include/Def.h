@@ -8,7 +8,6 @@
 #include "TokenNode.h"
 #include "Exp.h"
 #include "InitVal.h"
-#include "../parser/Symbol.hpp"
 
 class Def : public ASTNode {
 	bool isConst;

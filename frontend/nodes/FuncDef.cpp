@@ -1,4 +1,6 @@
 #include "../nodes-include/FuncDef.h"
+#include "../parser/Symbol.hpp"
+#include "../../llvm-ir/IrBuilder.h"
 
 FuncDef::FuncDef(TokenNode funcType, TokenNode ident, FuncFParamsPtr funcFParamsPtr, BlockPtr blockPtr)
 	: funcType(std::move(funcType)), ident(std::move(ident)),

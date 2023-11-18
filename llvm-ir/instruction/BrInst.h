@@ -29,12 +29,12 @@ public:
 
 	std::string toString() override {
 		if (jump) {
-			return "br label %" + getOperand(0)->getName();
+			return "br label %" + getOperand(0)->name;
 		} else {
 			return "br " +
 				getOperand(0)->toLlvmString() + ", " +
-				"label %" + getOperand(1)->getName() + ", " +
-				"label %" + getOperand(2)->getName();
+				"label %" + getOperand(1)->name + ", " +
+				"label %" + getOperand(2)->name;
 		}
 
 	}

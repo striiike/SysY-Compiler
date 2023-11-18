@@ -47,10 +47,10 @@ RelExp::RelExp(AddExpPtr leftOperand, vector<TokenType> operators, vector<AddExp
 Value *RelExp::llvmIr() {
 	Value *val = leftOperand->llvmIr();
 	for (int i = 0; i < operators.size(); ++i) {
-		if (val->getType()->isInt1())
+		if (val->type->isInt1())
 			val = irBuilder.buildZext(val, IntegerType::INT32);
 		Value *cmpVal = operands[i]->llvmIr();
-		if (cmpVal->getType()->isInt1())
+		if (cmpVal->type->isInt1())
 			cmpVal = irBuilder.buildZext(cmpVal, IntegerType::INT32);
 		if (operators[i]==TokenType::LSS) {
 			val = irBuilder.buildIcmpInst(IcmpType::LT, val, cmpVal);
@@ -142,17 +142,17 @@ EqExp::EqExp(RelExpPtr leftOperand, vector<TokenType> operators, vector<RelExpPt
 Value *EqExp::llvmIr() {
 	if (operands.empty()) {
 		Value *val = leftOperand->llvmIr();
-		if (val->getType()->isInt32()) {
+		if (val->type->isInt32()) {
 			val = irBuilder.buildIcmpInst(IcmpType::NE, val, new ConstantInt(0));
 		}
 		return val;
 	} else {
 		Value *val = leftOperand->llvmIr();
 		for (int i = 0; i < operators.size(); ++i) {
-			if (val->getType()->isInt1())
+			if (val->type->isInt1())
 				val = irBuilder.buildZext(val, IntegerType::INT32);
 			Value *cmpVal = operands[i]->llvmIr();
-			if (cmpVal->getType()->isInt1())
+			if (cmpVal->type->isInt1())
 				cmpVal = irBuilder.buildZext(cmpVal, IntegerType::INT32);
 			if (operators[i]==TokenType::EQL) {
 				val = irBuilder.buildIcmpInst(IcmpType::EQ, val, cmpVal);

@@ -7,13 +7,8 @@
 
 #include <list>
 #include <string>
-#include <utility>
-#include <fstream>
-
 #include "Type.h"
 
-#include <cassert>
-#include <algorithm>
 
 class Use;
 class Type;
@@ -28,13 +23,7 @@ public:
 	Value(Type *type, std::string name)
 		: type(type), name(std::move(name)) {}
 
-	Type *getType() {
-		return type;
-	}
 
-	std::string getName() {
-		return this->name;
-	}
 
 	virtual std::string toString() {
 		return " !ub! ";

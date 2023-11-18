@@ -2,11 +2,14 @@
 #include "../nodes-include/Decl.h"
 #include "../nodes-include/FuncDef.h"
 #include "../nodes-include/MainFuncDef.h"
+#include "../parser/Symbol.hpp"
+#include "../../llvm-ir/IrBuilder.h"
+
 
 CompUnit::CompUnit(std::vector<DeclPtr> declPtrs, std::vector<FuncDefPtr> funcDefPtrs, MainFuncDefPtr mainFuncDefPtr) :
 	declPtrs(std::move(declPtrs)),
 	funcDefPtrs(std::move(funcDefPtrs)),
-	mainFuncDefPtr(std::move(mainFuncDefPtr)) {
+	mainFuncDefPtr(mainFuncDefPtr) {
 	name = "<CompUnit>";
 	print();
 }

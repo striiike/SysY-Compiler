@@ -42,7 +42,7 @@ public:
 	std::string toString() override {
 		return name + " = " + aluTypeMap[aluType] + " " +
 			getOperand(0)->toLlvmString() + ", " +
-			getOperand(1)->getName();
+			getOperand(1)->name;
 
 	}
 };

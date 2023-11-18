@@ -12,7 +12,7 @@
 class ReturnInst : public Instruction {
 public:
 	ReturnInst(std::string name, Value *ret)
-		: Instruction(ret->getType(), std::move(name), InstType::RETURN) {
+		: Instruction(ret->type, std::move(name), InstType::RETURN) {
 		addOperand(ret);
 	}
 

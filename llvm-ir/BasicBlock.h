@@ -6,11 +6,10 @@
 #define COMPILER_LLVM_IR_BASICBLOCK_H
 
 #include <list>
-#include <utility>
 #include "instruction/Instruction.h"
 #include <sstream>
 #include "Value.h"
-//#include "Function.h"
+
 using namespace std;
 
 class Function;
@@ -35,38 +34,15 @@ public:
 	explicit BasicBlock(std::string name)
 		: Value(nullptr, std::move(name)) {}
 
-	void setParent(Function *func) {
-		parent = func;
-	}
+	void setParent(Function *func);
 
-	void addInstruction(Instruction *inst, bool head = false) {
-		if (head)
-			instructionList.push_front(inst);
-		else
-			instructionList.push_back(inst);
-		inst->parent = this;
-	}
+	void addInstruction(Instruction *inst, bool head = false);
 
-	bool lastReturn() {
-		if (instructionList.empty())
-			return false;
-		return instructionList.back()->instType==InstType::RETURN;
-	}
+	bool lastReturn();
 
-	std::string toString() override {
-		std::stringstream ss;
-		ss << name + ":\n";
-		for (auto i : instructionList) {
-			ss << "\t";
-			ss << i->toString();
-			ss << "\n";
-		}
-		return ss.str();
-	}
+	std::string toString() override;
 
-	Instruction *getEndInst() {
-		return instructionList.back();
-	}
+	Instruction *getEndInst();
 };
 
 #endif //COMPILER_LLVM_IR_BASICBLOCK_H

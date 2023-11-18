@@ -5,11 +5,10 @@
 #pragma once
 
 #include <vector>
-#include <memory>
 #include "../lexer/Lexer.h"
 #include "ASTNode.h"
 #include "UnaryExp.h"
-#include <algorithm>
+#include "../../llvm-ir/IrBuilder.h"
 
 using namespace std;
 

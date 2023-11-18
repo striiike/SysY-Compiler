@@ -5,6 +5,7 @@
 #include "../nodes-include/LVal.h"
 #include "../nodes-include/Exp.h"
 #include "../parser/Symbol.hpp"
+#include "../../llvm-ir/IrBuilder.h"
 
 LVal::LVal(TokenNode ident, std::vector<ExpPtr> array) : ident(std::move(ident)), array(std::move(array)) {
 	name = "<LVal>";

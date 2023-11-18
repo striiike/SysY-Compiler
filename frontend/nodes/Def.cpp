@@ -1,8 +1,10 @@
 #include "../nodes-include/Def.h"
+#include "../parser/Symbol.hpp"
+#include "../../llvm-ir/IrBuilder.h"
 
 Def::Def(bool isConst, TokenNode ident, std::vector<ExpPtr> expPtrs, InitValPtr initValPtr)
 	: isConst(isConst), ident(std::move(ident)), expPtrs(std::move(expPtrs)),
-	  initValPtr(std::move(initValPtr)) {
+	  initValPtr(initValPtr) {
 	name = isConst ? "<ConstDef>" : "<VarDef>";
 	print();
 }
@@ -43,7 +45,6 @@ void Def::buildLocalDef(const vector<int> &lens, int length) {
 	Value *alloca = nullptr;
 
 	if (isConst) {
-
 		Constant *constant;
 		if (expPtrs.empty()) {
 			/// \SEEMS_NO \TODO

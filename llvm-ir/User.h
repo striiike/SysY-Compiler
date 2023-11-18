@@ -16,21 +16,11 @@ class User : public Value {
 public:
 	std::vector<Value *> operandList;
 public:
-	User(Type *type, std::string name)
-		: Value(type, std::move(name)) {
-		operandList.clear();
-	}
+	User(Type *type, std::string name);
 
-	void addOperand(Value *value) {
-		assert(value!=nullptr);
-		operandList.push_back(value);
-		value->useList.push_back(new Use(this, value));
-	}
+	void addOperand(Value *value);
 
-	Value *getOperand(int index) {
-		if (index >= operandList.size()) return nullptr;
-		return operandList[index];
-	}
+	Value *getOperand(int index);
 
 	void updateOld2New(Value *old, Value *_new);
 

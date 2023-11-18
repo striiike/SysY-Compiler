@@ -7,9 +7,12 @@
 #include "../nodes-include/Exp.h"
 #include "../nodes-include/FunctionCall.h"
 
+#include "../nodes-include/TokenNode.h"
+#include "../../llvm-ir/IrBuilder.h"
+
 UnaryExp::UnaryExp(std::vector<TokenType> unaryOps, PrimaryExpPtr primaryExpPtr, FunctionCallPtr functionCallPtr)
-	: unaryOps(std::move(unaryOps)), primaryExpPtr(std::move(primaryExpPtr)),
-	  functionCallPtr(std::move(functionCallPtr)) {
+	: unaryOps(std::move(unaryOps)), primaryExpPtr(primaryExpPtr),
+	  functionCallPtr(functionCallPtr) {
 	name = "<UnaryExp>";
 	print();
 }

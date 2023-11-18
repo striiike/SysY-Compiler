@@ -7,7 +7,6 @@
 #include <utility>
 
 #include "ASTNode.h"
-#include "../parser/Symbol.hpp"
 
 class BlockItem : public ASTNode {
 private:

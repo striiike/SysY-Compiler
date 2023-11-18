@@ -7,10 +7,9 @@
 
 #include <optional>
 #include "../lexer/Lexer.h"
-#include "lib.hpp"
 #include "../../config.h"
 #include "../nodes-include/TokenNode.h"
-#include "Exception.hpp"
+#include "Symbol.hpp"
 
 using namespace std;
 

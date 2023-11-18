@@ -10,6 +10,7 @@
 #include <utility>
 #include <vector>
 #include <sstream>
+#include <algorithm>
 
 class BasicBlock;
 

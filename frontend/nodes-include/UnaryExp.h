@@ -5,7 +5,7 @@
 #pragma once
 
 #include "ASTNode.h"
-#include "TokenNode.h"
+#include "../lexer/Lexer.h"
 
 class UnaryExp : public ASTNode {
 	std::vector<TokenType> unaryOps;

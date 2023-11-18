@@ -133,6 +133,7 @@ void MipsParser::parseAluInst(AluInst *inst) {
 	mipsBuilder->allocateAndStore(inst, $t0);
 
 }
+
 void MipsParser::parseBrInst(BrInst *inst) {
 	if (inst->jump) {
 		mipsBuilder->buildBranchInst(CondType::J, new MipsLabel(inst->getOperand(0)->name));
@@ -144,6 +145,7 @@ void MipsParser::parseBrInst(BrInst *inst) {
 	}
 
 }
+
 void MipsParser::parseCallInst(CallInst *inst) {
 
 	auto *func = (Function *)inst->getOperand(0);
@@ -182,7 +184,7 @@ void MipsParser::parseCallInst(CallInst *inst) {
 			mipsBuilder->allocate(inst->operandList[i], $t0);
 
 //			mipsBuilder->stackOffset-=4;
-			mipsBuilder->buildStoreInst($t0, new MipsImm(mipsBuilder->stackOffset+argOff), $sp);
+			mipsBuilder->buildStoreInst($t0, new MipsImm(mipsBuilder->stackOffset + argOff), $sp);
 //			mipsBuilder->allocateAndStore(inst->operandList[i], $t0);
 		}
 	}
@@ -206,6 +208,10 @@ void MipsParser::parseGEPInst(GEPInst *inst) {
 	mipsBuilder->allocate(op1, $t0);
 	if (inst->getOperand(2)) {
 		mipsBuilder->allocate(inst->getOperand(2), $t1);
+		mipsBuilder->buildBinInst(M_SLL, $t1, $t1, new MipsImm(2));
+		mipsBuilder->buildBinInst(M_ADDU, $t0, $t0, $t1);
+	} else {
+		mipsBuilder->allocate(inst->getOperand(1), $t1);
 		mipsBuilder->buildBinInst(M_SLL, $t1, $t1, new MipsImm(2));
 		mipsBuilder->buildBinInst(M_ADDU, $t0, $t0, $t1);
 	}
@@ -274,7 +280,8 @@ void MipsParser::parseStoreInst(StoreInst *inst) {
 }
 
 void MipsParser::parseZextInst(ZextInst *inst) {
-
+	mipsBuilder->allocate(inst->getOperand(0), $t0);
+	mipsBuilder->allocateAndStore(inst, $t0);
 }
 void MipsParser::parsePhiInst(PhiInst *inst) {
 

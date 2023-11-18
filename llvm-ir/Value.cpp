@@ -4,7 +4,6 @@
 
 #include "Value.h"
 #include "User.h"
-#include "Use.h"
 
 void Value::replaceOld2New(Value *_new) {
 	std::vector<User*> userList{};

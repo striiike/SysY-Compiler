@@ -4,12 +4,7 @@
 
 #pragma once
 
-#include <memory>
-#include <string>
-#include <utility>
-#include <vector>
 #include "TokenNode.h"
-#include "ExpUniform.h"
 
 class Number : public ASTNode {
 	int num;
