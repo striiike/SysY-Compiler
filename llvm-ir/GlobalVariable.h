@@ -24,6 +24,10 @@ public:
 	}
 
 	bool isGlobal() override { return true; }
+
+	int getSize() {
+		return ((ArrayType *)((PointerType *)type)->getTargetType())->getNum()*4;
+	}
 };
 
 #endif //COMPILER_LLVM_IR_GLOBALVARIABLE_H

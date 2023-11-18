@@ -6,7 +6,7 @@
 #include "frontend/parser/Exception.hpp"
 #include "frontend/lexer/Lexer.h"
 #include "config.h"
-#include "midend/MidEnd.h"
+//#include "midend/MidEnd.h"
 #include "backend/MipsParser.h"
 
 using namespace std;
@@ -18,6 +18,8 @@ std::ofstream outfile("./output.txt");
 std::ofstream errfile("./error.txt");
 std::ofstream llvmfile("./llvm_ir.txt");
 std::ofstream llvmfile_m2r("./llvm_ir_m2r.txt");
+
+std::ofstream mipsfile("./mips.txt");
 
 void parseLog(const std::string &str) {
 	if (PARSER_DISPLAY && PARSER_SWITCH) {
@@ -92,6 +94,7 @@ int main() {
 	mipsParser->parseModule();
 
 	mipsParser->mipsBuilder->mipsModule->print(cout);
+	mipsParser->mipsBuilder->mipsModule->print(mipsfile);
 
 	return 0;
 }

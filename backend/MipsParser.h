@@ -4,24 +4,23 @@
 
 #pragma once
 
-#include "MipsComponent.h"
 #include "MipsBuilder.h"
-#include "../llvm-ir/instruction/AllocaInst.h"
-#include "../llvm-ir/instruction/AluInst.h"
-#include "../llvm-ir/instruction/CallInst.h"
-#include "../llvm-ir/instruction/BrInst.h"
-#include "../llvm-ir/instruction/IcmpInst.h"
-#include "../llvm-ir/instruction/ReturnInst.h"
-#include "../llvm-ir/instruction/ZextInst.h"
-#include "../llvm-ir/instruction/GEPInst.h"
-#include "../llvm-ir/instruction/LoadInst.h"
-#include "../llvm-ir/instruction/StoreInst.h"
-#include "../llvm-ir/instruction/PhiInst.h"
 class Module;
 class Function;
 class GlobalVariable;
 class Instruction;
 class BasicBlock;
+class AllocaInst;
+class AluInst;
+class CallInst;
+class BrInst;
+class IcmpInst;
+class ReturnInst;
+class ZextInst;
+class LoadInst;
+class GEPInst;
+class StoreInst;
+class PhiInst;
 
 class MipsParser {
 public:

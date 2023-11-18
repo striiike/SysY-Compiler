@@ -13,7 +13,7 @@
 #include "Use.h"
 
 class User : public Value {
-protected:
+public:
 	std::vector<Value *> operandList;
 public:
 	User(Type *type, std::string name)

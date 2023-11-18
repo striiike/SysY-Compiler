@@ -30,16 +30,16 @@ public:
 		return s + "\\00";
 	}
 
-	static std::string mipsString(std::string s) {
+	std::string mipsString() {
 		std::string target = "\n";
-		std::string replacement = "\n";
+		std::string replacement = "\\n";
 
 		size_t startPos = 0;
-		while ((startPos = s.find(target, startPos))!=std::string::npos) {
-			s.replace(startPos, target.length(), replacement);
+		while ((startPos = str.find(target, startPos))!=std::string::npos) {
+			str.replace(startPos, target.length(), replacement);
 			startPos += replacement.length();
 		}
-		return s;
+		return str;
 	}
 
 	std::string toString() override {
