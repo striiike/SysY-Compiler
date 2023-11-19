@@ -104,4 +104,5 @@ add_executable(compiler main.cpp
         llvm-ir/BasicBlock.cpp
         llvm-ir/Function.cpp
         llvm-ir/Module.cpp
+        llvm-ir/constant/Constant.cpp
 )

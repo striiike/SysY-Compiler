@@ -54,6 +54,7 @@ std::string MipsBranchInst::toString() const {
 		}
 	}
 }
+
 std::string MipsCmpInst::toString() const {
 	switch (ty) {
 	case BEQ:return "seq \t" + dst->toString() + ", \t" + src1->toString() + ", \t" + src2->toString();

@@ -7,11 +7,12 @@
 
 #include <set>
 #include <stack>
-#include "../llvm-ir/Module.h"
 using namespace std;
 
 class BasicBlock;
 class Instruction;
+class Value;
+class Module;
 
 class Mem2Reg {
 public:

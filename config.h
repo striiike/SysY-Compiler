@@ -4,8 +4,7 @@
 
 #pragma once
 #include <map>
-#include "frontend/parser/Exception.hpp"
-
+enum class Exception;
 extern bool PARSER_DISPLAY;
 extern bool PARSER_SWITCH;
 
@@ -14,6 +13,6 @@ extern std::ofstream errfile;
 
 extern void parseLog(const std::string &str);
 
-extern map<Exception, char> exceptionToString;
+extern std::map<Exception, char> exceptionToString;
 
 
