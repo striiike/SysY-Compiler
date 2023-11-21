@@ -1,13 +1,18 @@
 //
 // Created by hiccup on 2023/9/18.
 //
+//#include "./llvm-ir/Function.h"
+
+
 
 #include "frontend/parser/Parser.h"
-#include "frontend/parser/Exception.hpp"
+#include "frontend/parser/Exception.h"
 #include "frontend/lexer/Lexer.h"
 #include "config.h"
 //#include "midend/MidEnd.h"
 #include "backend/MipsParser.h"
+
+
 
 using namespace std;
 
@@ -45,6 +50,7 @@ map<Exception, char> exceptionToString = {
 };
 
 int main() {
+
 	std::ifstream infile("testfile.txt");
 //	std::ifstream infile("testfile.c");
 	std::string code((std::istreambuf_iterator<char>(infile)), std::istreambuf_iterator<char>());

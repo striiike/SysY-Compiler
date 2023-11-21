@@ -18,7 +18,13 @@ private:
 	FuncFParamsPtr funcFParamsPtr;
 	BlockPtr blockPtr;
 public:
-	FuncDef(TokenNode funcType, TokenNode ident, FuncFParamsPtr funcFParamsPtr, BlockPtr blockPtr);
+	FuncDef(TokenNode funcType, TokenNode ident, FuncFParamsPtr funcFParamsPtr, BlockPtr blockPtr)
+		: funcType(std::move(funcType)), ident(std::move(ident)),
+		  funcFParamsPtr(std::move(funcFParamsPtr)),
+		  blockPtr(std::move(blockPtr)) {
+		name = "<FuncDef>";
+		print();
+	}
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 	Value *llvmIr() override;

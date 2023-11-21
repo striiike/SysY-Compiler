@@ -13,9 +13,14 @@ class CompUnit : public ASTNode {
 	std::vector<FuncDefPtr> funcDefPtrs;
 	MainFuncDefPtr mainFuncDefPtr;
 public:
-	explicit CompUnit(std::vector<DeclPtr> declPtrs, std::vector<FuncDefPtr> funcDefPtrs,
-					  MainFuncDefPtr mainFuncDefPtr);
 
+	CompUnit(std::vector<DeclPtr> declPtrs, std::vector<FuncDefPtr> funcDefPtrs, MainFuncDefPtr mainFuncDefPtr) :
+		declPtrs(std::move(declPtrs)),
+		funcDefPtrs(std::move(funcDefPtrs)),
+		mainFuncDefPtr(mainFuncDefPtr) {
+		name = "<CompUnit>";
+		print();
+	}
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 	Value *llvmIr() override;
 };

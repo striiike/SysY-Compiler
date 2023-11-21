@@ -12,13 +12,26 @@ class UnaryExp : public ASTNode {
 	PrimaryExpPtr primaryExpPtr;
 	FunctionCallPtr functionCallPtr;
 public:
-	UnaryExp(std::vector<TokenType> unaryOps, PrimaryExpPtr primaryExpPtr, FunctionCallPtr functionCallPtr);
+	UnaryExp(std::vector<TokenType> unaryOps, PrimaryExpPtr primaryExpPtr, FunctionCallPtr functionCallPtr)
+		: unaryOps(std::move(unaryOps)), primaryExpPtr(primaryExpPtr),
+		  functionCallPtr(functionCallPtr) {
+		name = "<UnaryExp>";
+		print();
+	}
 
-	std::vector<TokenType> &getUnaryOps();
+	std::vector<TokenType> &getUnaryOps() {
+		return unaryOps;
+	}
 
-	PrimaryExpPtr getPrimaryExpPtr();
+	PrimaryExpPtr getPrimaryExpPtr() {
+		return primaryExpPtr;
+	}
 
-	FunctionCallPtr getFunctionCallPtr();
+	FunctionCallPtr getFunctionCallPtr() {
+		return functionCallPtr;
+	}
+
+
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 

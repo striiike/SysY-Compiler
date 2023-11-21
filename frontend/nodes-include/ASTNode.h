@@ -6,7 +6,7 @@
 
 #include <iostream>
 #include "../../config.h"
-#include "../parser/Exception.hpp"
+#include "../parser/Exception.h"
 #include <memory>
 #include <string>
 #include <fstream>

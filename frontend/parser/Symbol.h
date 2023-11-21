@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "Exception.hpp"
+#include "Exception.h"
 #include <set>
 #include <stack>
 #include <map>

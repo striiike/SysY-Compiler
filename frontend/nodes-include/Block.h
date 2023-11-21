@@ -13,9 +13,13 @@ private:
 	std::vector<BlockItemPtr> blockItemPtrs;
 	TokenNode rbrace;
 public:
-	explicit Block(std::vector<BlockItemPtr> blockItemPtrs, TokenNode rbrace);
-
+	Block(std::vector<BlockItemPtr> blockItemPtrs, TokenNode rbrace)
+		: blockItemPtrs(std::move(blockItemPtrs)), rbrace(std::move(rbrace)) {
+		name = "<Block>";
+		print();
+	}
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 	Value *llvmIr() override;
 };
 #endif //COMPILER_NODES_BLOCK_H
+

@@ -53,15 +53,52 @@ public:
 
 	bool isLink = false;
 
-	Function(Type *ret, std::string name);
+	Function(Type *ret, std::string name)
+		: User(new FunctionType(), std::move(name)) {
+		argumentList.clear();
+		basicList.clear();
+		retType = ret;
+	}
 
-	void addArgument(Argument *arg);
+	void addArgument(Argument *arg) {
+		argumentList.push_back(arg);
+	}
 
-	void addBasicBlock(BasicBlock *bb);
+	void addBasicBlock(BasicBlock *bb) {
+		basicList.push_back(bb);
+	}
 
-	Type *getRetType() const;
+	Type *getRetType() {
+		return retType;
+	}
 
-	std::string toString() override;
+	std::string toString() override {
+		std::stringstream ss;
+
+		if (isLink) {
+			ss << "declare " + retType->toString() + " " + this->name + "(";
+			for (auto &i : argumentList) {
+				ss << i->type->toString();
+				if (&i!=&argumentList.back())
+					ss << ", ";
+			}
+			ss << ")";
+			return ss.str();
+		}
+
+		ss << "define dso_local " + retType->toString() + " " + this->name + "(";
+		for (auto &i : argumentList) {
+			ss << i->toString();
+			if (&i!=&argumentList.back())
+				ss << ", ";
+		}
+		ss << ") {\n";
+		for (auto i : basicList) {
+			ss << i->toString();
+		}
+		ss << "}";
+		return ss.str();
+	}
 };
 
 #endif //COMPILER_LLVM_IR_FUNCTION_H

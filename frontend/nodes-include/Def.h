@@ -15,7 +15,13 @@ class Def : public ASTNode {
 	std::vector<ExpPtr> expPtrs;
 	InitValPtr initValPtr;
 public:
-	Def(bool isConst, TokenNode ident, std::vector<ExpPtr> expPtrs, InitValPtr initValPtr);
+	Def(bool isConst, TokenNode ident, std::vector<ExpPtr> expPtrs, InitValPtr initValPtr)
+		: isConst(isConst), ident(std::move(ident)), expPtrs(std::move(expPtrs)),
+		  initValPtr(initValPtr) {
+		name = isConst ? "<ConstDef>" : "<VarDef>";
+		print();
+	}
+
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 	Value *llvmIr() override;

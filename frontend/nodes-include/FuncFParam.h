@@ -13,7 +13,15 @@ private:
 	bool isArray;
 	std::vector<ExpPtr> expPtrs;
 public:
-	FuncFParam(TokenNode bType, TokenNode ident, bool isArray, std::vector<ExpPtr> expPtrs);
+	FuncFParam(TokenNode bType, TokenNode ident, bool isArray, std::vector<ExpPtr> expPtrs)
+		: bType(std::move(bType)),
+		  ident(std::move(ident)),
+		  isArray(isArray),
+		  expPtrs(std::move(expPtrs)) {
+		name = "<FuncFParam>";
+		print();
+	}
+
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 
 	int getDim();

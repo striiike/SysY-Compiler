@@ -82,40 +82,55 @@ void ExpUniform<T>::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 
 class MulExp : public ExpUniform<UnaryExpPtr> {
 public:
-	MulExp(UnaryExpPtr leftOperand, vector<TokenType> operators,
-		   vector<UnaryExpPtr> operands);
+	MulExp(UnaryExpPtr leftOperand, vector<TokenType> operators, vector<UnaryExpPtr> operands)
+		: ExpUniform<UnaryExpPtr>(std::move(leftOperand), std::move(operators), std::move(operands)) {
+		name = "<MulExp>";
+		print();
+	}
+
 
 	Value *llvmIr() override;
 };
 
 class AddExp : public ExpUniform<MulExpPtr> {
 public:
-	AddExp(MulExpPtr leftOperand, vector<TokenType> operators,
-		   vector<MulExpPtr> operands);
+	AddExp(MulExpPtr leftOperand, vector<TokenType> operators, vector<MulExpPtr> operands)
+		: ExpUniform<MulExpPtr>(std::move(leftOperand), std::move(operators), std::move(operands)) {
+		name = "<AddExp>";
+		print();
+	}
 
 	Value *llvmIr() override;
 };
 
 class RelExp : public ExpUniform<AddExpPtr> {
 public:
-	RelExp(AddExpPtr leftOperand, vector<TokenType> operators,
-		   vector<AddExpPtr> operands);
+	RelExp(AddExpPtr leftOperand, vector<TokenType> operators, vector<AddExpPtr> operands)
+		: ExpUniform<AddExpPtr>(std::move(leftOperand), std::move(operators), std::move(operands)) {
+		name = "<RelExp>";
+		print();
+	}
 
 	Value *llvmIr() override;
 };
 
 class EqExp : public ExpUniform<RelExpPtr> {
 public:
-	EqExp(RelExpPtr leftOperand, vector<TokenType> operators, vector<RelExpPtr> operands);
-
+	EqExp(RelExpPtr leftOperand, vector<TokenType> operators, vector<RelExpPtr> operands)
+		: ExpUniform<RelExpPtr>(std::move(leftOperand), std::move(operators), std::move(operands)) {
+		name = "<EqExp>";
+		print();
+	}
 	Value *llvmIr() override;
 };
 
 class LAndExp : public ExpUniform<EqExpPtr> {
 public:
-	LAndExp(EqExpPtr leftOperand, vector<TokenType> operators,
-			vector<EqExpPtr> operands);
-
+	LAndExp(EqExpPtr leftOperand, vector<TokenType> operators, vector<EqExpPtr> operands)
+		: ExpUniform<EqExpPtr>(std::move(leftOperand), std::move(operators), std::move(operands)) {
+		name = "<LAndExp>";
+		print();
+	}
 	/// it needs a @exit label & a @failure label
 	/// @failure is next LOrExp entry
 	/// @exit
@@ -124,8 +139,12 @@ public:
 
 class LOrExp : public ExpUniform<LAndExpPtr> {
 public:
-	LOrExp(LAndExpPtr leftOperand, vector<TokenType> operators,
-		   vector<LAndExpPtr> operands);
+
+	LOrExp(LAndExpPtr leftOperand, vector<TokenType> operators, vector<LAndExpPtr> operands)
+		: ExpUniform<LAndExpPtr>(std::move(leftOperand), std::move(operators), std::move(operands)) {
+		name = "<LOrExp>";
+		print();
+	}
 
 	/// it needs a @success label & a @next label
 	/// @success is @thenBb

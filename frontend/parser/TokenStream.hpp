@@ -9,7 +9,7 @@
 #include "../lexer/Lexer.h"
 #include "../../config.h"
 #include "../nodes-include/TokenNode.h"
-#include "Symbol.hpp"
+#include "Symbol.h"
 
 using namespace std;
 

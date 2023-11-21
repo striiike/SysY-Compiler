@@ -1,7 +1,7 @@
 //
 // Created by hiccup on 2023/10/1.
 //
-#include "Symbol.hpp"
+#include "Symbol.h"
 
 Symbol symbol;
 

@@ -26,38 +26,16 @@ add_executable(compiler main.cpp
         frontend/nodes-include/FuncFParams.h
         frontend/nodes-include/CompUnit.h
         frontend/nodes-include/lib.h
-        frontend/nodes/BlockItem.cpp
-        frontend/nodes/ComplexStmt.cpp
-        frontend/nodes/CompUnit.cpp
-        frontend/nodes/Decl.cpp
-        frontend/nodes/Def.cpp
-        frontend/nodes/Exp.cpp
-        frontend/nodes/ExpUniform.cpp
-        frontend/nodes/FuncDef.cpp
-        frontend/nodes/FuncFParam.cpp
-        frontend/nodes/FuncFParams.cpp
-        frontend/nodes/InitVal.cpp
-        frontend/nodes/MainFuncDef.cpp
-        frontend/nodes/SimpleStmt.cpp
-        frontend/nodes/Stmt.cpp
-        frontend/nodes/TokenNode.cpp
         frontend/parser/Parser.cpp
-        frontend/parser/Exception.hpp
+        frontend/parser/Exception.h
         frontend/parser/lib.hpp
-        frontend/parser/Symbol.hpp
+        frontend/parser/Symbol.h
         frontend/parser/Symbol.cpp
         frontend/nodes-include/CompUnit.h
-        frontend/nodes/BlockItem.cpp
         frontend/nodes-include/UnaryExp.h
-        frontend/nodes/UnaryExp.cpp
         frontend/nodes-include/PrimaryExp.h
-        frontend/nodes/PrimaryExp.cpp
         frontend/nodes-include/LVal.h
-        frontend/nodes/LVal.cpp
         frontend/nodes-include/FunctionCall.h
-        frontend/nodes/FunctionCall.cpp
-        frontend/nodes/ComplexStmt.cpp
-        frontend/nodes/FunctionCall.cpp
         llvm-ir/Module.h
         llvm-ir/Type.h
         llvm-ir/Function.h
@@ -73,7 +51,6 @@ add_executable(compiler main.cpp
         llvm-ir/IrBuilder.cpp
         llvm-ir/instruction/ReturnInst.h
         frontend/nodes-include/Block.h
-        frontend/nodes/Block.cpp
         llvm-ir/instruction/AllocaInst.h
         llvm-ir/instruction/AluInst.h
         llvm-ir/constant/ConstantInt.h
@@ -101,8 +78,11 @@ add_executable(compiler main.cpp
         backend/MipsInst.cpp
         backend/MipsOperand.cpp
         backend/MipsParser.cpp
-        llvm-ir/BasicBlock.cpp
+#        llvm-ir/BasicBlock.cpp
+#        llvm-ir/Function.cpp
+#        llvm-ir/Module.cpp
+#        llvm-ir/constant/Constant.cpp
+        frontend/CheckError.cpp
+        frontend/LlvmIr.cpp
         llvm-ir/Function.cpp
-        llvm-ir/Module.cpp
-        llvm-ir/constant/Constant.cpp
 )

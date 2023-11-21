@@ -20,7 +20,11 @@ private:
 	bool isConst;
 	ExpPtr expPtr;
 public:
-	ExpInitVal(bool isConst, ExpPtr expPtr);
+	ExpInitVal(bool isConst, ExpPtr expPtr) :
+		isConst(isConst), expPtr(std::move(expPtr)) {
+		name = isConst ? "<ConstInitVal>" : "<InitVal>";
+		print();
+	}
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 	std::vector<int> evaluate() override;
@@ -32,7 +36,13 @@ private:
 	bool isConst;
 	std::vector<InitValPtr> initValPtrs;
 public:
-	explicit ArrayInitVal(bool isConst, std::vector<InitValPtr> initValPtrs);
+	ArrayInitVal(bool isConst, std::vector<InitValPtr> initValPtrs) :
+		isConst(isConst), initValPtrs(std::move(initValPtrs)) {
+		name = isConst ? "<ConstInitVal>" : "<InitVal>";
+		print();
+	}
+
+
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 	std::vector<int> evaluate() override;

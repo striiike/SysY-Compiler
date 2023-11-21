@@ -5,7 +5,7 @@
 #pragma once
 
 #include "TokenStream.hpp"
-#include "Exception.hpp"
+#include "Exception.h"
 #include "../nodes-include/lib.h"
 
 class Parser {

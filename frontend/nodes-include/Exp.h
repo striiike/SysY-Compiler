@@ -9,7 +9,12 @@
 class Number : public ASTNode {
 	int num;
 public:
-	explicit Number(std::string num);
+
+	Number(std::string num) :
+		num(std::stoi(num)) {
+		name = "<Number>";
+		print();
+	}
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 	int evaluate();
@@ -22,7 +27,12 @@ class Exp : public ASTNode {
 public:
 	AddExpPtr addExpPtr;
 
-	explicit Exp(AddExpPtr sharedPtr, bool isConst);
+
+	Exp(AddExpPtr sharedPtr, bool isConst) :
+		addExpPtr(std::move(sharedPtr)), isConst(isConst) {
+		name = isConst ? "<ConstExp>" : "<Exp>";
+		print();
+	}
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 	int evaluate();
@@ -32,7 +42,13 @@ public:
 class Cond : public ASTNode {
 	LOrExpPtr lOrExpPtr;
 public:
-	explicit Cond(LOrExpPtr lOrExpPtr);
+
+	Cond(LOrExpPtr lOrExpPtr) : lOrExpPtr(std::move(lOrExpPtr)) {
+		name = "<Cond>";
+		print();
+	}
+
+
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 	Value *llvmIr() override;

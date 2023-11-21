@@ -10,7 +10,11 @@ class FuncFParams : public ASTNode {
 private:
 	std::vector<FuncFParamPtr> funcFParamPtrs;
 public:
-	explicit FuncFParams(std::vector<FuncFParamPtr> funcFParamPtrs);
+	FuncFParams(std::vector<FuncFParamPtr> funcFParamPtrs) :
+		funcFParamPtrs(std::move(funcFParamPtrs)) {
+		name = "<FuncFParams>";
+		print();
+	}
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 

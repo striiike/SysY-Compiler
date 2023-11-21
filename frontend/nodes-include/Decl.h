@@ -13,7 +13,14 @@ class Decl : public ASTNode {
 	TokenNode bType;
 	std::vector<DefPtr> defPtrs;
 public :
-	Decl(bool isConst, TokenNode bType, std::vector<DefPtr> defPtrs);
+	Decl(bool isConst, TokenNode bType, std::vector<DefPtr> defPtrs) :
+		isConst(isConst),
+		bType(std::move(bType)),
+		defPtrs(std::move(defPtrs)) {
+		name = isConst ? "<ConstDecl>" : "<VarDecl>";
+		print();
+	}
+
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 	Value *llvmIr() override;

@@ -13,7 +13,15 @@ private:
 	DeclPtr declPtr;
 	StmtPtr stmtPtr;
 public:
-	BlockItem(DeclPtr declPtr, StmtPtr stmtPtr);
+
+	BlockItem(DeclPtr declPtr, StmtPtr stmtPtr) :
+		declPtr(declPtr),
+		stmtPtr(stmtPtr) {
+		name = "<BlockItem>";
+	}
+
+
+
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 

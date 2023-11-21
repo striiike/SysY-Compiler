@@ -21,7 +21,10 @@ private:
 	StmtPtr stmtPtr;
 	StmtPtr stmtElsePtr;
 public :
-	IfStmt(CondPtr condPtr, StmtPtr stmtPtr, StmtPtr stmtElsePtr);
+	IfStmt(CondPtr condPtr, StmtPtr stmtPtr, StmtPtr stmtElsePtr) :
+		condPtr(condPtr), stmtPtr(stmtPtr),
+		stmtElsePtr(stmtElsePtr), ComplexStmt() {}
+
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 	Value *llvmIr() override;
@@ -32,7 +35,12 @@ private:
 	LValPtr lValPtr;
 	ExpPtr expPtr;
 public:
-	_ForStmt(LValPtr lValPtr, ExpPtr expPtr);
+	_ForStmt(LValPtr lValPtr, ExpPtr expPtr)
+	: lValPtr(lValPtr), expPtr(expPtr) {
+		name = "<ForStmt>";
+		print();
+	}
+
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 	Value *llvmIr() override;
@@ -45,8 +53,12 @@ private:
 	CondPtr condPtr;
 	StmtPtr stmtPtr;
 public :
-	ForStmt(CondPtr condPtr, StmtPtr stmtPtr,
-			_ForStmtPtr assignStmtPtr1, _ForStmtPtr assignStmtPtr2);
+
+	ForStmt(CondPtr condPtr, StmtPtr stmtPtr, _ForStmtPtr assignStmtPtr1, _ForStmtPtr assignStmtPtr2) :
+		condPtr(condPtr), stmtPtr(stmtPtr),
+		assignStmtPtr1(assignStmtPtr1),
+		assignStmtPtr2(assignStmtPtr2), ComplexStmt() {}
+
 
 	void checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) override;
 	Value *llvmIr() override;
