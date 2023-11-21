@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include "TokenStream.hpp"
+#include "TokenStream.h"
 #include "Exception.h"
-#include "../nodes-include/lib.h"
+#include "../nodes/lib.h"
 
 class Parser {
 private:

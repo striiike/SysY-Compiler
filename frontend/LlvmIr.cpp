@@ -1,7 +1,7 @@
 //
 // Created by hiccup on 2023/11/21.
 //
-#include "nodes-include/lib.h"
+#include "nodes/lib.h"
 #include "parser/Symbol.h"
 #include "../llvm-ir/IrBuilder.h"
 

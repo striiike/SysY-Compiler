@@ -11,6 +11,7 @@
 #include "config.h"
 //#include "midend/MidEnd.h"
 #include "backend/MipsParser.h"
+#include "llvm-ir/IrBuilder.h"
 
 
 
@@ -23,7 +24,7 @@ std::ofstream outfile("./output.txt");
 std::ofstream errfile("./error.txt");
 std::ofstream llvmfile("./llvm_ir.txt");
 std::ofstream llvmfile_m2r("./llvm_ir_m2r.txt");
-
+std::ofstream llvmfile_killPhi("./llvm_ir_killPhi.txt");
 std::ofstream mipsfile("./mips.txt");
 
 void parseLog(const std::string &str) {
@@ -63,19 +64,19 @@ int main() {
 
 	auto AST = parser.parseCompUnit();
 
-//	{
-//		auto ctx = make_shared<ErrorCtx>();
-//		auto ret = make_shared<ErrorRet>();
-//		AST.checkError(ctx, ret);
-//		std::sort(errorList.begin(), errorList.end(),
-//				  [](const auto &left, const auto &right) {
-//					  return left.second < right.second;
-//				  });
-//		errorList.erase(std::unique(errorList.begin(), errorList.end()), errorList.end());
-//		for (const auto &pair : errorList) {
-//			errfile << pair.second << " " << exceptionToString[pair.first] << std::endl;
-//		}
-//	}
+	{
+		auto ctx = make_shared<ErrorCtx>();
+		auto ret = make_shared<ErrorRet>();
+		AST.checkError(ctx, ret);
+		std::sort(errorList.begin(), errorList.end(),
+				  [](const auto &left, const auto &right) {
+					  return left.second < right.second;
+				  });
+		errorList.erase(std::unique(errorList.begin(), errorList.end()), errorList.end());
+		for (const auto &pair : errorList) {
+			errfile << pair.second << " " << exceptionToString[pair.first] << std::endl;
+		}
+	}
 	symbol.clear();
 
 	AST.llvmIr();

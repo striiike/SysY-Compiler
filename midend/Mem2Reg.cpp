@@ -76,7 +76,7 @@ void Mem2Reg::buildDefUse(Instruction *inst) {
 	useInsts = new std::set<Instruction *>();
 
 	for (auto use : inst->useList) {
-		assert(use->user);
+
 		Instruction *userInst = ((Instruction *)use->user);
 		if (userInst->instType==InstType::STORE) {
 			defBbs->insert(userInst->parent);
@@ -96,6 +96,10 @@ void Mem2Reg::insertPhiInst(Instruction *inst) {
 //		return;
 //	}
 
+
+
+	/// there should be @no phi
+	/// 算法没能包括这种情况，不知道是什么问题，目前没问题，先不管了
 	if (defBbs->size()==1)
 		return;
 

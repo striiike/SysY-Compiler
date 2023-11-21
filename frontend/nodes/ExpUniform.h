@@ -5,12 +5,14 @@
 #pragma once
 
 #include <vector>
+#include <algorithm>
 #include "../lexer/Lexer.h"
 #include "ASTNode.h"
 #include "UnaryExp.h"
-#include "../../llvm-ir/IrBuilder.h"
+//#include "../../llvm-ir/IrBuilder.h"
 
 using namespace std;
+class BasicBlock;
 
 // only for certain syntax as (MulExp, AddExp, RelExp, EqExp, LAndExp, LOrExp)
 //
@@ -83,7 +85,7 @@ void ExpUniform<T>::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 class MulExp : public ExpUniform<UnaryExpPtr> {
 public:
 	MulExp(UnaryExpPtr leftOperand, vector<TokenType> operators, vector<UnaryExpPtr> operands)
-		: ExpUniform<UnaryExpPtr>(std::move(leftOperand), std::move(operators), std::move(operands)) {
+		: ExpUniform<UnaryExpPtr>(leftOperand, std::move(operators), std::move(operands)) {
 		name = "<MulExp>";
 		print();
 	}
@@ -95,7 +97,7 @@ public:
 class AddExp : public ExpUniform<MulExpPtr> {
 public:
 	AddExp(MulExpPtr leftOperand, vector<TokenType> operators, vector<MulExpPtr> operands)
-		: ExpUniform<MulExpPtr>(std::move(leftOperand), std::move(operators), std::move(operands)) {
+		: ExpUniform<MulExpPtr>(leftOperand, std::move(operators), std::move(operands)) {
 		name = "<AddExp>";
 		print();
 	}
@@ -106,7 +108,7 @@ public:
 class RelExp : public ExpUniform<AddExpPtr> {
 public:
 	RelExp(AddExpPtr leftOperand, vector<TokenType> operators, vector<AddExpPtr> operands)
-		: ExpUniform<AddExpPtr>(std::move(leftOperand), std::move(operators), std::move(operands)) {
+		: ExpUniform<AddExpPtr>(leftOperand, std::move(operators), std::move(operands)) {
 		name = "<RelExp>";
 		print();
 	}
@@ -117,7 +119,7 @@ public:
 class EqExp : public ExpUniform<RelExpPtr> {
 public:
 	EqExp(RelExpPtr leftOperand, vector<TokenType> operators, vector<RelExpPtr> operands)
-		: ExpUniform<RelExpPtr>(std::move(leftOperand), std::move(operators), std::move(operands)) {
+		: ExpUniform<RelExpPtr>(leftOperand, std::move(operators), std::move(operands)) {
 		name = "<EqExp>";
 		print();
 	}
@@ -127,7 +129,7 @@ public:
 class LAndExp : public ExpUniform<EqExpPtr> {
 public:
 	LAndExp(EqExpPtr leftOperand, vector<TokenType> operators, vector<EqExpPtr> operands)
-		: ExpUniform<EqExpPtr>(std::move(leftOperand), std::move(operators), std::move(operands)) {
+		: ExpUniform<EqExpPtr>(leftOperand, std::move(operators), std::move(operands)) {
 		name = "<LAndExp>";
 		print();
 	}
@@ -141,7 +143,7 @@ class LOrExp : public ExpUniform<LAndExpPtr> {
 public:
 
 	LOrExp(LAndExpPtr leftOperand, vector<TokenType> operators, vector<LAndExpPtr> operands)
-		: ExpUniform<LAndExpPtr>(std::move(leftOperand), std::move(operators), std::move(operands)) {
+		: ExpUniform<LAndExpPtr>(leftOperand, std::move(operators), std::move(operands)) {
 		name = "<LOrExp>";
 		print();
 	}

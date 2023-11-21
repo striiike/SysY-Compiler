@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include "User.h"
+
 void User::updateOld2New(Value *old, Value *_new) {
 	if (std::count(operandList.begin(), operandList.end(), old)) {
 		std::replace(operandList.begin(), operandList.end(), old, _new);

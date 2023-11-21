@@ -8,7 +8,7 @@
 #include <optional>
 #include "../lexer/Lexer.h"
 #include "../../config.h"
-#include "../nodes-include/TokenNode.h"
+#include "../nodes/TokenNode.h"
 #include "Symbol.h"
 
 using namespace std;
