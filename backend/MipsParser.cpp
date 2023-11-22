@@ -18,6 +18,7 @@
 #include "../llvm-ir/instruction/ReturnInst.h"
 #include "../llvm-ir/instruction/IcmpInst.h"
 #include "../llvm-ir/instruction/PhiInst.h"
+#include "../llvm-ir/instruction/ParallelCopyInst.h"
 
 void MipsParser::parseModule() {
 	for (auto i : module->globalList) {
@@ -84,7 +85,7 @@ void MipsParser::parseInstruction(Instruction *inst) {
 		break;
 	case InstType::STORE: parseStoreInst((StoreInst *)inst);
 		break;
-	case InstType::PHI: parsePhiInst((PhiInst *)inst);
+	case InstType::MOVE: parseMoveInst((MoveInst *)inst);
 		break;
 	case InstType::ZEXT: parseZextInst((ZextInst *)inst);
 		break;
@@ -283,6 +284,7 @@ void MipsParser::parseZextInst(ZextInst *inst) {
 	mipsBuilder->allocate(inst->getOperand(0), $t0);
 	mipsBuilder->allocateAndStore(inst, $t0);
 }
-void MipsParser::parsePhiInst(PhiInst *inst) {
-
+void MipsParser::parseMoveInst(MoveInst *inst) {
+	mipsBuilder->allocate(inst->src, $t0);
+	mipsBuilder->allocateAndStore(inst->dst, $t0);
 }

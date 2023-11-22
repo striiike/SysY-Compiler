@@ -12,8 +12,7 @@
 //#include "midend/MidEnd.h"
 #include "backend/MipsParser.h"
 #include "llvm-ir/IrBuilder.h"
-
-
+#include "midend/MidEnd.h"
 
 using namespace std;
 
@@ -23,6 +22,7 @@ bool PARSER_SWITCH = false;
 std::ofstream outfile("./output.txt");
 std::ofstream errfile("./error.txt");
 std::ofstream llvmfile("./llvm_ir.txt");
+std::ofstream llvmfile_nop("./llvm_ir_nop.txt");
 std::ofstream llvmfile_m2r("./llvm_ir_m2r.txt");
 std::ofstream llvmfile_killPhi("./llvm_ir_killPhi.txt");
 std::ofstream mipsfile("./mips.txt");
@@ -81,21 +81,27 @@ int main() {
 
 	AST.llvmIr();
 //	cout << irBuilder.getModule()->toString() << endl;
-//	llvmfile << irBuilder.getModule()->toString() << endl;
+	llvmfile_nop << irBuilder.getModule()->toString() << endl;
 
 //	auto *mid = new MidEnd();
 //	mid->run(irBuilder.getModule());
 
-//	(new DFBuilder(&(irBuilder.getModule()->functionList)))->run();
+	(new DFBuilder(&(irBuilder.getModule()->functionList)))->run();
 //	cout << irBuilder.getModule()->toString() << endl;
-//	(new Mem2Reg())->run(irBuilder.getModule());
+	(new Mem2Reg())->run(irBuilder.getModule());
 
 
 	llvmfile << irBuilder.getModule()->toString() << endl;
 
 
-//	llvmfile_m2r << irBuilder.getModule()->toString() << endl;
+	llvmfile_m2r << irBuilder.getModule()->toString() << endl;
 //	cout << irBuilder.getModule()->toString() << endl;
+
+
+
+
+	(new RemovePhi())->run(irBuilder.getModule());
+	llvmfile_killPhi << irBuilder.getModule()->toString() << endl;
 
 	auto mipsParser = new MipsParser(irBuilder.getModule());
 	mipsParser->parseModule();

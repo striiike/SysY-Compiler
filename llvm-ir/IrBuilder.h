@@ -25,6 +25,7 @@
 #include "instruction/BrInst.h"
 #include "instruction/IcmpInst.h"
 #include "instruction/PhiInst.h"
+#include "instruction/ParallelCopyInst.h"
 
 using namespace std;
 
@@ -61,6 +62,7 @@ static std::string bbPrefix = "b";
 static std::string argPrefix = "%a_";
 
 class IrBuilder {
+public:
 	int bbCnt;
 	int argsCnt;
 	int globalVarCnt;
@@ -143,6 +145,8 @@ public:
 	Value *buildBrInst(BasicBlock *bb);
 
 	Value *buildPhiInst(vector<BasicBlock*> *bbs, BasicBlock *to);
+
+	ParallelCopyInst *buildPC();
 
 	void fillInReturn();
 };

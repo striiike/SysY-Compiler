@@ -13,7 +13,7 @@
 class BasicBlock;
 
 enum InstType {
-	ALLOCA, RETURN, STORE, GEP, ALU, LOAD, CALL, ICMP, BRANCH, ZEXT, PHI
+	ALLOCA, RETURN, STORE, GEP, ALU, LOAD, CALL, ICMP, BRANCH, ZEXT, PHI, PC, MOVE
 };
 
 class Instruction : public User {

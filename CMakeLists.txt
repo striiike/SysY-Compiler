@@ -82,4 +82,7 @@ add_executable(compiler main.cpp
 #        llvm-ir/constant/Constant.cpp
         frontend/CheckError.cpp
         frontend/LlvmIr.cpp
+        midend/RemovePhi.h
+        midend/RemovePhi.cpp
+        llvm-ir/instruction/ParallelCopyInst.h
 )

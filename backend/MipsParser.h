@@ -20,7 +20,7 @@ class ZextInst;
 class LoadInst;
 class GEPInst;
 class StoreInst;
-class PhiInst;
+class MoveInst;
 
 class MipsParser {
 public:
@@ -48,5 +48,5 @@ public:
 	void parseGEPInst(GEPInst *inst);
 	void parseLoadInst(LoadInst *inst);
 	void parseStoreInst(StoreInst *inst);
-	void parsePhiInst(PhiInst *inst);
+	void parseMoveInst(MoveInst *inst);
 };

@@ -92,16 +92,16 @@ void Mem2Reg::buildDefUse(Instruction *inst) {
 
 void Mem2Reg::insertPhiInst(Instruction *inst) {
 
-//	if (useBbs->empty()) {
-//		return;
-//	}
 
 
 
+
+	/// it was me a silly b, i don't remember why it can't pass the test at that time
+	/// maybe something else trigger this error
 	/// there should be @no phi
-	/// 算法没能包括这种情况，不知道是什么问题，目前没问题，先不管了
-	if (defBbs->size()==1)
-		return;
+
+	//	if (defBbs->size()==1)
+	//		return;
 
 
 

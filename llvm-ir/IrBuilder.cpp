@@ -144,3 +144,10 @@ void IrBuilder::fillInReturn() {
 		buildReturn(val);
 	}
 }
+
+
+ParallelCopyInst* buildPC() {
+
+}
+
+

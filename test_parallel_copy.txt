@@ -1,0 +1,84 @@
+
+//	BB1:
+//	%1 = phi i32 [ %2, %BB2 ], [ %3, %BB3 ]
+//	%2 = phi i32 [%1, %BB2], [%3, %BB3]
+//	br label %BB4
+//	BB2:
+//	....
+//	br  i1 %4, label %BB4 label %BB1
+//	BB3:
+//	...
+//	br  i1 %5, label %BB4 label %BB1
+//	BB4:
+//	%6 = add i32 %1, %1
+
+	BasicBlock *b1 = new BasicBlock("b1"), *b2 = new BasicBlock("b2"), *b3 = new BasicBlock("b3"),
+		*b4 = new BasicBlock("b4");
+	Value *v1, *v3 = new Value(IntegerType::INT32, "%3"), *v = new Value(IntegerType::INT32, "%8"), *v4, *v5, *v6;
+
+	PhiInst *phi1, *phi2;
+
+
+	vector<BasicBlock *> *pre1 = new vector<BasicBlock *>{b2, b3};
+	phi1 = new PhiInst(pre1, "%1");
+
+	vector<BasicBlock *> *pre2 = new vector<BasicBlock *>{b2, b3};
+	phi2 = new PhiInst(pre2, "%2");
+	phi2->addValueFromBb(phi1, b2);
+	phi2->addValueFromBb(v3, b3);
+	phi1->addValueFromBb(phi2, b2);
+	phi1->addValueFromBb(v3, b3);
+
+	auto *br1 = new BrInst(b4);
+	b1->instructionList.push_back(phi1);
+	b1->instructionList.push_back(phi2);
+	b1->instructionList.push_back(br1);
+
+	auto *br2 = new BrInst(new Value(IntegerType::INT1, "%4"), b4, b1);
+	b2->instructionList.push_back(br2);
+
+	auto *br3 = new BrInst(new Value(IntegerType::INT1, "%5"), b4, b1);
+	b3->instructionList.push_back(br3);
+
+	auto *ret = new ReturnInst("fucker", new Value(IntegerType::INT32, "fucker"));
+	b4->instructionList.push_back(ret);
+
+	Function *func = new Function(IntegerType::INT32, "fucker");
+	func->basicList.push_back(b1);
+	func->basicList.push_back(b2);
+	func->basicList.push_back(b3);
+	func->basicList.push_back(b4);
+	b1->parent = func;
+	b2->parent = func;
+	b3->parent = func;
+	b4->parent = func;
+
+	Module *module = new Module();
+	module->functionList.push_back(func);
+
+	b1->preBbs = new vector<BasicBlock *>;
+	b1->sucBbs = new vector<BasicBlock *>;
+	b2->preBbs = new vector<BasicBlock *>;
+	b2->sucBbs = new vector<BasicBlock *>;
+	b3->preBbs = new vector<BasicBlock *>;
+	b3->sucBbs = new vector<BasicBlock *>;
+	b4->preBbs = new vector<BasicBlock *>;
+	b4->sucBbs = new vector<BasicBlock *>;
+
+	b1->preBbs->push_back(b2);
+	b1->preBbs->push_back(b3);
+	b1->sucBbs->push_back(b4);
+
+	b2->sucBbs->push_back(b1);
+	b2->sucBbs->push_back(b4);
+
+	b3->sucBbs->push_back(b1);
+	b3->sucBbs->push_back(b4);
+
+	b4->preBbs->push_back(b2);
+	b4->preBbs->push_back(b3);
+//	(new DFBuilder(&(module->functionList)))->run();
+//	(new Mem2Reg())->run(module);
+	llvmfile_m2r << module->toString() << endl;
+	(new RemovePhi())->run(module);
+	llvmfile_killPhi << module->toString() << endl;
