@@ -5,10 +5,8 @@
 #include <set>
 #include <algorithm>
 #include "RemovePhi.h"
-#include "../llvm-ir/Module.h"
 #include "../llvm-ir/instruction/PhiInst.h"
 #include "../llvm-ir/instruction/ParallelCopyInst.h"
-#include "../llvm-ir/BasicBlock.h"
 #include "../llvm-ir/IrBuilder.h"
 
 void RemovePhi::run(Module *module) {
@@ -18,7 +16,7 @@ void RemovePhi::run(Module *module) {
 		/// by replacing with parallel copy
 		parallelCopy(f);
 
-		cout << module->toString() << endl;
+//		cout << module->toString() << endl;
 
 		/// change parallel copy to mips-fit version
 		sequentialMove(f);

@@ -85,4 +85,6 @@ add_executable(compiler main.cpp
         midend/RemovePhi.h
         midend/RemovePhi.cpp
         llvm-ir/instruction/ParallelCopyInst.h
+        backend/SillyParser.h
+        backend/SillyParser.cpp
 )
