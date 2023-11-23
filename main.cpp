@@ -106,8 +106,8 @@ int main() {
 	auto mipsParser = new MipsParser(irBuilder.getModule());
 	mipsParser->parseModule();
 
-	mipsParser->mipsBuilder->mipsModule->print(cout);
-	mipsParser->mipsBuilder->mipsModule->print(mipsfile);
+	mipsParser->mipsModule->print(cout);
+
 
 	return 0;
 }

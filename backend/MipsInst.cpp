@@ -27,6 +27,8 @@ std::string MipsBinInst::toString() const {
 std::string MipsLiInst::toString() const {
 	if (dynamic_cast<MipsLabel *>(imm)) {
 		return "la \t" + dst->toString() + ", \t" + imm->toString();
+	} else if (dynamic_cast<MipsReg *>(imm)) {
+		return "move \t" + dst->toString() + ", \t" + imm->toString();
 	}
 	return "li \t" + dst->toString() + ", \t" + imm->toString();
 }

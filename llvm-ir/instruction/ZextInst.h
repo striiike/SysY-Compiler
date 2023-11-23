@@ -14,11 +14,11 @@ class ZextInst : public Instruction {
 public:
 	ZextInst(std::string name, Value *val, Type *tar)
 		: Instruction(tar, std::move(name), InstType::ZEXT) {
-		addOperand(val);
+		addOp(val);
 	}
 
 	std::string toString() override {
-		return name + " = zext " + getOperand(0)->toLlvmString() + " to " + type->toString();
+		return name + " = zext " + getOp(0)->toLlvmString() + " to " + type->toString();
 	}
 };
 

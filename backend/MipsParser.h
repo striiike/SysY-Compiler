@@ -5,6 +5,10 @@
 #pragma once
 
 #include "MipsBuilder.h"
+#include "../llvm-ir/Function.h"
+#include "../llvm-ir/constant/ConstantInt.h"
+#include <unordered_map>
+
 class Module;
 class Function;
 class GlobalVariable;
@@ -22,21 +26,35 @@ class GEPInst;
 class StoreInst;
 class MoveInst;
 
+/*
+ * 	the existence of MipsParser is to make sure we use the machine code efficiently
+ *	but not to allocate all the registers !
+ */
+
+
 class MipsParser {
 public:
 	Module *module;
-	MipsBuilder *mipsBuilder;
+	MipsModule *mipsModule;
+
+	MipsFunction *curMipsFunction{};
+	MipsBlock *curMipsBlock{};
+
+	std::unordered_map<GlobalVariable *, MipsOperand *> *global2Operand;
+	std::unordered_map<Value *, MipsOperand *> *value2Operand;
 
 public:
-	MipsParser(Module *mod) {
+	explicit MipsParser(Module *mod) {
 		module = mod;
-		mipsBuilder = new MipsBuilder();
+		mipsModule = new MipsModule;
+		global2Operand = new unordered_map<GlobalVariable *, MipsOperand *>;
+		value2Operand = new unordered_map<Value *, MipsOperand *>;
 	}
 
 	void parseModule();
 	void parseGlobalVar(GlobalVariable *) const;
 	void parseFunction(Function *);
-	void parseInstruction(Instruction *);
+	void parseInstruction(Instruction *, MipsBlock *);
 
 	void parseAllocaInst(AllocaInst *inst);
 	void parseAluInst(AluInst *inst);
@@ -49,4 +67,8 @@ public:
 	void parseLoadInst(LoadInst *inst);
 	void parseStoreInst(StoreInst *inst);
 	void parseMoveInst(MoveInst *inst);
+	MipsOperand *parseOperand(Value *val, bool isImm);
+	MipsOperand *parseGlobalOp(GlobalVariable *val, bool imm);
+	MipsOperand *parseArgumentOp(Argument *val, bool imm);
+	MipsOperand *parseConstOp(ConstantInt *val, bool imm);
 };

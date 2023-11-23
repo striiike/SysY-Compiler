@@ -23,6 +23,8 @@ struct MipsBinInst : MipsInst {
 	MipsOperand *src2;
 	MipsOperand *dst;
 
+	MipsBinInst(BinType t, MipsOperand *d, MipsOperand *s1, MipsOperand *s2)
+		: ty(t), dst(d), src1(s1), src2(s2) {}
 	std::string toString() const override;;
 };
 
@@ -49,6 +51,9 @@ struct MipsMarco : MipsInst {
 struct MipsMoveInst : MipsInst {
 	MipsOperand *src1;
 	MipsOperand *dst;
+
+	MipsMoveInst(MipsOperand *d, MipsOperand *s)
+		: dst(d), src1(s) {}
 	std::string toString() const override;
 };
 
@@ -59,11 +64,14 @@ enum CondType {
 struct MipsBranchInst : MipsInst {
 	CondType ty;
 	MipsLabel *label;
-	MipsOperand *src1;
-	MipsOperand *src2;
+	MipsOperand *src1{};
+	MipsOperand *src2{};
 
 	MipsBranchInst(CondType ty, MipsOperand *src1, MipsOperand *src2, MipsLabel *label)
 		: ty(ty), src1(src1), src2(src2), label(label) {}
+
+	MipsBranchInst(CondType ty, MipsLabel *label)
+		: ty(ty), label(label) {}
 
 	std::string toString() const override;
 
@@ -74,6 +82,9 @@ struct MipsCmpInst : MipsInst {
 	MipsOperand *src1;
 	MipsOperand *src2;
 	MipsOperand *dst;
+
+	MipsCmpInst(CondType t, MipsOperand *d, MipsOperand *s1, MipsOperand *s2)
+	: ty(t), dst(d), src1(s1), src2(s2) {}
 
 	std::string toString() const override;
 };

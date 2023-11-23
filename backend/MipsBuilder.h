@@ -15,7 +15,6 @@ class MipsBuilder {
 public:
 	std::map<Value *, int> *value2Offset = new map<Value *, int>;
 	std::map<Value *, string> *global2Label = new map<Value *, string>;
-	std::map<Value *, int> *global2Offsetss = new map<Value *, int>;
 	int stackOffset = 0;
 	int dataOffset = 0;
 	MipsFunction *curFunc;

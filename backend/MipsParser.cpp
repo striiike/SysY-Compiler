@@ -17,8 +17,9 @@
 #include "../llvm-ir/instruction/StoreInst.h"
 #include "../llvm-ir/instruction/ReturnInst.h"
 #include "../llvm-ir/instruction/IcmpInst.h"
-#include "../llvm-ir/instruction/PhiInst.h"
 #include "../llvm-ir/instruction/ParallelCopyInst.h"
+
+auto mipsBuilder = new MipsBuilder();
 
 void MipsParser::parseModule() {
 	for (auto i : module->globalList) {
@@ -34,63 +35,137 @@ void MipsParser::parseGlobalVar(GlobalVariable *glo) const {
 	mipsGlo->name = glo->name.substr(1);
 	mipsGlo->label = new MipsLabel(mipsGlo->name);
 
-	(*mipsBuilder->global2Label)[glo] = mipsGlo->name;
+	(*global2Operand)[glo] = mipsGlo->label;
+
 	if (glo->init->isArr()) {
 		auto item = ((ConstantArray *)glo->init);
 		mipsGlo->arr = item->array;
-		mipsBuilder->dataOffset += mipsGlo->size = glo->getSize();
 	}
 	if (glo->init->isInt()) {
 		auto item = ((ConstantInt *)glo->init);
 		mipsGlo->arr.push_back(item->value);
-		mipsBuilder->dataOffset += 4;
 	}
 	if (glo->init->isStr()) {
 		auto item = ((ConstantString *)glo->init);
 		mipsGlo->stringLiteral = item->mipsString();
-		mipsBuilder->dataOffset += mipsGlo->stringLiteral.size();
 	}
-	mipsBuilder->mipsModule->globals.push_back(mipsGlo);
-
+	mipsModule->globals.push_back(mipsGlo);
 }
 
 void MipsParser::parseFunction(Function *func) {
-	mipsBuilder->buildFunc(func);
+	curMipsFunction = new MipsFunction();
+	mipsModule->functions.push_back(curMipsFunction);
 	for (auto i : func->basicList) {
-		mipsBuilder->buildBlock(i);
+		curMipsBlock = new MipsBlock();
+		curMipsFunction->blockList.push_back(curMipsBlock);
 		for (auto j : i->instructionList) {
-			parseInstruction(j);
+			parseInstruction(j, curMipsBlock);
 		}
 	}
 }
 
-void MipsParser::parseInstruction(Instruction *inst) {
-	mipsBuilder->curBlock->instructionList.push_back(new MipsComment(inst->toString()));
+void MipsParser::parseInstruction(Instruction *inst, MipsBlock *block) {
+	block->instructionList.push_back(new MipsComment(inst->toString()));
 	switch (inst->instType) {
-	case InstType::ALLOCA: parseAllocaInst((AllocaInst *)inst);
+	case InstType::ALLOCA: {
+		parseAllocaInst((AllocaInst *)inst);
 		break;
-	case InstType::ALU: parseAluInst((AluInst *)inst);
+	}
+	case InstType::ALU: {
+		parseAluInst((AluInst *)inst);
 		break;
-	case InstType::BRANCH: parseBrInst((BrInst *)inst);
+	}
+	case InstType::BRANCH: {
+		parseBrInst((BrInst *)inst);
 		break;
-	case InstType::CALL: parseCallInst((CallInst *)inst);
+	}
+	case InstType::CALL: {
+		parseCallInst((CallInst *)inst);
 		break;
-	case InstType::GEP: parseGEPInst((GEPInst *)inst);
+	}
+	case InstType::GEP: {
+		parseGEPInst((GEPInst *)inst);
 		break;
-	case InstType::ICMP: parseIcmpInst((IcmpInst *)inst);
+	}
+	case InstType::ICMP: {
+		parseIcmpInst((IcmpInst *)inst);
 		break;
-	case InstType::LOAD: parseLoadInst((LoadInst *)inst);
+	}
+	case InstType::LOAD: {
+		parseLoadInst((LoadInst *)inst);
 		break;
-	case InstType::RETURN: parseReturnInst((ReturnInst *)inst);
+	}
+	case InstType::RETURN: {
+		parseReturnInst((ReturnInst *)inst);
 		break;
-	case InstType::STORE: parseStoreInst((StoreInst *)inst);
+	}
+	case InstType::STORE: {
+		parseStoreInst((StoreInst *)inst);
 		break;
-	case InstType::MOVE: parseMoveInst((MoveInst *)inst);
+	}
+	case InstType::MOVE: {
+		parseMoveInst((MoveInst *)inst);
 		break;
-	case InstType::ZEXT: parseZextInst((ZextInst *)inst);
+	}
+	case InstType::ZEXT: {
+		parseZextInst((ZextInst *)inst);
 		break;
+	}
 	default: break;
 	}
+}
+
+/*
+ *  most of the compilers I observed have this kind of method,
+ *  it is really important in every aspect.
+ *  It is an abstract way of changing irValue into MipsOperand.
+ *
+ */
+MipsOperand *MipsParser::parseOperand(Value *val, bool canImm) {
+	if (value2Operand->count(val)) {
+		auto op = (*value2Operand)[val];
+		if (!canImm && dynamic_cast<MipsImm *> (op)) {
+			auto *tmp = new MipsVrReg();
+			auto *inst = new MipsLiInst(tmp, op);
+			curMipsBlock->addInst(inst);
+			return tmp;
+		}
+		return op;
+	}
+
+	if (dynamic_cast<Value *>(val)) {
+		return parseGlobalOp(dynamic_cast<GlobalVariable *>(val), canImm);
+	} else if (dynamic_cast<Argument *>(val)) {
+		return parseArgumentOp(dynamic_cast<Argument *>(val), canImm);
+	} else if (dynamic_cast<ConstantInt *>(val)) {
+		return parseConstOp(dynamic_cast<ConstantInt *>(val), canImm);
+	} else {
+		auto *vr = new MipsVrReg();
+		return vr;
+	}
+}
+
+MipsOperand *MipsParser::parseGlobalOp(GlobalVariable *val, bool canImm) {
+	auto *dst = new MipsVrReg();
+	auto *inst = new MipsLiInst(dst, (*global2Operand)[val]);
+	curMipsBlock->addInst(inst);
+	return dst;
+}
+
+MipsOperand *MipsParser::parseArgumentOp(Argument *val, bool canImm) {
+	int rk = val->rank;
+	auto *dst = new MipsVrReg();
+	if (rk < 4) {
+		auto *inst = new MipsLiInst(dst, (rk==0) ? $a0 : (rk==1) ? $a1 : (rk==2) ? $a2 : (rk==3) ? $a3 : nullptr);
+		curMipsBlock->addInst(inst);
+	} else {
+
+	}
+	return dst;
+}
+
+MipsOperand *MipsParser::parseConstOp(ConstantInt *val, bool canImm) {
+	return new MipsImm(val->value);
 }
 
 void MipsParser::parseAllocaInst(AllocaInst *inst) {
@@ -111,45 +186,112 @@ void MipsParser::parseAllocaInst(AllocaInst *inst) {
 }
 
 void MipsParser::parseAluInst(AluInst *inst) {
+	auto op1 = inst->getOp(0), op2 = inst->getOp(1);
+	bool imm1 = dynamic_cast<ConstantInt *> (op1);
+	bool imm2 = dynamic_cast<ConstantInt *> (op2);
 
-	auto op1 = inst->getOperand(0), op2 = inst->getOperand(1);
-
-	mipsBuilder->allocate(op1, $t0);
-	mipsBuilder->allocate(op2, $t1);
-
-	switch (inst->aluType) {
-	case AluType::ADD: mipsBuilder->buildBinInst(M_ADDU, $t0, $t0, $t1);
-		break;
-	case AluType::SUB: mipsBuilder->buildBinInst(M_SUBU, $t0, $t0, $t1);
-		break;
-	case AluType::MUL: mipsBuilder->buildBinInst(M_MUL, $t0, $t0, $t1);
-		break;
-	case AluType::SDIV:mipsBuilder->buildBinInst(M_DIV, $t0, $t0, $t1);
-		break;
-	case AluType::SREM:mipsBuilder->buildBinInst(M_SREM, $t0, $t0, $t1);
-		break;
-	default:break;
+	auto dst = parseOperand(inst, false);
+	MipsInst *mipsInst;
+	if (inst->aluType==AluType::ADD) {
+		if (imm1 && imm2) {
+			int ans = dynamic_cast<ConstantInt *> (op1)->value + dynamic_cast<ConstantInt *> (op2)->value;
+			mipsInst = new MipsLiInst(dst, new MipsImm(ans));
+		} else {
+			MipsOperand *mop1, *mop2;
+			if (imm1) {
+				mop2 = parseOperand(op1, true);
+				mop1 = parseOperand(op2, false);
+			} else {
+				mop1 = parseOperand(op1, true);
+				mop2 = parseOperand(op2, false);
+			}
+			mipsInst = new MipsBinInst(BinType::M_ADDU, dst, mop1, mop2);
+		}
 	}
-
-	mipsBuilder->allocateAndStore(inst, $t0);
-
+	if (inst->aluType==AluType::SUB) {
+		if (imm1 && imm2) {
+			int ans = dynamic_cast<ConstantInt *> (op1)->value - dynamic_cast<ConstantInt *> (op2)->value;
+			mipsInst = new MipsLiInst(dst, new MipsImm(ans));
+		} else {
+			MipsOperand *mop1, *mop2;
+			if (imm1) {
+				mop2 = parseOperand(op1, true);
+				mop1 = parseOperand(op2, false);
+			} else {
+				mop1 = parseOperand(op1, true);
+				mop2 = parseOperand(op2, false);
+			}
+			mipsInst = new MipsBinInst(BinType::M_SUBU, dst, mop1, mop2);
+		}
+	}
+	if (inst->aluType==AluType::MUL) {
+		if (imm1 && imm2) {
+			int ans = dynamic_cast<ConstantInt *> (op1)->value*dynamic_cast<ConstantInt *> (op2)->value;
+			mipsInst = new MipsLiInst(dst, new MipsImm(ans));
+		} else {
+			MipsOperand *mop1, *mop2;
+			if (imm1) {
+				mop2 = parseOperand(op1, true);
+				mop1 = parseOperand(op2, false);
+			} else {
+				mop1 = parseOperand(op1, true);
+				mop2 = parseOperand(op2, false);
+			}
+			mipsInst = new MipsBinInst(BinType::M_MUL, dst, mop1, mop2);
+		}
+	}
+	if (inst->aluType==AluType::SDIV) {
+		if (imm1 && imm2) {
+			int ans = dynamic_cast<ConstantInt *> (op1)->value/dynamic_cast<ConstantInt *> (op2)->value;
+			mipsInst = new MipsLiInst(dst, new MipsImm(ans));
+		} else {
+			MipsOperand *mop1, *mop2;
+			if (imm1) {
+				mop2 = parseOperand(op1, true);
+				mop1 = parseOperand(op2, false);
+			} else {
+				mop1 = parseOperand(op1, true);
+				mop2 = parseOperand(op2, false);
+			}
+			mipsInst = new MipsBinInst(BinType::M_DIV, dst, mop1, mop2);
+		}
+	}
+	if (inst->aluType==AluType::SREM) {
+		if (imm1 && imm2) {
+			int ans = dynamic_cast<ConstantInt *> (op1)->value%dynamic_cast<ConstantInt *> (op2)->value;
+			mipsInst = new MipsLiInst(dst, new MipsImm(ans));
+		} else {
+			MipsOperand *mop1, *mop2;
+			if (imm1) {
+				mop2 = parseOperand(op1, true);
+				mop1 = parseOperand(op2, false);
+			} else {
+				mop1 = parseOperand(op1, true);
+				mop2 = parseOperand(op2, false);
+			}
+			mipsInst = new MipsBinInst(BinType::M_SREM, dst, mop1, mop2);
+		}
+	}
+	curMipsBlock->addInst(mipsInst);
 }
 
 void MipsParser::parseBrInst(BrInst *inst) {
 	if (inst->jump) {
-		mipsBuilder->buildBranchInst(CondType::J, new MipsLabel(inst->getOperand(0)->name));
+		auto *br = new MipsBranchInst(CondType::J, new MipsLabel(inst->getOp(0)->name));
+		curMipsBlock->addInst(br);
 	} else {
-		mipsBuilder->allocate(inst->getOperand(0), $t0);
+		auto mop = parseOperand(inst->getOp(0), false);
+		auto *br = new MipsBranchInst(CondType::BNE, mop, $zero, new MipsLabel(inst->getOp(1)->name));
+		auto *br1 = new MipsBranchInst(CondType::J, new MipsLabel(inst->getOp(2)->name));
 
-		mipsBuilder->buildBranchInst(CondType::BNE, $t0, $zero, new MipsLabel(inst->getOperand(1)->name));
-		mipsBuilder->buildBranchInst(CondType::J, new MipsLabel(inst->getOperand(2)->name));
+		curMipsBlock->addInst(br);
+		curMipsBlock->addInst(br1);
 	}
-
 }
 
 void MipsParser::parseCallInst(CallInst *inst) {
 
-	auto *func = (Function *)inst->getOperand(0);
+	auto *func = (Function *)inst->getOp(0);
 
 	if (func->isLink) {
 
@@ -158,11 +300,11 @@ void MipsParser::parseCallInst(CallInst *inst) {
 			mipsBuilder->curBlock->instructionList.push_back(new MipsMarco("getint"));
 		}
 		if (func==Function::putint) {
-			mipsBuilder->allocate(inst->getOperand(1), $a0);
+			mipsBuilder->allocate(inst->getOp(1), $a0);
 			mipsBuilder->curBlock->instructionList.push_back(new MipsMarco("putint"));
 		}
 		if (func==Function::putstr) {
-			mipsBuilder->allocate(inst->getOperand(1), $a0);
+			mipsBuilder->allocate(inst->getOp(1), $a0);
 			mipsBuilder->curBlock->instructionList.push_back(new MipsMarco("putstr"));
 		}
 
@@ -172,7 +314,7 @@ void MipsParser::parseCallInst(CallInst *inst) {
 		return;
 	}
 
-	int size = (int)inst->operandList.size() - 1;
+	int size = (int)inst->opList.size() - 1;
 
 	mipsBuilder->stackOffset -= 8;
 	mipsBuilder->buildStoreInst($sp, new MipsImm(mipsBuilder->stackOffset + 4), $sp);
@@ -182,7 +324,7 @@ void MipsParser::parseCallInst(CallInst *inst) {
 		int argOff = 0;
 		for (int i = 1; i <= size; ++i) {
 			argOff -= 4;
-			mipsBuilder->allocate(inst->operandList[i], $t0);
+			mipsBuilder->allocate(inst->opList[i], $t0);
 
 //			mipsBuilder->stackOffset-=4;
 			mipsBuilder->buildStoreInst($t0, new MipsImm(mipsBuilder->stackOffset + argOff), $sp);
@@ -205,14 +347,14 @@ void MipsParser::parseCallInst(CallInst *inst) {
 }
 
 void MipsParser::parseGEPInst(GEPInst *inst) {
-	auto op1 = inst->getOperand(0);
+	auto op1 = inst->getOp(0);
 	mipsBuilder->allocate(op1, $t0);
-	if (inst->getOperand(2)) {
-		mipsBuilder->allocate(inst->getOperand(2), $t1);
+	if (inst->getOp(2)) {
+		mipsBuilder->allocate(inst->getOp(2), $t1);
 		mipsBuilder->buildBinInst(M_SLL, $t1, $t1, new MipsImm(2));
 		mipsBuilder->buildBinInst(M_ADDU, $t0, $t0, $t1);
 	} else {
-		mipsBuilder->allocate(inst->getOperand(1), $t1);
+		mipsBuilder->allocate(inst->getOp(1), $t1);
 		mipsBuilder->buildBinInst(M_SLL, $t1, $t1, new MipsImm(2));
 		mipsBuilder->buildBinInst(M_ADDU, $t0, $t0, $t1);
 	}
@@ -222,31 +364,32 @@ void MipsParser::parseGEPInst(GEPInst *inst) {
 }
 
 void MipsParser::parseIcmpInst(IcmpInst *inst) {
-	auto op1 = inst->getOperand(0), op2 = inst->getOperand(1);
+	auto op1 = inst->getOp(0), op2 = inst->getOp(1);
 
-	mipsBuilder->allocate(op1, $t0);
-	mipsBuilder->allocate(op2, $t1);
+	auto mop1 = parseOperand(op1, false), mop2 = parseOperand(op2, false);
+	auto dst = parseOperand(inst, false);
+	MipsInst *mipsInst;
 
 	switch (inst->icmpType) {
-	case IcmpType::EQ: mipsBuilder->buildCmpInst(BEQ, $t0, $t0, $t1);
+	case IcmpType::EQ: mipsInst = new MipsCmpInst(BEQ, dst, mop1, mop2);
 		break;
-	case IcmpType::NE: mipsBuilder->buildCmpInst(BNE, $t0, $t0, $t1);
+	case IcmpType::NE: mipsInst = new MipsCmpInst(BNE, dst, mop1, mop2);
 		break;
-	case IcmpType::LE: mipsBuilder->buildCmpInst(BLE, $t0, $t0, $t1);
+	case IcmpType::LE: mipsInst = new MipsCmpInst(BLE, dst, mop1, mop2);
 		break;
-	case IcmpType::LT:mipsBuilder->buildCmpInst(BLT, $t0, $t0, $t1);
+	case IcmpType::LT:mipsInst = new MipsCmpInst(BLT, dst, mop1, mop2);
 		break;
-	case IcmpType::GE:mipsBuilder->buildCmpInst(BGE, $t0, $t0, $t1);
+	case IcmpType::GE:mipsInst = new MipsCmpInst(BGE, dst, mop1, mop2);
 		break;
-	case IcmpType::GT:mipsBuilder->buildCmpInst(BGT, $t0, $t0, $t1);
+	case IcmpType::GT:mipsInst = new MipsCmpInst(BGT, dst, mop1, mop2);
 		break;
 	default:break;
 	}
-	mipsBuilder->allocateAndStore(inst, $t0);
+	curMipsBlock->addInst(mipsInst);
 }
 
 void MipsParser::parseLoadInst(LoadInst *inst) {
-	auto op1 = inst->getOperand(0);
+	auto op1 = inst->getOp(0);
 
 	mipsBuilder->allocate(op1, $t1);
 	mipsBuilder->buildLoadInst($t0, new MipsImm(0), $t1);
@@ -255,23 +398,16 @@ void MipsParser::parseLoadInst(LoadInst *inst) {
 }
 
 void MipsParser::parseReturnInst(ReturnInst *inst) {
-	MipsOperand *src = nullptr;
-	if (inst->type==IntegerType::VOID) {
-
-	} else {
-		auto op1 = inst->getOperand(0);
-		mipsBuilder->allocate(op1, $v0);
-//		src = $t0;
+	if (inst->type!=IntegerType::VOID) {
+		auto *mop = parseOperand(inst->getOp(0), true);
+		auto *m = new MipsLiInst($v0, mop);
 	}
-
-//	mipsBuilder->buildLoadInst($sp, new MipsImm(-4), $sp);
-//	mipsBuilder->buildLoadInst($ra, new MipsImm(-8), $sp);
-
-	mipsBuilder->buildBranchInst(CondType::JR, $ra, nullptr, nullptr);
+	auto *mipsInst = new MipsBranchInst(CondType::JR, $ra, nullptr, nullptr);
+	curMipsBlock->addInst(mipsInst);
 }
 
 void MipsParser::parseStoreInst(StoreInst *inst) {
-	auto op1 = inst->getOperand(0), op2 = inst->getOperand(1);
+	auto op1 = inst->getOp(0), op2 = inst->getOp(1);
 
 	mipsBuilder->allocate(op1, $t0);
 
@@ -281,10 +417,15 @@ void MipsParser::parseStoreInst(StoreInst *inst) {
 }
 
 void MipsParser::parseZextInst(ZextInst *inst) {
-	mipsBuilder->allocate(inst->getOperand(0), $t0);
-	mipsBuilder->allocateAndStore(inst, $t0);
+	auto mop1 = parseOperand(inst, false);
+	auto mop2 = parseOperand(inst->getOp(0), true);
+
+	curMipsBlock->addInst(new MipsLiInst(mop1, mop2));
 }
+
 void MipsParser::parseMoveInst(MoveInst *inst) {
-	mipsBuilder->allocate(inst->src, $t0);
-	mipsBuilder->allocateAndStore(inst->dst, $t0);
+	auto mop1 = parseOperand(inst->dst, false);
+	auto mop2 = parseOperand(inst->src, true);
+
+	curMipsBlock->addInst(new MipsLiInst(mop1, mop2));
 }

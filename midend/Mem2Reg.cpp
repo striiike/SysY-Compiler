@@ -152,7 +152,7 @@ void Mem2Reg::rename(BasicBlock *entry) {
 			it = instList->erase(it);
 		} else if (inst->instType==InstType::STORE && defInsts->count(inst)) {
 			/// store's @content
-			reach->push(inst->getOperand(0));
+			reach->push(inst->getOp(0));
 			++cnt;
 			it = instList->erase(it);
 		}

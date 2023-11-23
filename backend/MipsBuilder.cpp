@@ -38,22 +38,22 @@ void MipsBuilder::buildBlock(BasicBlock *bb) {
 	block->label = bb->name;
 }
 void MipsBuilder::buildBinInst(BinType ty, MipsOperand *dst, MipsOperand *src1, MipsOperand *src2) const {
-	auto *bin = new MipsBinInst();
-	bin->src1 = src1;
-	bin->src2 = src2;
-	bin->dst = dst;
-	bin->ty = ty;
-	curBlock->instructionList.push_back(bin);
+//	auto *bin = new MipsBinInst();
+//	bin->src1 = src1;
+//	bin->src2 = src2;
+//	bin->dst = dst;
+//	bin->ty = ty;
+//	curBlock->instructionList.push_back(bin);
 }
 void MipsBuilder::buildLiInst(MipsOperand *dst, MipsOperand *imm) const {
 	auto *li = new MipsLiInst(dst, imm);
 	curBlock->instructionList.push_back(li);
 }
 void MipsBuilder::buildMoveInst(MipsOperand *dst, MipsOperand *src1) const {
-	auto *move = new MipsMoveInst();
-	move->src1 = src1;
-	move->dst = dst;
-	curBlock->instructionList.push_back(move);
+//	auto *move = new MipsMoveInst();
+//	move->src1 = src1;
+//	move->dst = dst;
+//	curBlock->instructionList.push_back(move);
 }
 void MipsBuilder::buildBranchInst(CondType ty, MipsOperand *src1, MipsOperand *src2, MipsLabel *label) {
 	auto *branch = new MipsBranchInst(ty, src1, src2, label);
@@ -64,12 +64,12 @@ void MipsBuilder::buildBranchInst(CondType ty, MipsLabel *label) {
 	curBlock->instructionList.push_back(branch);
 }
 void MipsBuilder::buildCmpInst(CondType ty, MipsOperand *dst, MipsOperand *src1, MipsOperand *src2) {
-	auto *cmp = new MipsCmpInst();
-	cmp->ty = ty;
-	cmp->src1 = src1;
-	cmp->src2 = src2;
-	cmp->dst = dst;
-	curBlock->instructionList.push_back(cmp);
+//	auto *cmp = new MipsCmpInst();
+//	cmp->ty = ty;
+//	cmp->src1 = src1;
+//	cmp->src2 = src2;
+//	cmp->dst = dst;
+//	curBlock->instructionList.push_back(cmp);
 }
 void MipsBuilder::buildStoreInst(MipsOperand *dst, MipsOperand *addr, MipsOperand *offset) {
 	auto *store = new MipsStoreInst(dst, addr, offset);

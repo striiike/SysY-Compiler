@@ -21,12 +21,12 @@ public:
 	PhiInst(std::vector<BasicBlock *> *pre, std::string name)
 		: Instruction(IntegerType::INT32, std::move(name), InstType::PHI) {
 		preBbs = pre;
-		operandList = std::vector<Value *>(pre->size());
+		opList = std::vector<Value *>(pre->size());
 	}
 
 	void addValueFromBb(Value *val, BasicBlock *bb) {
 		size_t index = std::find(preBbs->begin(), preBbs->end(), bb) - preBbs->begin();
-		operandList[index] = val;
+		opList[index] = val;
 		val->useList.push_back(new Use(this, val));
 	}
 
@@ -34,7 +34,7 @@ public:
 		std::stringstream ss;
 		ss << name + " = phi " + type->toString() + " ";
 		for (int i = 0; i < preBbs->size(); ++i) {
-			ss << "[ " + operandList[i]->name + ", %" + (*preBbs)[i]->name + " ]";
+			ss << "[ " + opList[i]->name + ", %" + (*preBbs)[i]->name + " ]";
 			if (i!=preBbs->size() - 1)
 				ss << ", ";
 		}

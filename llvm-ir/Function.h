@@ -15,7 +15,9 @@
 class Function;
 
 class Argument : public Value {
+public:
 	Function *parent{};
+	int rank{};
 public:
 	Argument(Type *type, std::string name)
 		: Value(type, std::move(name)) {}
@@ -62,6 +64,7 @@ public:
 
 	void addArgument(Argument *arg) {
 		argumentList.push_back(arg);
+		arg->rank = (int)argumentList.size();
 	}
 
 	void addBasicBlock(BasicBlock *bb) {

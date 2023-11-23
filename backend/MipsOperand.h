@@ -13,14 +13,28 @@ struct MipsOperand {
 };
 
 struct MipsReg : MipsOperand {
+};
+
+struct MipsVrReg : MipsReg {
+	static int cnt;
 	std::string name;
 
-	explicit MipsReg(std::string name) : name(std::move(name)) {}
+	MipsVrReg() {
+		name = "Vr_" + to_string(++cnt);
+	}
+
 	string toString() override { return name; }
 };
 
-typedef MipsReg *MipsRegPtr;
-extern MipsRegPtr $zero, $v0, $v1, $a0, a1, a2, a3, $t0, $t1, t2, t3, t4, t5, t6, t7,
+struct MipsPhReg : MipsReg {
+	std::string name;
+
+	explicit MipsPhReg(std::string name) : name(std::move(name)) {}
+	string toString() override { return name; }
+};
+
+typedef MipsPhReg *MipsPhRegPtr;
+extern MipsPhRegPtr $zero, $v0, $v1, $a0, $a1, $a2, $a3, $t0, $t1, t2, t3, t4, t5, t6, t7,
 	s0, s1, s2, s3, s4, s5, s6, s7, t8, t9, k0, k1, gp, $sp, $fp, $ra;
 
 struct MipsImm : MipsOperand {

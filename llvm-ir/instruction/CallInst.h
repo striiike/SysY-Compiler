@@ -18,9 +18,9 @@ public:
 	/// <result> = call <type> <function> (...)
 	CallInst(std::string name, Function *func, std::vector<Value *> &args)
 		: Instruction(func->getRetType(), std::move(name), InstType::CALL) {
-		addOperand(func);
+		addOp(func);
 		for (auto i : args)
-			addOperand(i);
+			addOp(i);
 	}
 
 	std::string toString() override {
@@ -28,13 +28,13 @@ public:
 		if (type!=IntegerType::VOID) {
 			ss << name + " = ";
 		}
-		ss << "call " + type->toString() + " " + getOperand(0)->name;
+		ss << "call " + type->toString() + " " + getOp(0)->name;
 		ss << "(";
-		if (operandList.size() > 1) {
-			ss << operandList[1]->toLlvmString();
+		if (opList.size() > 1) {
+			ss << opList[1]->toLlvmString();
 
-			for (int i = 2; i < operandList.size(); ++i) {
-				ss << ", " << operandList[i]->toLlvmString();
+			for (int i = 2; i < opList.size(); ++i) {
+				ss << ", " << opList[i]->toLlvmString();
 			}
 		}
 		ss << ")";
