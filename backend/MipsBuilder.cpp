@@ -32,10 +32,10 @@ void MipsBuilder::buildFunc(Function *function) {
 //		buildStoreInst($ra, new MipsImm(-8), $sp);
 }
 void MipsBuilder::buildBlock(BasicBlock *bb) {
-	auto *block = new MipsBlock();
-	curFunc->blockList.push_back(block);
-	curBlock = block;
-	block->label = bb->name;
+//	auto *block = new MipsBlock();
+//	curFunc->blockList.push_back(block);
+//	curBlock = block;
+//	block->label = bb->name;
 }
 void MipsBuilder::buildBinInst(BinType ty, MipsOperand *dst, MipsOperand *src1, MipsOperand *src2) const {
 //	auto *bin = new MipsBinInst();

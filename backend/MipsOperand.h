@@ -20,7 +20,7 @@ struct MipsVrReg : MipsReg {
 	std::string name;
 
 	MipsVrReg() {
-		name = "Vr_" + to_string(++cnt);
+		name = "%VR" + to_string(++cnt);
 	}
 
 	string toString() override { return name; }

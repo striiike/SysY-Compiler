@@ -4,7 +4,6 @@
 
 #include "MipsParser.h"
 #include "../llvm-ir/Module.h"
-#include "../llvm-ir/constant/ConstantInt.h"
 #include "../llvm-ir/constant/ConstantArray.h"
 #include "../llvm-ir/constant/ConstantString.h"
 #include "../llvm-ir/instruction/AllocaInst.h"
@@ -18,8 +17,6 @@
 #include "../llvm-ir/instruction/ReturnInst.h"
 #include "../llvm-ir/instruction/IcmpInst.h"
 #include "../llvm-ir/instruction/ParallelCopyInst.h"
-
-auto mipsBuilder = new MipsBuilder();
 
 void MipsParser::parseModule() {
 	for (auto i : module->globalList) {
@@ -53,18 +50,21 @@ void MipsParser::parseGlobalVar(GlobalVariable *glo) const {
 }
 
 void MipsParser::parseFunction(Function *func) {
-	curMipsFunction = new MipsFunction();
+	curMipsFunction = new MipsFunction(func->name.substr(1));
 	mipsModule->functions.push_back(curMipsFunction);
+
 	for (auto i : func->basicList) {
-		curMipsBlock = new MipsBlock();
+
+		curMipsBlock = new MipsBlock(i->name);
 		curMipsFunction->blockList.push_back(curMipsBlock);
+
 		for (auto j : i->instructionList) {
 			parseInstruction(j, curMipsBlock);
 		}
 	}
 }
 
-void MipsParser::parseInstruction(Instruction *inst, MipsBlock *block) {
+void MipsParser::parseInstruction(Instruction *inst, MipsBlock *block) const {
 	block->instructionList.push_back(new MipsComment(inst->toString()));
 	switch (inst->instType) {
 	case InstType::ALLOCA: {
@@ -121,7 +121,7 @@ void MipsParser::parseInstruction(Instruction *inst, MipsBlock *block) {
  *  It is an abstract way of changing irValue into MipsOperand.
  *
  */
-MipsOperand *MipsParser::parseOperand(Value *val, bool canImm) {
+MipsOperand *MipsParser::parseOp(Value *val, bool canImm) const {
 	if (value2Operand->count(val)) {
 		auto op = (*value2Operand)[val];
 		if (!canImm && dynamic_cast<MipsImm *> (op)) {
@@ -133,7 +133,7 @@ MipsOperand *MipsParser::parseOperand(Value *val, bool canImm) {
 		return op;
 	}
 
-	if (dynamic_cast<Value *>(val)) {
+	if (dynamic_cast<GlobalVariable *>(val)) {
 		return parseGlobalOp(dynamic_cast<GlobalVariable *>(val), canImm);
 	} else if (dynamic_cast<Argument *>(val)) {
 		return parseArgumentOp(dynamic_cast<Argument *>(val), canImm);
@@ -141,56 +141,64 @@ MipsOperand *MipsParser::parseOperand(Value *val, bool canImm) {
 		return parseConstOp(dynamic_cast<ConstantInt *>(val), canImm);
 	} else {
 		auto *vr = new MipsVrReg();
+		(*value2Operand)[val] = vr;
 		return vr;
 	}
 }
 
-MipsOperand *MipsParser::parseGlobalOp(GlobalVariable *val, bool canImm) {
+MipsOperand *MipsParser::parseGlobalOp(GlobalVariable *val, bool canImm) const {
 	auto *dst = new MipsVrReg();
 	auto *inst = new MipsLiInst(dst, (*global2Operand)[val]);
 	curMipsBlock->addInst(inst);
 	return dst;
 }
 
-MipsOperand *MipsParser::parseArgumentOp(Argument *val, bool canImm) {
+MipsOperand *MipsParser::parseArgumentOp(Argument *val, bool canImm) const {
 	int rk = val->rank;
 	auto *dst = new MipsVrReg();
 	if (rk < 4) {
 		auto *inst = new MipsLiInst(dst, (rk==0) ? $a0 : (rk==1) ? $a1 : (rk==2) ? $a2 : (rk==3) ? $a3 : nullptr);
 		curMipsBlock->addInst(inst);
 	} else {
-
+		auto *m1 = new MipsLoadInst(dst, new MipsImm((rk - 4)*4), $sp);
+		curMipsBlock->addInst(m1);
 	}
+	(*value2Operand)[val] = dst;
 	return dst;
 }
 
-MipsOperand *MipsParser::parseConstOp(ConstantInt *val, bool canImm) {
+MipsOperand *MipsParser::parseConstOp(ConstantInt *val, bool canImm) const {
+	if (!canImm) {
+		auto *tmp = new MipsVrReg();
+		auto *inst = new MipsLiInst(tmp, new MipsImm(val->value));
+		curMipsBlock->addInst(inst);
+		return tmp;
+	}
 	return new MipsImm(val->value);
 }
 
-void MipsParser::parseAllocaInst(AllocaInst *inst) {
+void MipsParser::parseAllocaInst(AllocaInst *inst) const {
+	auto *dst = parseOp(inst, false);
+	(*value2Operand)[inst] = dst;
+	auto mipsInst = new MipsBinInst(BinType::M_ADDU, dst, $sp, new MipsImm(curMipsFunction->off));
+	curMipsBlock->addInst(mipsInst);
+
 	int len;
 	if (inst->retType==IntegerType::INT32) {
 		len = 4;
-		mipsBuilder->stackOffset -= 4;
+		curMipsFunction->off += 4;
 	} else {
 		len = ((ArrayType *)inst->retType)->getNum();
-		mipsBuilder->stackOffset -= 4*len;
+		curMipsFunction->off += 4*len;
 	}
-
-	mipsBuilder->buildBinInst(BinType::M_ADDU, $t0, $sp, new MipsImm(mipsBuilder->stackOffset));
-	mipsBuilder->stackOffset -= 4;
-
-	mipsBuilder->buildStoreInst($t0, new MipsImm(mipsBuilder->stackOffset), $sp);
-	(*mipsBuilder->value2Offset)[inst] = mipsBuilder->stackOffset;
 }
 
-void MipsParser::parseAluInst(AluInst *inst) {
+void MipsParser::parseAluInst(AluInst *inst) const {
 	auto op1 = inst->getOp(0), op2 = inst->getOp(1);
 	bool imm1 = dynamic_cast<ConstantInt *> (op1);
 	bool imm2 = dynamic_cast<ConstantInt *> (op2);
 
-	auto dst = parseOperand(inst, false);
+	auto dst = parseOp(inst, false);
 	MipsInst *mipsInst;
 	if (inst->aluType==AluType::ADD) {
 		if (imm1 && imm2) {
@@ -199,11 +207,11 @@ void MipsParser::parseAluInst(AluInst *inst) {
 		} else {
 			MipsOperand *mop1, *mop2;
 			if (imm1) {
-				mop2 = parseOperand(op1, true);
-				mop1 = parseOperand(op2, false);
+				mop2 = parseOp(op1, true);
+				mop1 = parseOp(op2, false);
 			} else {
-				mop1 = parseOperand(op1, true);
-				mop2 = parseOperand(op2, false);
+				mop1 = parseOp(op1, true);
+				mop2 = parseOp(op2, false);
 			}
 			mipsInst = new MipsBinInst(BinType::M_ADDU, dst, mop1, mop2);
 		}
@@ -215,11 +223,11 @@ void MipsParser::parseAluInst(AluInst *inst) {
 		} else {
 			MipsOperand *mop1, *mop2;
 			if (imm1) {
-				mop2 = parseOperand(op1, true);
-				mop1 = parseOperand(op2, false);
+				mop2 = parseOp(op1, true);
+				mop1 = parseOp(op2, false);
 			} else {
-				mop1 = parseOperand(op1, true);
-				mop2 = parseOperand(op2, false);
+				mop1 = parseOp(op1, true);
+				mop2 = parseOp(op2, false);
 			}
 			mipsInst = new MipsBinInst(BinType::M_SUBU, dst, mop1, mop2);
 		}
@@ -231,11 +239,11 @@ void MipsParser::parseAluInst(AluInst *inst) {
 		} else {
 			MipsOperand *mop1, *mop2;
 			if (imm1) {
-				mop2 = parseOperand(op1, true);
-				mop1 = parseOperand(op2, false);
+				mop2 = parseOp(op1, true);
+				mop1 = parseOp(op2, false);
 			} else {
-				mop1 = parseOperand(op1, true);
-				mop2 = parseOperand(op2, false);
+				mop1 = parseOp(op1, true);
+				mop2 = parseOp(op2, false);
 			}
 			mipsInst = new MipsBinInst(BinType::M_MUL, dst, mop1, mop2);
 		}
@@ -247,11 +255,11 @@ void MipsParser::parseAluInst(AluInst *inst) {
 		} else {
 			MipsOperand *mop1, *mop2;
 			if (imm1) {
-				mop2 = parseOperand(op1, true);
-				mop1 = parseOperand(op2, false);
+				mop2 = parseOp(op1, true);
+				mop1 = parseOp(op2, false);
 			} else {
-				mop1 = parseOperand(op1, true);
-				mop2 = parseOperand(op2, false);
+				mop1 = parseOp(op1, true);
+				mop2 = parseOp(op2, false);
 			}
 			mipsInst = new MipsBinInst(BinType::M_DIV, dst, mop1, mop2);
 		}
@@ -263,11 +271,11 @@ void MipsParser::parseAluInst(AluInst *inst) {
 		} else {
 			MipsOperand *mop1, *mop2;
 			if (imm1) {
-				mop2 = parseOperand(op1, true);
-				mop1 = parseOperand(op2, false);
+				mop2 = parseOp(op1, true);
+				mop1 = parseOp(op2, false);
 			} else {
-				mop1 = parseOperand(op1, true);
-				mop2 = parseOperand(op2, false);
+				mop1 = parseOp(op1, true);
+				mop2 = parseOp(op2, false);
 			}
 			mipsInst = new MipsBinInst(BinType::M_SREM, dst, mop1, mop2);
 		}
@@ -275,12 +283,12 @@ void MipsParser::parseAluInst(AluInst *inst) {
 	curMipsBlock->addInst(mipsInst);
 }
 
-void MipsParser::parseBrInst(BrInst *inst) {
+void MipsParser::parseBrInst(BrInst *inst) const {
 	if (inst->jump) {
 		auto *br = new MipsBranchInst(CondType::J, new MipsLabel(inst->getOp(0)->name));
 		curMipsBlock->addInst(br);
 	} else {
-		auto mop = parseOperand(inst->getOp(0), false);
+		auto mop = parseOp(inst->getOp(0), false);
 		auto *br = new MipsBranchInst(CondType::BNE, mop, $zero, new MipsLabel(inst->getOp(1)->name));
 		auto *br1 = new MipsBranchInst(CondType::J, new MipsLabel(inst->getOp(2)->name));
 
@@ -289,85 +297,69 @@ void MipsParser::parseBrInst(BrInst *inst) {
 	}
 }
 
-void MipsParser::parseCallInst(CallInst *inst) {
+void MipsParser::parseCallInst(CallInst *inst) const {
 
 	auto *func = (Function *)inst->getOp(0);
+	MipsInst *callInst;
 
 	if (func->isLink) {
-
-//		mipsBuilder->buildLiInst($a0, )
-		if (func==Function::getint) {
-			mipsBuilder->curBlock->instructionList.push_back(new MipsMarco("getint"));
-		}
-		if (func==Function::putint) {
-			mipsBuilder->allocate(inst->getOp(1), $a0);
-			mipsBuilder->curBlock->instructionList.push_back(new MipsMarco("putint"));
-		}
-		if (func==Function::putstr) {
-			mipsBuilder->allocate(inst->getOp(1), $a0);
-			mipsBuilder->curBlock->instructionList.push_back(new MipsMarco("putstr"));
-		}
-
-		if (inst->type!=IntegerType::VOID) {
-			mipsBuilder->allocateAndStore(inst, $v0);
-		}
-		return;
+		callInst = new MipsMarco(func->name);
+	} else {
+		callInst = new MipsBranchInst(CondType::JAL, new MipsLabel("Function_" + func->name.substr(1)));
 	}
 
-	int size = (int)inst->opList.size() - 1;
-
-	mipsBuilder->stackOffset -= 8;
-	mipsBuilder->buildStoreInst($sp, new MipsImm(mipsBuilder->stackOffset + 4), $sp);
-	mipsBuilder->buildStoreInst($ra, new MipsImm(mipsBuilder->stackOffset), $sp);
-
-	if (size > 0) {
-		int argOff = 0;
-		for (int i = 1; i <= size; ++i) {
-			argOff -= 4;
-			mipsBuilder->allocate(inst->opList[i], $t0);
-
-//			mipsBuilder->stackOffset-=4;
-			mipsBuilder->buildStoreInst($t0, new MipsImm(mipsBuilder->stackOffset + argOff), $sp);
-//			mipsBuilder->allocateAndStore(inst->operandList[i], $t0);
+	int argsNum = (int)func->argumentList.size();
+	for (int i = 0; i < argsNum; ++i) {
+		MipsInst *mipsInst;
+		if (i < 4) {
+			auto mop = parseOp(inst->getOp(i + 1), true);
+			mipsInst = new MipsLiInst((i==0) ? $a0 : (i==1) ? $a1 : (i==2) ? $a2 : (i==3) ? $a3 : nullptr, mop);
+		} else {
+			auto mop = parseOp(inst->getOp(i + 1), false);
+			mipsInst = new MipsStoreInst(mop, new MipsImm(-(argsNum - i)*4), $sp);
 		}
+		curMipsBlock->addInst(mipsInst);
 	}
 
-	mipsBuilder->buildBinInst(M_ADDU, $sp, $sp, new MipsImm(mipsBuilder->stackOffset));
-	// give it fuck;
-	mipsBuilder->buildBranchInst(JAL, new MipsLabel("Function_" + func->name.substr(1)));
-
-	mipsBuilder->buildLoadInst($ra, new MipsImm(0), $sp);
-	mipsBuilder->buildLoadInst($sp, new MipsImm(4), $sp);
-	mipsBuilder->stackOffset += 8;
+	if (argsNum > 4) {
+		auto *tmp = new MipsBinInst(M_ADDU, $sp, $sp, new MipsImm(-(argsNum - 4)*4));
+		curMipsBlock->addInst(tmp);
+	}
+	curMipsBlock->addInst(callInst);
+	if (argsNum > 4) {
+		auto *tmp = new MipsBinInst(M_ADDU, $sp, $sp, new MipsImm((argsNum - 4)*4));
+		curMipsBlock->addInst(tmp);
+	}
 
 	if (inst->type!=IntegerType::VOID) {
-		mipsBuilder->allocateAndStore(inst, $v0);
+		auto *dst = parseOp(inst, false);
+		auto *m = new MipsLiInst(dst, $v0);
+		curMipsBlock->addInst(m);
 	}
-
 }
 
-void MipsParser::parseGEPInst(GEPInst *inst) {
-	auto op1 = inst->getOp(0);
-	mipsBuilder->allocate(op1, $t0);
+void MipsParser::parseGEPInst(GEPInst *inst) const {
+	auto mop1 = parseOp(inst->getOp(0), false);
+	MipsOperand *mop2, *dst = parseOp(inst, false);
 	if (inst->getOp(2)) {
-		mipsBuilder->allocate(inst->getOp(2), $t1);
-		mipsBuilder->buildBinInst(M_SLL, $t1, $t1, new MipsImm(2));
-		mipsBuilder->buildBinInst(M_ADDU, $t0, $t0, $t1);
+		mop2 = parseOp(inst->getOp(2), false);
 	} else {
-		mipsBuilder->allocate(inst->getOp(1), $t1);
-		mipsBuilder->buildBinInst(M_SLL, $t1, $t1, new MipsImm(2));
-		mipsBuilder->buildBinInst(M_ADDU, $t0, $t0, $t1);
+		mop2 = parseOp(inst->getOp(1), false);
 	}
+	auto mi1 = new MipsBinInst(M_SLL, mop2, mop2, new MipsImm(2));
+	auto mi2 = new MipsBinInst(M_ADDU, mop1, mop1, mop2);
+	auto mipsInst = new MipsLoadInst(dst, new MipsImm(0), mop1);
 
-//	mipsBuilder->buildLoadInst($t0, new MipsImm(0), $t0);
-	mipsBuilder->allocateAndStore(inst, $t0);
+	curMipsBlock->addInst(mi1);
+	curMipsBlock->addInst(mi2);
+	curMipsBlock->addInst(mipsInst);
 }
 
-void MipsParser::parseIcmpInst(IcmpInst *inst) {
+void MipsParser::parseIcmpInst(IcmpInst *inst) const {
 	auto op1 = inst->getOp(0), op2 = inst->getOp(1);
 
-	auto mop1 = parseOperand(op1, false), mop2 = parseOperand(op2, false);
-	auto dst = parseOperand(inst, false);
+	auto mop1 = parseOp(op1, false), mop2 = parseOp(op2, false);
+	auto dst = parseOp(inst, false);
 	MipsInst *mipsInst;
 
 	switch (inst->icmpType) {
@@ -388,44 +380,88 @@ void MipsParser::parseIcmpInst(IcmpInst *inst) {
 	curMipsBlock->addInst(mipsInst);
 }
 
-void MipsParser::parseLoadInst(LoadInst *inst) {
+void MipsParser::parseLoadInst(LoadInst *inst) const {
 	auto op1 = inst->getOp(0);
 
-	mipsBuilder->allocate(op1, $t1);
-	mipsBuilder->buildLoadInst($t0, new MipsImm(0), $t1);
-	mipsBuilder->allocateAndStore(inst, $t0);
-
+	auto mop1 = parseOp(op1, false), dst = parseOp(inst, false);
+	auto mipsInst = new MipsLoadInst(dst, new MipsImm(0), mop1);
+	curMipsBlock->addInst(mipsInst);
 }
 
-void MipsParser::parseReturnInst(ReturnInst *inst) {
+void MipsParser::parseReturnInst(ReturnInst *inst) const {
 	if (inst->type!=IntegerType::VOID) {
-		auto *mop = parseOperand(inst->getOp(0), true);
+		auto *mop = parseOp(inst->getOp(0), true);
 		auto *m = new MipsLiInst($v0, mop);
+		curMipsBlock->addInst(m);
 	}
 	auto *mipsInst = new MipsBranchInst(CondType::JR, $ra, nullptr, nullptr);
 	curMipsBlock->addInst(mipsInst);
 }
 
-void MipsParser::parseStoreInst(StoreInst *inst) {
+void MipsParser::parseStoreInst(StoreInst *inst) const {
 	auto op1 = inst->getOp(0), op2 = inst->getOp(1);
 
-	mipsBuilder->allocate(op1, $t0);
-
-	mipsBuilder->allocate(op2, $t1);
-
-	mipsBuilder->buildStoreInst($t0, new MipsImm(0), $t1);
+	auto mop1 = parseOp(op1, false), mop2 = parseOp(op2, false);
+	auto mipsInst = new MipsStoreInst(mop1, new MipsImm(0), mop2);
+	curMipsBlock->addInst(mipsInst);
 }
 
-void MipsParser::parseZextInst(ZextInst *inst) {
-	auto mop1 = parseOperand(inst, false);
-	auto mop2 = parseOperand(inst->getOp(0), true);
+void MipsParser::parseZextInst(ZextInst *inst) const {
+	auto mop1 = parseOp(inst, false);
+	auto mop2 = parseOp(inst->getOp(0), true);
 
 	curMipsBlock->addInst(new MipsLiInst(mop1, mop2));
 }
 
-void MipsParser::parseMoveInst(MoveInst *inst) {
-	auto mop1 = parseOperand(inst->dst, false);
-	auto mop2 = parseOperand(inst->src, true);
+void MipsParser::parseMoveInst(MoveInst *inst) const {
+	auto mop1 = parseOp(inst->dst, false);
+	auto mop2 = parseOp(inst->src, true);
 
 	curMipsBlock->addInst(new MipsLiInst(mop1, mop2));
 }
+
+
+/*
+ *	-------- view of stack --------
+ *
+ *	when entering a function
+ *
+ *		| # 7th arg
+ *		| # 6th arg
+ *		| # 5th arg
+ *		------------
+ *		|
+ *		| context saving where I'm planning
+ *		|
+ *		------------
+ *		|
+ *		|
+ *		| alloca
+ *		|
+ *		|
+ *		------------
+ *		$sp  <--- here is stack pointer
+ *
+ *	$sp is always at the bottom, in order to reduce calculation
+ *
+ *
+ *
+ *
+ */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

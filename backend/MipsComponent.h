@@ -5,6 +5,7 @@
 #pragma once
 
 #include <string>
+#include <utility>
 #include <vector>
 #include <sstream>
 #include "MipsInst.h"
@@ -42,6 +43,8 @@ struct MipsBlock {
 	vector<MipsInst *> instructionList{};
 	string label;
 
+	explicit MipsBlock(std::string name) : label(std::move(name)) {}
+
 	void addInst(MipsInst *inst) {
 		instructionList.push_back(inst);
 	}
@@ -60,7 +63,9 @@ struct MipsBlock {
 struct MipsFunction {
 	vector<MipsBlock *> blockList{};
 	string name;
+	int off = 0;
 
+	explicit MipsFunction(std::string name) : name(std::move(name)) {}
 
 	string toString() const {
 		stringstream ss;

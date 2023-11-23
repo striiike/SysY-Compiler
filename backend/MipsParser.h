@@ -28,7 +28,7 @@ class MoveInst;
 
 /*
  * 	the existence of MipsParser is to make sure we use the machine code efficiently
- *	but not to allocate all the registers !
+ *	but not to allocate all the registers or context saving !!
  */
 
 
@@ -54,21 +54,21 @@ public:
 	void parseModule();
 	void parseGlobalVar(GlobalVariable *) const;
 	void parseFunction(Function *);
-	void parseInstruction(Instruction *, MipsBlock *);
+	void parseInstruction(Instruction *, MipsBlock *) const;
 
-	void parseAllocaInst(AllocaInst *inst);
-	void parseAluInst(AluInst *inst);
-	void parseCallInst(CallInst *inst);
-	void parseBrInst(BrInst *inst);
-	void parseIcmpInst(IcmpInst *inst);
-	void parseReturnInst(ReturnInst *inst);
-	void parseZextInst(ZextInst *inst);
-	void parseGEPInst(GEPInst *inst);
-	void parseLoadInst(LoadInst *inst);
-	void parseStoreInst(StoreInst *inst);
-	void parseMoveInst(MoveInst *inst);
-	MipsOperand *parseOperand(Value *val, bool isImm);
-	MipsOperand *parseGlobalOp(GlobalVariable *val, bool imm);
-	MipsOperand *parseArgumentOp(Argument *val, bool imm);
-	MipsOperand *parseConstOp(ConstantInt *val, bool imm);
+	void parseAllocaInst(AllocaInst *inst) const;
+	void parseAluInst(AluInst *inst) const;
+	void parseCallInst(CallInst *inst) const;
+	void parseBrInst(BrInst *inst) const;
+	void parseIcmpInst(IcmpInst *inst) const;
+	void parseReturnInst(ReturnInst *inst) const;
+	void parseZextInst(ZextInst *inst) const;
+	void parseGEPInst(GEPInst *inst) const;
+	void parseLoadInst(LoadInst *inst) const;
+	void parseStoreInst(StoreInst *inst) const;
+	void parseMoveInst(MoveInst *inst) const;
+	MipsOperand *parseOp(Value *val, bool canImm) const;
+	MipsOperand *parseGlobalOp(GlobalVariable *val, bool imm) const;
+	MipsOperand *parseArgumentOp(Argument *val, bool imm) const;
+	MipsOperand *parseConstOp(ConstantInt *val, bool imm) const;
 };

@@ -64,7 +64,7 @@ public:
 
 	void addArgument(Argument *arg) {
 		argumentList.push_back(arg);
-		arg->rank = (int)argumentList.size();
+		arg->rank = (int)argumentList.size() - 1;
 	}
 
 	void addBasicBlock(BasicBlock *bb) {

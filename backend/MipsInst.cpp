@@ -55,6 +55,7 @@ std::string MipsBranchInst::toString() const {
 			return "jr\t" + src1->toString();
 		}
 	}
+	return "";
 }
 
 std::string MipsCmpInst::toString() const {
