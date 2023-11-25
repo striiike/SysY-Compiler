@@ -4,9 +4,10 @@
 
 #pragma once
 
-#include "MipsBuilder.h"
 #include "../llvm-ir/Function.h"
 #include "../llvm-ir/constant/ConstantInt.h"
+#include "mips/MipsComponent.h"
+#include "mips/MipsInst.h"
 #include <unordered_map>
 
 class Module;
@@ -43,12 +44,15 @@ public:
 	std::unordered_map<GlobalVariable *, MipsOperand *> *global2Operand;
 	std::unordered_map<Value *, MipsOperand *> *value2Operand;
 
+	std::unordered_map<BasicBlock *, MipsBlock*> *llvm2MipsBlock;
+
 public:
 	explicit MipsParser(Module *mod) {
 		module = mod;
 		mipsModule = new MipsModule;
 		global2Operand = new unordered_map<GlobalVariable *, MipsOperand *>;
 		value2Operand = new unordered_map<Value *, MipsOperand *>;
+		llvm2MipsBlock = new unordered_map<BasicBlock *, MipsBlock*>;
 	}
 
 	void parseModule();

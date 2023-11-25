@@ -13,6 +13,7 @@
 #include "backend/MipsParser.h"
 #include "llvm-ir/IrBuilder.h"
 #include "midend/MidEnd.h"
+#include "backend/MipsAllocator.h"
 
 using namespace std;
 
@@ -80,33 +81,50 @@ int main() {
 	symbol.clear();
 
 	AST.llvmIr();
-//	cout << irBuilder.getModule()->toString() << endl;
 	llvmfile_nop << irBuilder.getModule()->toString() << endl;
-
 //	auto *mid = new MidEnd();
 //	mid->run(irBuilder.getModule());
 
 	(new DFBuilder(&(irBuilder.getModule()->functionList)))->run();
-//	cout << irBuilder.getModule()->toString() << endl;
 	(new Mem2Reg())->run(irBuilder.getModule());
 
-
 	llvmfile << irBuilder.getModule()->toString() << endl;
-
-
 	llvmfile_m2r << irBuilder.getModule()->toString() << endl;
-//	cout << irBuilder.getModule()->toString() << endl;
-
-
-
 
 	(new RemovePhi())->run(irBuilder.getModule());
 	llvmfile_killPhi << irBuilder.getModule()->toString() << endl;
 
+
+
+
+
+
+
 	auto mipsParser = new MipsParser(irBuilder.getModule());
 	mipsParser->parseModule();
-
 	mipsParser->mipsModule->print(cout);
+
+
+	auto alloca = new MipsAllocator(mipsParser->mipsModule);
+	alloca->run();
+
+	mipsParser->mipsModule->print(mipsfile);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 	return 0;

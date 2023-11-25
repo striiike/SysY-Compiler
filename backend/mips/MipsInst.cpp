@@ -3,7 +3,7 @@
 //
 
 #include "MipsInst.h"
-std::string MipsBinInst::toString() const {
+std::string MipsBinInst::toString()  {
 	if (ty==M_DIV) {
 		return "div \t" + dst->toString() + ", \t " + src1->toString() + ", \t" + src2->toString();
 	}
@@ -24,41 +24,39 @@ std::string MipsBinInst::toString() const {
 	}
 	return "!fuck!";
 }
-std::string MipsLiInst::toString() const {
+std::string MipsLiInst::toString()  {
 	if (dynamic_cast<MipsLabel *>(imm)) {
-		return "la \t" + dst->toString() + ", \t" + imm->toString();
+		return "la   \t" + dst->toString() + ", \t" + imm->toString();
 	} else if (dynamic_cast<MipsReg *>(imm)) {
 		return "move \t" + dst->toString() + ", \t" + imm->toString();
 	}
-	return "li \t" + dst->toString() + ", \t" + imm->toString();
+	return "li   \t" + dst->toString() + ", \t" + imm->toString();
 }
-std::string MipsMarco::toString() const {
+std::string MipsMarco::toString()  {
 
 	return dst;
 }
-std::string MipsMoveInst::toString() const {
-	return "move \t" + dst->toString() + ", \t" + src1->toString();
-}
-std::string MipsBranchInst::toString() const {
+
+std::string MipsBranchInst::toString()  {
 	if (src2) {
 		if (ty==BNE) {
-			return "bne\t" + src1->toString() + ", \t" + src2->toString() + ", \t" + label->toString();
+			return "bne \t" + src1->toString() + ", \t" + src2->toString() + ", \t" + label->toString();
 		}
 	} else {
 		if (ty==J) {
-			return "j\t" + label->toString();
+			return "j    \t" + label->toString();
 		}
 		if (ty==JAL) {
-			return "jal\t" + label->toString();
+			return "jal  \t" + label->toString();
 		}
 		if (ty==JR) {
-			return "jr\t" + src1->toString();
+			return "jr   \t" + src1->toString();
 		}
 	}
 	return "";
 }
 
-std::string MipsCmpInst::toString() const {
+std::string MipsCmpInst::toString()  {
 	switch (ty) {
 	case BEQ:return "seq \t" + dst->toString() + ", \t" + src1->toString() + ", \t" + src2->toString();
 	case BNE:return "sne \t" + dst->toString() + ", \t" + src1->toString() + ", \t" + src2->toString();
@@ -71,12 +69,12 @@ std::string MipsCmpInst::toString() const {
 	}
 
 }
-std::string MipsStoreInst::toString() const {
-	return "sw \t" + dst->toString() + ", \t" + addr->toString() + "(" + offset->toString() + ")";
+std::string MipsStoreInst::toString()  {
+	return "sw   \t" + dst->toString() + ", \t" + addr->toString() + "(" + offset->toString() + ")";
 }
-std::string MipsLoadInst::toString() const {
-	return "lw \t" + dst->toString() + ", \t" + addr->toString() + "(" + offset->toString() + ")";
+std::string MipsLoadInst::toString()  {
+	return "lw   \t" + dst->toString() + ", \t" + addr->toString() + "(" + offset->toString() + ")";
 }
-std::string MipsComment::toString() const {
+std::string MipsComment::toString()  {
 	return "# --- " + comment + " --- #";
 }

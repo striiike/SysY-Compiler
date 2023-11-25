@@ -7,6 +7,7 @@
 int MipsVrReg::cnt = 0;
 
 MipsPhRegPtr $zero = new MipsPhReg("$zero");
+MipsPhRegPtr $at = new MipsPhReg("$at");
 MipsPhRegPtr $v0 = new MipsPhReg("$v0");
 MipsPhRegPtr $v1 = new MipsPhReg("$v1");
 MipsPhRegPtr $a0 = new MipsPhReg("$a0");
@@ -37,3 +38,13 @@ MipsPhRegPtr $gp = new MipsPhReg("$gp");
 MipsPhRegPtr $sp = new MipsPhReg("$sp");
 MipsPhRegPtr $fp = new MipsPhReg("$fp");
 MipsPhRegPtr $ra = new MipsPhReg("$ra");
+
+map<int, MipsPhRegPtr> index2reg{
+	{0, $zero}, {1, $at}, {2, $v0}, {3, $v1},
+	{4, $a0}, {5, $a1}, {6, $a2}, {7, $a3},
+	{8, $t0}, {9, $t1}, {10, $t2}, {11, $t3}, {12, $t4}, {13, $t5}, {14, $t6}, {15, $t7},
+	{16, $s0}, {17, $s1}, {18, $s2}, {19, $s3}, {20, $s4}, {21, $s5}, {22, $s6}, {23, $s7},
+	{24, $t8}, {25, $t9},
+	{26, $k0}, {27, $k1},
+	{28, $gp}, {29, $sp}, {30, $fp}, {31, $ra}
+};

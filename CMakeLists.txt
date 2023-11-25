@@ -69,12 +69,11 @@ add_executable(compiler main.cpp
         llvm-ir/instruction/PhiInst.h
         llvm-ir/Value.cpp
         llvm-ir/User.cpp
-        backend/MipsInst.h
+        backend/mips/MipsInst.h
         backend/MipsParser.h
-        backend/MipsBuilder.cpp
-        backend/MipsComponent.cpp
-        backend/MipsInst.cpp
-        backend/MipsOperand.cpp
+        backend/mips/MipsComponent.cpp
+        backend/mips/MipsInst.cpp
+        backend/mips/MipsOperand.cpp
         backend/MipsParser.cpp
 #        llvm-ir/BasicBlock.cpp
 #        llvm-ir/Function.cpp
@@ -85,4 +84,6 @@ add_executable(compiler main.cpp
         midend/RemovePhi.h
         midend/RemovePhi.cpp
         llvm-ir/instruction/ParallelCopyInst.h
+        backend/MipsAllocator.h
+        backend/MipsAllocator.cpp
 )

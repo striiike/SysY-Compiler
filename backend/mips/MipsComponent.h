@@ -8,7 +8,11 @@
 #include <utility>
 #include <vector>
 #include <sstream>
+#include <set>
 #include "MipsInst.h"
+#include <algorithm>
+#include <list>
+
 using namespace std;
 
 struct MipsGlobalVar {
@@ -22,8 +26,7 @@ struct MipsGlobalVar {
 	string toString() const {
 		if (!stringLiteral.empty()) {
 			return name + ": .asciiz \"" + stringLiteral + "\"";
-		}
-		else if (arr.empty()) {
+		} else if (arr.empty()) {
 			return name + ": .space " + to_string(size);
 		} else {
 			stringstream ss;
@@ -40,30 +43,51 @@ struct MipsGlobalVar {
 };
 
 struct MipsBlock {
-	vector<MipsInst *> instructionList{};
+	vector<MipsInst *> instList{};
 	string label;
+
+	/*
+	 *  same as Block in llvm
+	 */
+	set<MipsBlock *> *succ = new set<MipsBlock *>;
+	set<MipsBlock *> *pred = new set<MipsBlock *>;
+
+	set<MipsReg *> *def = new set<MipsReg *>;
+	set<MipsReg *> *use = new set<MipsReg *>;
+	set<MipsReg *> *liveIn = new set<MipsReg *>;
+	set<MipsReg *> *liveOut = new set<MipsReg *>;
 
 	explicit MipsBlock(std::string name) : label(std::move(name)) {}
 
 	void addInst(MipsInst *inst) {
-		instructionList.push_back(inst);
+		instList.push_back(inst);
+	}
+
+	void insertAfter(MipsInst *inst, MipsInst *toInsert) {
+		auto pos = find(instList.begin(), instList.end(), inst);
+		instList.insert(pos + 1, toInsert);
+	}
+	void insertBefore(MipsInst *inst, MipsInst *toInsert) {
+		auto pos = find(instList.begin(), instList.end(), inst);
+		instList.insert(pos, toInsert);
 	}
 
 	string toString() const {
 		stringstream ss;
 		ss << label + ": \n";
-		for (auto i : instructionList) {
+		for (auto i : instList) {
 			ss << "\t" + i->toString() + "\n";
 		}
 		return ss.str();
 	}
-
 };
 
 struct MipsFunction {
-	vector<MipsBlock *> blockList{};
+	list<MipsBlock *> blockList{};
 	string name;
-	int off = 0;
+	int stackOff = 0;
+
+	set<MipsPhReg *> allocatedRegs{};
 
 	explicit MipsFunction(std::string name) : name(std::move(name)) {}
 
@@ -75,7 +99,6 @@ struct MipsFunction {
 		}
 		return ss.str();
 	}
-
 
 	MipsFunction() = default;
 };
@@ -99,7 +122,6 @@ struct MipsModule {
 			   "\tli\t$v0,\t4\n"
 			   "\tsyscall\n"
 			   ".end_macro\n\n";
-
 
 		out << ".data\n";
 		for (auto i : globals) {

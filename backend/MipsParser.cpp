@@ -57,15 +57,29 @@ void MipsParser::parseFunction(Function *func) {
 
 		curMipsBlock = new MipsBlock(i->name);
 		curMipsFunction->blockList.push_back(curMipsBlock);
+		(*llvm2MipsBlock)[i] = curMipsBlock;
 
 		for (auto j : i->instructionList) {
 			parseInstruction(j, curMipsBlock);
 		}
 	}
+
+	/*
+	 * make CFG in mipsBlock, they are the same
+	 */
+	for (auto i : func->basicList) {
+		auto curMips = (*llvm2MipsBlock)[i];
+		for (auto j : *i->preBbs) {
+			curMips->pred->insert((*llvm2MipsBlock)[j]);
+		}
+		for (auto j : *i->sucBbs) {
+			curMips->succ->insert((*llvm2MipsBlock)[j]);
+		}
+	}
 }
 
 void MipsParser::parseInstruction(Instruction *inst, MipsBlock *block) const {
-	block->instructionList.push_back(new MipsComment(inst->toString()));
+	block->instList.push_back(new MipsComment(inst->toString()));
 	switch (inst->instType) {
 	case InstType::ALLOCA: {
 		parseAllocaInst((AllocaInst *)inst);
@@ -180,16 +194,16 @@ MipsOperand *MipsParser::parseConstOp(ConstantInt *val, bool canImm) const {
 void MipsParser::parseAllocaInst(AllocaInst *inst) const {
 	auto *dst = parseOp(inst, false);
 	(*value2Operand)[inst] = dst;
-	auto mipsInst = new MipsBinInst(BinType::M_ADDU, dst, $sp, new MipsImm(curMipsFunction->off));
+	auto mipsInst = new MipsBinInst(BinType::M_ADDU, dst, $sp, new MipsImm(curMipsFunction->stackOff));
 	curMipsBlock->addInst(mipsInst);
 
 	int len;
 	if (inst->retType==IntegerType::INT32) {
 		len = 4;
-		curMipsFunction->off += 4;
+		curMipsFunction->stackOff += 4;
 	} else {
 		len = ((ArrayType *)inst->retType)->getNum();
-		curMipsFunction->off += 4*len;
+		curMipsFunction->stackOff += 4*len;
 	}
 }
 
@@ -303,7 +317,7 @@ void MipsParser::parseCallInst(CallInst *inst) const {
 	MipsInst *callInst;
 
 	if (func->isLink) {
-		callInst = new MipsMarco(func->name);
+		callInst = new MipsMarco(func->name.substr(1));
 	} else {
 		callInst = new MipsBranchInst(CondType::JAL, new MipsLabel("Function_" + func->name.substr(1)));
 	}
@@ -347,12 +361,12 @@ void MipsParser::parseGEPInst(GEPInst *inst) const {
 		mop2 = parseOp(inst->getOp(1), false);
 	}
 	auto mi1 = new MipsBinInst(M_SLL, mop2, mop2, new MipsImm(2));
-	auto mi2 = new MipsBinInst(M_ADDU, mop1, mop1, mop2);
-	auto mipsInst = new MipsLoadInst(dst, new MipsImm(0), mop1);
+	auto mi2 = new MipsBinInst(M_ADDU, dst, mop1, mop2);
+//	auto mipsInst = new MipsLoadInst(dst, new MipsImm(0), mop1);
 
 	curMipsBlock->addInst(mi1);
 	curMipsBlock->addInst(mi2);
-	curMipsBlock->addInst(mipsInst);
+//	curMipsBlock->addInst(mipsInst);
 }
 
 void MipsParser::parseIcmpInst(IcmpInst *inst) const {
@@ -429,7 +443,7 @@ void MipsParser::parseMoveInst(MoveInst *inst) const {
  *		| # 7th arg
  *		| # 6th arg
  *		| # 5th arg
- *		------------
+ *		------------  <-- $sp without fixing
  *		|
  *		| context saving where I'm planning
  *		|

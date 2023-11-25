@@ -196,6 +196,10 @@ void RemovePhi::sequentialMove(Function *f) {
 					break;
 			}
 
+			/*
+			 * 	flag means there is a cycle
+			 */
+
 			if (flag) {
 				seq.push_back(new MoveInst(edge->first, edge->second));
 				for (auto it = pcList.begin(); it != pcList.end(); ++it) {

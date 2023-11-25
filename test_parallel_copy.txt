@@ -30,18 +30,18 @@
 	phi1->addValueFromBb(v3, b3);
 
 	auto *br1 = new BrInst(b4);
-	b1->instructionList.push_back(phi1);
-	b1->instructionList.push_back(phi2);
-	b1->instructionList.push_back(br1);
+	b1->instList.push_back(phi1);
+	b1->instList.push_back(phi2);
+	b1->instList.push_back(br1);
 
 	auto *br2 = new BrInst(new Value(IntegerType::INT1, "%4"), b4, b1);
-	b2->instructionList.push_back(br2);
+	b2->instList.push_back(br2);
 
 	auto *br3 = new BrInst(new Value(IntegerType::INT1, "%5"), b4, b1);
-	b3->instructionList.push_back(br3);
+	b3->instList.push_back(br3);
 
 	auto *ret = new ReturnInst("fucker", new Value(IntegerType::INT32, "fucker"));
-	b4->instructionList.push_back(ret);
+	b4->instList.push_back(ret);
 
 	Function *func = new Function(IntegerType::INT32, "fucker");
 	func->basicList.push_back(b1);
