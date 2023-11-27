@@ -26,6 +26,7 @@ std::ofstream llvmfile("./llvm_ir.txt");
 std::ofstream llvmfile_nop("./llvm_ir_nop.txt");
 std::ofstream llvmfile_m2r("./llvm_ir_m2r.txt");
 std::ofstream llvmfile_killPhi("./llvm_ir_killPhi.txt");
+std::ofstream mipsfile_vr("./mips_vr.txt");
 std::ofstream mipsfile("./mips.txt");
 
 void parseLog(const std::string &str) {
@@ -102,7 +103,7 @@ int main() {
 
 	auto mipsParser = new MipsParser(irBuilder.getModule());
 	mipsParser->parseModule();
-	mipsParser->mipsModule->print(cout);
+	mipsParser->mipsModule->print(mipsfile_vr);
 
 
 	auto alloca = new MipsAllocator(mipsParser->mipsModule);

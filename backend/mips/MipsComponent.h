@@ -42,6 +42,7 @@ struct MipsGlobalVar {
 	}
 };
 
+struct MipsFunction;
 struct MipsBlock {
 	vector<MipsInst *> instList{};
 	string label;
@@ -87,9 +88,19 @@ struct MipsFunction {
 	string name;
 	int stackOff = 0;
 
+	int allocateForSpill = 0;
+
 	set<MipsPhReg *> allocatedRegs{};
 
 	explicit MipsFunction(std::string name) : name(std::move(name)) {}
+
+	/*
+	 *  before inserting saving context
+	 */
+	void addArgToFront(MipsInst *inst) {
+		auto first = &blockList.front()->instList;
+		first->insert(first->begin(), inst);
+	}
 
 	string toString() const {
 		stringstream ss;

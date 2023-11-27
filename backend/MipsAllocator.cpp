@@ -6,6 +6,7 @@
 #include "mips/MipsComponent.h"
 #include <algorithm>
 #include <iostream>
+#include <fstream>
 
 void MipsAllocator::buildDefUse(MipsBlock *bb) {
 	auto blockDef = new set<MipsReg *>();
@@ -20,6 +21,7 @@ void MipsAllocator::buildDefUse(MipsBlock *bb) {
 			if (!blockDef->count(j))
 				blockUse->insert(j);
 		}
+
 		for (auto j : *i->getDef()) {
 			if (!blockUse->count(j))
 				blockDef->insert(j);
@@ -43,14 +45,10 @@ void MipsAllocator::liveAnalysis(MipsFunction *f) {
 		 * out[n] += for succ in[n]
 		 *
 		 */
-
+		cout << "fucker\n" << endl;
 		for (auto bb : f->blockList) {
 			auto *_liveOut = new set<MipsReg *>;
 			auto *_liveIn = new set<MipsReg *>;
-
-			for (auto suc : *bb->succ) {
-				_liveOut->insert(suc->liveIn->begin(), suc->liveIn->end());
-			}
 
 			std::set<MipsReg *> difference{};
 			std::set_difference(
@@ -60,6 +58,10 @@ void MipsAllocator::liveAnalysis(MipsFunction *f) {
 
 			_liveIn->insert(bb->use->begin(), bb->use->end());
 			_liveIn->insert(difference.begin(), difference.end());
+
+			for (auto suc : *bb->succ) {
+				_liveOut->insert(suc->liveIn->begin(), suc->liveIn->end());
+			}
 
 			if (*_liveIn!=*bb->liveIn || *_liveOut!=*bb->liveOut) {
 				changed = true;
@@ -163,11 +165,13 @@ void MipsAllocator::run() {
 		}
 		cout << endl;
 
+		/*
 		cout << "colors : "<< endl;
 		for (auto i : color) {
 			cout << i.first->toString() << " " << to_string(i.second) << ", ";
 		}
 		cout << endl;
+		 */
 
 		if (!spilledNodes.empty()) {
 			rewriteProgram(f);
@@ -189,6 +193,8 @@ void MipsAllocator::run() {
 
 
 
+	std::ofstream tmp("./mips_withoutFix.txt");
+	module->print(tmp);
 
 
 	/*
@@ -199,6 +205,8 @@ void MipsAllocator::run() {
 		// make register to vector
 		auto vec = vector<MipsReg*>(f->allocatedRegs.begin(), f->allocatedRegs.end());
 		int allocateSize = f->stackOff + 4*(int)vec.size();
+
+		// allocate size for spill nodes
 
 
 		auto b1 = new MipsBlock(f->name + "_save_context");
@@ -214,8 +222,10 @@ void MipsAllocator::run() {
 
 		for (auto bb : f->blockList) {
 			for (auto i : bb->instList) {
-				if (dynamic_cast<MipsLoadInst*>(i) && ((MipsLoadInst*)i)->offset == $sp) {
-					dynamic_cast<MipsImm*>(((MipsLoadInst*)i)->addr)->imm += allocateSize;
+				if (dynamic_cast<MipsLoadInst *>(i) &&
+					((MipsLoadInst *)i)->offset==$sp &&
+					!i->allocateForSpill) {
+					dynamic_cast<MipsImm *>(((MipsLoadInst *)i)->addr)->imm += allocateSize;
 				}
 			}
 		}
@@ -538,16 +548,24 @@ void MipsAllocator::assignColors() {
 
 void MipsAllocator::rewriteProgram(MipsFunction *f) {
 	/*
-	 *  我觉得应该够吧..., who knows it 2333
+	 *  我觉得应该够吧..., who knows it 2333, 有一个点不够，md
 	 */
+
+
+
+
 	auto newTemps = unordered_set<MipsReg *>{};
+
+//	f->stackOff -= f->allocateForSpill;
+	f->allocateForSpill = 0;
 
 	for (auto spill : spilledNodes) {
 
 		MipsReg *vrReg = nullptr;
 
 		for (auto bb: f->blockList) {
-			for (auto i:bb->instList) {
+			auto insts = bb->instList;
+			for (auto i : insts) {
 
 				if (!vrReg)
 					vrReg = new MipsVrReg();
@@ -558,11 +576,13 @@ void MipsAllocator::rewriteProgram(MipsFunction *f) {
 
 				if (_use) {
 					auto m = new MipsLoadInst(vrReg, new MipsImm(f->stackOff), $sp);
+					m->allocateForSpill = true;
 					bb->insertBefore(i,m);
 				}
 
 				if (_def) {
 					auto m = new MipsStoreInst(vrReg, new MipsImm(f->stackOff), $sp);
+					m->allocateForSpill = true;
 					bb->insertAfter(i,m);
 				}
 
@@ -577,9 +597,15 @@ void MipsAllocator::rewriteProgram(MipsFunction *f) {
 		// allocate space on the stack
 		f->stackOff += 4;
 
+		// total allocate, if rewriteProgram again
+		f->allocateForSpill += 4;
+
 	}
 
-
+	cout << "!Allocate stack size : "
+		 << f->stackOff
+		 << ", allocate for spill : "
+		 << f->allocateForSpill << endl;
 
 	spilledNodes.clear();
 	initial.clear();

@@ -37,6 +37,7 @@ void MipsParser::parseGlobalVar(GlobalVariable *glo) const {
 	if (glo->init->isArr()) {
 		auto item = ((ConstantArray *)glo->init);
 		mipsGlo->arr = item->array;
+		mipsGlo->size = ((ArrayType*)item->type)->getNum() * 4;
 	}
 	if (glo->init->isInt()) {
 		auto item = ((ConstantInt *)glo->init);
@@ -168,14 +169,20 @@ MipsOperand *MipsParser::parseGlobalOp(GlobalVariable *val, bool canImm) const {
 }
 
 MipsOperand *MipsParser::parseArgumentOp(Argument *val, bool canImm) const {
+	/*
+	 *  It has to be inserted to the first block.
+	 *  because if you firstly use in the 2nd, and reuse it in the 3rd, that would be wrong.
+	 */
 	int rk = val->rank;
 	auto *dst = new MipsVrReg();
 	if (rk < 4) {
 		auto *inst = new MipsLiInst(dst, (rk==0) ? $a0 : (rk==1) ? $a1 : (rk==2) ? $a2 : (rk==3) ? $a3 : nullptr);
-		curMipsBlock->addInst(inst);
+//		curMipsBlock->addInst(inst);
+		curMipsFunction->addArgToFront(inst);
 	} else {
 		auto *m1 = new MipsLoadInst(dst, new MipsImm((rk - 4)*4), $sp);
-		curMipsBlock->addInst(m1);
+//		curMipsBlock->addInst(m1);
+		curMipsFunction->addArgToFront(m1);
 	}
 	(*value2Operand)[val] = dst;
 	return dst;
@@ -236,13 +243,10 @@ void MipsParser::parseAluInst(AluInst *inst) const {
 			mipsInst = new MipsLiInst(dst, new MipsImm(ans));
 		} else {
 			MipsOperand *mop1, *mop2;
-			if (imm1) {
-				mop2 = parseOp(op1, true);
-				mop1 = parseOp(op2, false);
-			} else {
-				mop1 = parseOp(op1, true);
-				mop2 = parseOp(op2, false);
-			}
+
+			mop1 = parseOp(op1, false);
+			mop2 = parseOp(op2, false);
+
 			mipsInst = new MipsBinInst(BinType::M_SUBU, dst, mop1, mop2);
 		}
 	}
@@ -360,8 +364,11 @@ void MipsParser::parseGEPInst(GEPInst *inst) const {
 	} else {
 		mop2 = parseOp(inst->getOp(1), false);
 	}
-	auto mi1 = new MipsBinInst(M_SLL, mop2, mop2, new MipsImm(2));
-	auto mi2 = new MipsBinInst(M_ADDU, dst, mop1, mop2);
+
+	auto mul4 = new MipsVrReg();
+
+	auto mi1 = new MipsBinInst(M_SLL, mul4, mop2, new MipsImm(2));
+	auto mi2 = new MipsBinInst(M_ADDU, dst, mop1, mul4);
 //	auto mipsInst = new MipsLoadInst(dst, new MipsImm(0), mop1);
 
 	curMipsBlock->addInst(mi1);
@@ -424,14 +431,16 @@ void MipsParser::parseZextInst(ZextInst *inst) const {
 	auto mop1 = parseOp(inst, false);
 	auto mop2 = parseOp(inst->getOp(0), true);
 
-	curMipsBlock->addInst(new MipsLiInst(mop1, mop2));
+//	curMipsBlock->addInst(new MipsLiInst(mop1, mop2));
+	curMipsBlock->addInst(new MipsBinInst(M_ADDU, mop1, $zero, mop2));
 }
 
 void MipsParser::parseMoveInst(MoveInst *inst) const {
 	auto mop1 = parseOp(inst->dst, false);
 	auto mop2 = parseOp(inst->src, true);
 
-	curMipsBlock->addInst(new MipsLiInst(mop1, mop2));
+//	curMipsBlock->addInst(new MipsLiInst(mop1, mop2));
+	curMipsBlock->addInst(new MipsBinInst(M_ADDU, mop1, $zero, mop2));
 }
 
 

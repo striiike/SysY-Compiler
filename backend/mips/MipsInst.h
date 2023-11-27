@@ -14,6 +14,8 @@ using namespace std;
 
 struct MipsInst {
 
+	bool allocateForSpill = false;
+
 	virtual unordered_set<MipsReg *> *getDef() { return new unordered_set<MipsReg *>{}; }
 	virtual unordered_set<MipsReg *> *getUse() { return new unordered_set<MipsReg *>{}; }
 	virtual bool replaceUse2vr(MipsReg *old, MipsReg *_new) { return false; }
@@ -166,20 +168,21 @@ struct MipsStoreInst : MipsInst {
 		auto s = new unordered_set<MipsReg *>;
 		(dynamic_cast<MipsVrReg *>(offset) && s->insert((MipsVrReg *)offset).second);
 		(dynamic_cast<MipsVrReg *>(addr) && s->insert((MipsVrReg *)addr).second);
-		return s;
-	}
-	unordered_set<MipsReg *> *getDef() override {
-		auto s = new unordered_set<MipsReg *>;
 		(dynamic_cast<MipsVrReg *>(dst) && s->insert((MipsVrReg *)dst).second);
 		return s;
 	}
+//	unordered_set<MipsReg *> *getDef() override {
+//		auto s = new unordered_set<MipsReg *>;
+//		return s;
+//	}
 	bool replaceUse2vr(MipsReg *old, MipsReg *_new) override {
 		return offset==old && (offset = _new, true) ||
-			addr==old && (addr = _new, true);
+			addr==old && (addr = _new, true) ||
+		 dst==old && (dst = _new, true);
 	}
-	bool replaceDef2vr(MipsReg *old, MipsReg *_new) override {
-		return dst==old && (dst = _new, true);
-	}
+//	bool replaceDef2vr(MipsReg *old, MipsReg *_new) override {
+//		;
+//	}
 
 };
 
