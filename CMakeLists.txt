@@ -86,4 +86,6 @@ add_executable(compiler main.cpp
         llvm-ir/instruction/ParallelCopyInst.h
         backend/MipsAllocator.h
         backend/MipsAllocator.cpp
+        midend/DeadCodeEmit.h
+        midend/DeadCodeEmit.cpp
 )

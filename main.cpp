@@ -25,6 +25,7 @@ std::ofstream errfile("./error.txt");
 std::ofstream llvmfile("./llvm_ir.txt");
 std::ofstream llvmfile_nop("./llvm_ir_nop.txt");
 std::ofstream llvmfile_m2r("./llvm_ir_m2r.txt");
+std::ofstream llvmfile_dce("./llvm_ir_dce.txt");
 std::ofstream llvmfile_killPhi("./llvm_ir_killPhi.txt");
 std::ofstream mipsfile_vr("./mips_vr.txt");
 std::ofstream mipsfile("./mips.txt");
@@ -92,14 +93,19 @@ int main() {
 	llvmfile << irBuilder.getModule()->toString() << endl;
 	llvmfile_m2r << irBuilder.getModule()->toString() << endl;
 
+
+	(new DeadCodeEmit())->run(irBuilder.getModule());
+	llvmfile_dce << irBuilder.getModule()->toString() << endl;
+
+
+
+
+
+
+
+
 	(new RemovePhi())->run(irBuilder.getModule());
 	llvmfile_killPhi << irBuilder.getModule()->toString() << endl;
-
-
-
-
-
-
 
 	auto mipsParser = new MipsParser(irBuilder.getModule());
 	mipsParser->parseModule();
