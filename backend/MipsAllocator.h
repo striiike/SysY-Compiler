@@ -37,18 +37,6 @@ public:
 	/*
 	 *  others
 	 */
-	struct PairHash {
-		std::size_t operator()(const std::pair<MipsReg *, MipsReg *> &p) const {
-			auto hash1 = std::hash<MipsReg *>{}(p.first);
-			auto hash2 = std::hash<MipsReg *>{}(p.second);
-			return hash1 ^ hash2;
-		}
-	};
-	struct PairEqual {
-		bool operator()(const std::pair<MipsReg *, MipsReg *> &lhs, const std::pair<MipsReg *, MipsReg *> &rhs) const {
-			return lhs.first==rhs.first && lhs.second==rhs.second;
-		}
-	};
 	unordered_set<MipsReg *> initial;
 	set<pair<MipsReg *, MipsReg *>> adjSet;
 	unordered_map<MipsReg *, unordered_set<MipsReg *>> adjList;
@@ -85,3 +73,6 @@ public:
 	void clearState();
 };
 
+/*
+ *  move 有 bug, 不过也优化了没多少，不管了。
+ */

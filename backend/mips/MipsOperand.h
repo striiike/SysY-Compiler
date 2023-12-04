@@ -9,11 +9,15 @@
 #include <map>
 using namespace std;
 
+struct MipsPhReg;
+
 struct MipsOperand {
 	virtual string toString() { return "!fuck!"; }
 };
 
 struct MipsReg : MipsOperand {
+
+	virtual MipsPhReg *reg() { return nullptr; }
 	virtual bool isPreColored() { return false; }
 };
 
@@ -21,6 +25,7 @@ struct MipsPhReg : MipsReg {
 	std::string name;
 
 	explicit MipsPhReg(std::string name) : name(std::move(name)) {}
+	MipsPhReg *reg() override { return this; }
 	string toString() override { return name; }
 	bool isPreColored() override { return true; }
 };
@@ -40,7 +45,7 @@ struct MipsVrReg : MipsReg {
 			return alloca->name;
 		return name;
 	}
-
+	MipsPhReg *reg() override { return alloca; }
 };
 
 typedef MipsPhReg *MipsPhRegPtr;

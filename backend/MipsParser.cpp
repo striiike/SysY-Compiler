@@ -37,7 +37,7 @@ void MipsParser::parseGlobalVar(GlobalVariable *glo) const {
 	if (glo->init->isArr()) {
 		auto item = ((ConstantArray *)glo->init);
 		mipsGlo->arr = item->array;
-		mipsGlo->size = ((ArrayType*)item->type)->getNum() * 4;
+		mipsGlo->size = ((ArrayType *)item->type)->getNum()*4;
 	}
 	if (glo->init->isInt()) {
 		auto item = ((ConstantInt *)glo->init);
@@ -231,8 +231,8 @@ void MipsParser::parseAluInst(AluInst *inst) const {
 				mop2 = parseOp(op1, true);
 				mop1 = parseOp(op2, false);
 			} else {
-				mop1 = parseOp(op1, true);
-				mop2 = parseOp(op2, false);
+				mop1 = parseOp(op1, false);
+				mop2 = parseOp(op2, true);
 			}
 			mipsInst = new MipsBinInst(BinType::M_ADDU, dst, mop1, mop2);
 		}
@@ -359,11 +359,21 @@ void MipsParser::parseCallInst(CallInst *inst) const {
 void MipsParser::parseGEPInst(GEPInst *inst) const {
 	auto mop1 = parseOp(inst->getOp(0), false);
 	MipsOperand *mop2, *dst = parseOp(inst, false);
+
+	Value *_mop2 = (inst->getOp(2)) ? inst->getOp(2) : inst->getOp(1);
+	if (dynamic_cast<ConstantInt *>(_mop2)) {
+		auto imm = dynamic_cast<ConstantInt *>(_mop2);
+		auto mi = new MipsBinInst(M_ADDU, dst, mop1, new MipsImm(imm->value*4));
+		curMipsBlock->addInst(mi);
+		return;
+	}
+
 	if (inst->getOp(2)) {
 		mop2 = parseOp(inst->getOp(2), false);
 	} else {
 		mop2 = parseOp(inst->getOp(1), false);
 	}
+
 
 	auto mul4 = new MipsVrReg();
 
@@ -431,8 +441,13 @@ void MipsParser::parseZextInst(ZextInst *inst) const {
 	auto mop1 = parseOp(inst, false);
 	auto mop2 = parseOp(inst->getOp(0), true);
 
-//	curMipsBlock->addInst(new MipsLiInst(mop1, mop2));
-	curMipsBlock->addInst(new MipsBinInst(M_ADDU, mop1, $zero, mop2));
+	if (dynamic_cast<MipsReg *>(mop2)) {
+		curMipsBlock->addInst(new MipsBinInst(M_ADDU, mop1, mop2, new MipsImm(0)));
+	} else {
+		curMipsBlock->addInst(new MipsLiInst(mop1, mop2));
+	}
+
+//	curMipsBlock->addInst(new MipsBinInst(M_ADDU, mop1, $zero, mop2));
 }
 
 void MipsParser::parseMoveInst(MoveInst *inst) const {
@@ -440,7 +455,11 @@ void MipsParser::parseMoveInst(MoveInst *inst) const {
 	auto mop2 = parseOp(inst->src, true);
 
 //	curMipsBlock->addInst(new MipsLiInst(mop1, mop2));
-	curMipsBlock->addInst(new MipsBinInst(M_ADDU, mop1, $zero, mop2));
+	if (dynamic_cast<MipsReg *>(mop2)) {
+		curMipsBlock->addInst(new MipsBinInst(M_ADDU, mop1, mop2, new MipsImm(0)));
+	} else {
+		curMipsBlock->addInst(new MipsLiInst(mop1, mop2));
+	}
 }
 
 

@@ -61,7 +61,7 @@ void PrintfStmt::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 	for (int i = 1; i < str.size() - 1; i++) {
 		if (str[i]=='\\' && str[i + 1]!='n')
 			formatUnmatched = true;
-		if (str[i]!=32 && str[i]!=33 && (str[i] < 40 || str[i] > 126) && str[i]!='%')
+		if (str[i] != '\n' && str[i]!=32 && str[i]!=33 && (str[i] < 40 || str[i] > 126) && str[i]!='%')
 			formatUnmatched = true;
 		if (str[i]=='%') {
 			if (str[i + 1]=='d')
@@ -115,6 +115,9 @@ void LVal::checkError(ErrorCtxPtr ctx, ErrorRetPtr ret) {
 		ret->undefined = true;
 	} else if (varPtr->isConst && ctx->isLeftValue)
 		errorList.emplace_back(Exception::CONST_ASSIGNED, ident.getLineNum());
+
+	ctx->isLeftValue = false;
+
 	for (const auto &i : array) {
 		i->checkError(ctx, ret);
 	}

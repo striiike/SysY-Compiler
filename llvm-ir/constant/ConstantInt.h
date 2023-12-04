@@ -22,6 +22,11 @@ public:
 		return type->toString() + " " + std::to_string(value);
 	}
 
+	void setValue(int val) {
+		value = val;
+		name = to_string(val);
+	}
+
 	bool isInt() override { return true; }
 };
 

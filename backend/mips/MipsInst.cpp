@@ -11,9 +11,15 @@ std::string MipsBinInst::toString()  {
 		return "rem \t" + dst->toString() + ", \t " + src1->toString() + ", \t" + src2->toString();
 	}
 	if (ty==M_ADDU) {
+		if (dynamic_cast<MipsImm*>(src2)) {
+			return "addiu \t" + dst->toString() + ", \t " + src1->toString() + ", \t" + src2->toString();
+		}
 		return "addu \t" + dst->toString() + ", \t " + src1->toString() + ", \t" + src2->toString();
 	}
 	if (ty==M_SUBU) {
+		if (dynamic_cast<MipsImm*>(src2)) {
+			return "addiu \t" + dst->toString() + ", \t " + src1->toString() + ", \t-" + src2->toString();
+		}
 		return "subu \t" + dst->toString() + ", \t " + src1->toString() + ", \t" + src2->toString();
 	}
 	if (ty==M_MUL) {

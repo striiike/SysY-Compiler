@@ -260,6 +260,32 @@ void MipsAllocator::run() {
 		}
 
 	}
+
+
+	/*
+	 *  kill same move
+	 */
+	/*
+	for (auto f : module->functions) {
+		for (auto bb : f->blockList) {
+
+			auto *instList = &(bb->instList);
+			for (auto it = instList->begin();
+				 it!=instList->end();) {
+
+				if (dynamic_cast<MipsLiInst *>(*it) &&
+					((MipsVrReg *)((MipsLiInst *)*it)->dst)->alloca==
+						((MipsVrReg *)((MipsLiInst *)*it)->imm)->alloca) {
+
+					it = instList->erase(it);
+				} else {
+					++it;
+				}
+
+			}
+		}
+	}
+	*/
 }
 
 void MipsAllocator::build(MipsFunction *f) {

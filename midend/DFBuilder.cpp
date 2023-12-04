@@ -30,6 +30,9 @@ void DFBuilder::run() {
 		buildDominateMap(i);
 		buildDominateTree(i);
 		buildDF(i);
+
+		// for GCM 
+		buildDTDepth(i->basicList.front(), 1);
 	}
 
 }
@@ -229,5 +232,11 @@ void DFBuilder::buildDF(Function *function) {
 
 
 
-
+void DFBuilder::buildDTDepth(BasicBlock *bb, int depth) {
+	bb->dtDepth = depth;
+	for (auto child : *bb->childBbs) {
+		child->immDominator = bb;
+		buildDTDepth(child, depth + 1);
+	}
+}
 

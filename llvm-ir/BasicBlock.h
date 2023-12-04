@@ -30,6 +30,8 @@ public:
 	/// DF
 	vector<BasicBlock *> *DF{};
 
+	int dtDepth = 0;
+
 public:
 	explicit BasicBlock(std::string name)
 		: Value(nullptr, std::move(name)) {}

@@ -41,6 +41,8 @@ void Mem2Reg::run(Module *module) {
 					insertPhiInst(inst);
 
 					rename(func->basicList.front());
+
+					inst->removeUse();
 					it = instList->erase(it);
 
 				} else {
@@ -149,11 +151,15 @@ void Mem2Reg::rename(BasicBlock *entry) {
 		if (inst->instType==InstType::LOAD && useInsts->count(inst)) {
 
 			inst->replaceOld2New(!reach->empty() ? reach->top() : new ConstantInt(0,0));
+
+			inst->removeUse();
 			it = instList->erase(it);
 		} else if (inst->instType==InstType::STORE && defInsts->count(inst)) {
 			/// store's @content
 			reach->push(inst->getOp(0));
 			++cnt;
+
+			inst->removeUse();
 			it = instList->erase(it);
 		}
 //		else if (inst->instType==InstType::ALLOCA && inst == globalInst) {

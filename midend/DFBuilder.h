@@ -44,6 +44,7 @@ public:
 	void buildDominateTree(Function *function);
 	bool isImmediatelyDominated(BasicBlock *dominator, BasicBlock *child) const;
 	void buildDF(Function *function);
+    void buildDTDepth(BasicBlock *bb, int depth);
 };
 
 #endif //COMPILER_MIDEND_DFBUILDER_H

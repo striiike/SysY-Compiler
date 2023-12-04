@@ -20,6 +20,7 @@ public:
 	void addOp(Value *value);
 	Value *getOp(int index);
 	void updateOld2New(Value *old, Value *_new);
+	void removeSelf();
 };
 
 #endif //COMPILER_LLVM_IR_USER_H

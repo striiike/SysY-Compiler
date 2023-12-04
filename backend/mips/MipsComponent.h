@@ -66,7 +66,7 @@ struct MipsBlock {
 
 	void insertAfter(MipsInst *inst, MipsInst *toInsert) {
 		auto pos = find(instList.begin(), instList.end(), inst);
-		instList.insert(pos + 1, toInsert);
+		instList.insert(++pos, toInsert);
 	}
 	void insertBefore(MipsInst *inst, MipsInst *toInsert) {
 		auto pos = find(instList.begin(), instList.end(), inst);

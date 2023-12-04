@@ -88,4 +88,8 @@ add_executable(compiler main.cpp
         backend/MipsAllocator.cpp
         midend/DeadCodeEmit.h
         midend/DeadCodeEmit.cpp
+        midend/GVN.h
+        midend/GVN.cpp
+        backend/PeepHole.h
+        backend/PeepHole.cpp
 )

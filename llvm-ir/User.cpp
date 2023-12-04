@@ -27,3 +27,9 @@ User::User(Type *type, std::string name)
 	: Value(type, std::move(name)) {
 	opList.clear();
 }
+
+void User::removeSelf() {
+	for (auto op : opList) {
+		op->useList.remove_if([this](Use *u) { return (u->user)==this; });
+	}
+}

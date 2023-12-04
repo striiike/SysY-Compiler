@@ -45,6 +45,10 @@ public:
 			getOp(1)->name;
 
 	}
+
+	std::string opName() {
+		return aluTypeMap[aluType];
+	}
 };
 
 #endif //COMPILER_LLVM_IR_INSTRUCTION_ALUINST_H
