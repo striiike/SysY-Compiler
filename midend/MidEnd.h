@@ -11,6 +11,7 @@
 #include "RemovePhi.h"
 #include "GVN.h"
 #include "DeadCodeEmit.h"
+#include "Minority.h"
 
 class MidEnd {
 public:

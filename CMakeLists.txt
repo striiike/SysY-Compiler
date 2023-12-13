@@ -92,4 +92,6 @@ add_executable(compiler main.cpp
         midend/GVN.cpp
         backend/PeepHole.h
         backend/PeepHole.cpp
+        midend/Minority.h
+        midend/Minority.cpp
 )

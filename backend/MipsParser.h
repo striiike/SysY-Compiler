@@ -46,6 +46,13 @@ public:
 
 	std::unordered_map<BasicBlock *, MipsBlock*> *llvm2MipsBlock;
 
+
+
+	int N=32;
+	int log = 0;
+	int shift=0;
+	long long multiplier=0;
+
 public:
 	explicit MipsParser(Module *mod) {
 		module = mod;
@@ -58,10 +65,10 @@ public:
 	void parseModule();
 	void parseGlobalVar(GlobalVariable *) const;
 	void parseFunction(Function *);
-	void parseInstruction(Instruction *, MipsBlock *) const;
+	void parseInstruction(Instruction *, MipsBlock *);
 
 	void parseAllocaInst(AllocaInst *inst) const;
-	void parseAluInst(AluInst *inst) const;
+	void parseAluInst(AluInst *inst);
 	void parseCallInst(CallInst *inst) const;
 	void parseBrInst(BrInst *inst) const;
 	void parseIcmpInst(IcmpInst *inst) const;
@@ -75,4 +82,7 @@ public:
 	MipsOperand *parseGlobalOp(GlobalVariable *val, bool imm) const;
 	MipsOperand *parseArgumentOp(Argument *val, bool imm) const;
 	MipsOperand *parseConstOp(ConstantInt *val, bool imm) const;
+
+	void chooseMultiplier(int divisor);
+	void divide(MipsReg *dividend, MipsReg* target, int divisor);
 };

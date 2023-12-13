@@ -79,7 +79,7 @@ void MipsParser::parseFunction(Function *func) {
 	}
 }
 
-void MipsParser::parseInstruction(Instruction *inst, MipsBlock *block) const {
+void MipsParser::parseInstruction(Instruction *inst, MipsBlock *block) {
 	block->instList.push_back(new MipsComment(inst->toString()));
 	switch (inst->instType) {
 	case InstType::ALLOCA: {
@@ -214,7 +214,83 @@ void MipsParser::parseAllocaInst(AllocaInst *inst) const {
 	}
 }
 
-void MipsParser::parseAluInst(AluInst *inst) const {
+void MipsParser::chooseMultiplier(int divisor) {
+	log = N - __builtin_clz(divisor - 1);
+	shift = log;
+	long long low = (1LL << (N + shift))/divisor;
+	long long high = ((1LL << (N + shift)) + (1LL << (shift + 1)))/divisor;
+
+	while ((low >> 1) < (high >> 1) && shift > 0) {
+		low >>= 1;
+		high >>= 1;
+		shift--;
+	}
+	multiplier = high;
+}
+
+void MipsParser::divide(MipsReg *target, MipsReg *dividend, int divisor) {
+	bool isNegative = (divisor < 0);
+	int divisorAbs = isNegative ? -divisor : divisor;
+	chooseMultiplier(divisorAbs);
+	if (divisorAbs==1) {
+		if (dividend!=target) {
+			curMipsBlock->addInst(new MipsBinInst(M_ADDU, target, $zero, dividend));
+		}
+	} else if (divisorAbs==(1 << log)) {
+		auto *vr0 = new MipsVrReg();
+		curMipsBlock->addInst(new MipsBinInst(M_SRA, vr0, dividend, new MipsImm(log - 1)));
+		curMipsBlock->addInst(new MipsBinInst(M_SRL, vr0, vr0, new MipsImm(N - log)));
+		curMipsBlock->addInst(new MipsBinInst(M_ADDU, vr0, vr0, dividend));
+		curMipsBlock->addInst(new MipsBinInst(M_SRA, target, vr0, new MipsImm(log)));
+
+	} else if (((unsigned long long)multiplier) < 0x80000000LL) {
+		auto *vr0 = new MipsVrReg(), *vr1 = new MipsVrReg();
+		int m = (int)multiplier;
+		curMipsBlock->addInst(new MipsLiInst(vr0, new MipsImm(m)));
+		curMipsBlock->addInst(new MipsMULT(vr0, dividend));
+		curMipsBlock->addInst(new MipsMFHI(vr0));
+		curMipsBlock->addInst(new MipsBinInst(M_SRA, vr0, vr0, new MipsImm(shift)));
+		curMipsBlock->addInst(new MipsBinInst(M_SRA, vr1, dividend, new MipsImm(31)));
+		curMipsBlock->addInst(new MipsBinInst(M_SUBU, target, vr0, vr1));
+
+	} else {
+		auto *vr0 = new MipsVrReg(), *vr1 = new MipsVrReg();
+		int m = (int)(multiplier - 0x100000000LL);
+		curMipsBlock->addInst(new MipsLiInst(vr0, new MipsImm(m)));
+		curMipsBlock->addInst(new MipsMULT(vr0, dividend));
+		curMipsBlock->addInst(new MipsMFHI(vr0));
+		curMipsBlock->addInst(new MipsBinInst(M_ADDU, vr0, vr0, dividend));
+		curMipsBlock->addInst(new MipsBinInst(M_SRA, vr0, vr0, new MipsImm(shift)));
+		curMipsBlock->addInst(new MipsBinInst(M_SRA, vr1, dividend, new MipsImm(31)));
+		curMipsBlock->addInst(new MipsBinInst(M_SUBU, target, vr0, vr1));
+	}
+	if (isNegative) {
+		curMipsBlock->addInst(new MipsBinInst(M_SUBU, target, $zero, target));
+	}
+}
+
+int findSingleOne(int num) {
+	int position = 0;
+	int count = 0;
+
+	while (num) {
+		if (num & 1) {
+			count++;
+//			position = count;
+		}
+
+		if (count > 1) {
+			return -1;
+		}
+		position++;
+		num >>= 1;
+	}
+
+	return position-1;
+}
+
+
+void MipsParser::parseAluInst(AluInst *inst) {
 	auto op1 = inst->getOp(0), op2 = inst->getOp(1);
 	bool imm1 = dynamic_cast<ConstantInt *> (op1);
 	bool imm2 = dynamic_cast<ConstantInt *> (op2);
@@ -260,9 +336,19 @@ void MipsParser::parseAluInst(AluInst *inst) const {
 				mop2 = parseOp(op1, true);
 				mop1 = parseOp(op2, false);
 			} else {
-				mop1 = parseOp(op1, true);
-				mop2 = parseOp(op2, false);
+				mop1 = parseOp(op1, false);
+				mop2 = parseOp(op2, true);
 			}
+
+			if (dynamic_cast<MipsImm *>(mop2)) {
+				int ones = findSingleOne(dynamic_cast<MipsImm *>(mop2)->imm);
+				if (ones!=-1) {
+					mipsInst = new MipsBinInst(BinType::M_SLL, dst, mop1, new MipsImm(ones));
+					curMipsBlock->addInst(mipsInst);
+					return;
+				}
+			}
+
 			mipsInst = new MipsBinInst(BinType::M_MUL, dst, mop1, mop2);
 		}
 	}
@@ -271,15 +357,24 @@ void MipsParser::parseAluInst(AluInst *inst) const {
 			int ans = dynamic_cast<ConstantInt *> (op1)->value/dynamic_cast<ConstantInt *> (op2)->value;
 			mipsInst = new MipsLiInst(dst, new MipsImm(ans));
 		} else {
-			MipsOperand *mop1, *mop2;
-			if (imm1) {
-				mop2 = parseOp(op1, true);
-				mop1 = parseOp(op2, false);
+
+			if (imm2) {
+				MipsOperand *mop1, *mop2;
+				mop1 = parseOp(op1, false);
+				mop2 = parseOp(op2, true);
+
+				divide((MipsReg *)dst, (MipsReg *)mop1, ((MipsImm *)mop2)->imm);
+
+				return;
 			} else {
-				mop1 = parseOp(op1, true);
+
+				MipsOperand *mop1, *mop2;
+				mop1 = parseOp(op1, false);
 				mop2 = parseOp(op2, false);
+
+				mipsInst = new MipsBinInst(BinType::M_DIV, dst, mop1, mop2);
 			}
-			mipsInst = new MipsBinInst(BinType::M_DIV, dst, mop1, mop2);
+
 		}
 	}
 	if (inst->aluType==AluType::SREM) {
@@ -373,7 +468,6 @@ void MipsParser::parseGEPInst(GEPInst *inst) const {
 	} else {
 		mop2 = parseOp(inst->getOp(1), false);
 	}
-
 
 	auto mul4 = new MipsVrReg();
 

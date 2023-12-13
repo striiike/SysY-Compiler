@@ -24,7 +24,7 @@ struct MipsInst {
 };
 
 enum BinType {
-	M_ADDU, M_SUBU, M_MUL, M_DIV, M_SREM, M_SLL
+	M_ADDU, M_SUBU, M_MUL, M_DIV, M_SREM, M_SLL, M_SLA, M_SRA, M_SRL
 };
 
 struct MipsBinInst : MipsInst {
@@ -226,4 +226,51 @@ struct MipsComment : MipsInst {
 };
 
 
+struct MipsMFHI : MipsInst {
+	MipsReg *to;
 
+	MipsMFHI(MipsReg *op1) {
+		this->to = op1;
+	}
+
+	string toString() override {
+		return "mfhi   \t" + to->toString();
+	}
+
+	unordered_set<MipsReg *> *getDef() override {
+		auto s = new unordered_set<MipsReg *>;
+		(dynamic_cast<MipsVrReg *>(to) && s->insert((MipsVrReg *)to).second);
+		return s;
+	}
+
+	bool replaceDef2vr(MipsReg *old, MipsReg *_new) override {
+		return to==old && (to = _new, true);
+	}
+};
+
+struct MipsMULT : MipsInst {
+	MipsReg *op1;
+	MipsReg *op2;
+
+	MipsMULT(MipsReg *opp1, MipsReg *opp2) {
+		this->op1 = opp1;
+		this->op2 = opp2;
+	}
+
+	string toString() override {
+		return "mult   \t" + op1->toString() + ", \t" + op2->toString();
+	}
+
+	unordered_set<MipsReg *> *getUse() override {
+		auto s = new unordered_set<MipsReg *>;
+		(dynamic_cast<MipsVrReg *>(op1) && s->insert((MipsVrReg *)op1).second);
+		(dynamic_cast<MipsVrReg *>(op2) && s->insert((MipsVrReg *)op2).second);
+		return s;
+	}
+
+	bool replaceUse2vr(MipsReg *old, MipsReg *_new) override {
+		return op1==old && (op1 = _new, true) ||
+			op2==old && (op2 = _new, true);
+	}
+
+};

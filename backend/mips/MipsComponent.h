@@ -81,6 +81,10 @@ struct MipsBlock {
 		}
 		return ss.str();
 	}
+
+	MipsInst *lastInst() {
+		return instList.back();
+	}
 };
 
 struct MipsFunction {

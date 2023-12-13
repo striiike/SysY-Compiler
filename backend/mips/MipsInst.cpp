@@ -28,6 +28,12 @@ std::string MipsBinInst::toString()  {
 	if (ty==M_SLL) {
 		return "sll \t" + dst->toString() + ", \t " + src1->toString() + ", \t" + src2->toString();
 	}
+	if (ty==M_SRL) {
+		return "srl \t" + dst->toString() + ", \t " + src1->toString() + ", \t" + src2->toString();
+	}
+	if (ty==M_SRA) {
+		return "sra \t" + dst->toString() + ", \t " + src1->toString() + ", \t" + src2->toString();
+	}
 	return "!fuck!";
 }
 std::string MipsLiInst::toString()  {

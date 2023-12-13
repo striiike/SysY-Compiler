@@ -197,7 +197,7 @@ void RemovePhi::sequentialMove(Function *f) {
 			}
 
 			/*
-			 * 	flag means there is a cycle
+			 * 	flag means there is not a cycle
 			 */
 
 			if (flag) {

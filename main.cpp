@@ -109,9 +109,11 @@ int main() {
 	(new GVN())->run(irBuilder.getModule());
 	llvmfile_gvn << irBuilder.getModule()->toString() << endl;
 
+
 	llvmfile << irBuilder.getModule()->toString() << endl;
 
-
+	(new Minority())->run(irBuilder.getModule());
+	llvmfile_gvn << irBuilder.getModule()->toString() << endl;
 
 	(new RemovePhi())->run(irBuilder.getModule());
 	llvmfile_killPhi << irBuilder.getModule()->toString() << endl;

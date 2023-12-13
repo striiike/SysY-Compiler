@@ -38,6 +38,32 @@ void PeepHole::run(MipsModule *module) {
 
 		}
 	}
+
+
+	for (auto f : module->functions) {
+		for (auto it = f->blockList.begin(); it != f->blockList.end(); ++it) {
+
+			++it;
+			auto *nit = &(*it);
+			auto nbb = (*nit);
+			--it;
+
+			if (*nit) {
+				auto last = (*it)->lastInst();
+				auto br = dynamic_cast<MipsBranchInst *>(last);
+
+				if (br && br->ty == J && br->label->label == (*nit)->label) {
+					(*it)->instList.pop_back();
+				}
+
+
+			}
+
+
+
+		}
+	}
+
 }
 
 bool PeepHole::imm2Zero(_List_iterator<MipsInst *> it, MipsBlock *bb) {
