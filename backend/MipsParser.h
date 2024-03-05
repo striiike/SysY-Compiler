@@ -51,7 +51,7 @@ public:
 	int N=32;
 	int log = 0;
 	int shift=0;
-	long long multiplier=0;
+	unsigned long long multiplier=0;
 
 public:
 	explicit MipsParser(Module *mod) {

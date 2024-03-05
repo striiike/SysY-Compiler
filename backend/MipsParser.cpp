@@ -217,8 +217,8 @@ void MipsParser::parseAllocaInst(AllocaInst *inst) const {
 void MipsParser::chooseMultiplier(int divisor) {
 	log = N - __builtin_clz(divisor - 1);
 	shift = log;
-	long long low = (1LL << (N + shift))/divisor;
-	long long high = ((1LL << (N + shift)) + (1LL << (shift + 1)))/divisor;
+	unsigned long long low = (1ULL << (N + shift))/divisor;
+	unsigned long long high = ((1ULL << (N + shift)) + (1ULL << (shift + 1)))/divisor;
 
 	while ((low >> 1) < (high >> 1) && shift > 0) {
 		low >>= 1;
