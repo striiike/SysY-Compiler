@@ -23,6 +23,7 @@ public:
 	virtual bool isArr() { return false; }
 	virtual bool isStr() { return false; }
 
+	bool isImm() override { return true; }
 };
 
 #endif //COMPILER_LLVM_IR_CONSTANT_H

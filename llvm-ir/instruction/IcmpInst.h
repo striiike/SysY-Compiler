@@ -29,13 +29,13 @@ public:
 	IcmpInst(std::string name, IcmpType ty, Value *op1, Value *op2)
 		: Instruction(IntegerType::INT1, std::move(name), InstType::ICMP) {
 		icmpType = ty;
-		addOperand(op1);
-		addOperand(op2);
+		addOp(op1);
+		addOp(op2);
 	}
 
 	std::string toString() override {
 		return name + " = icmp " + icmpTypeMap[icmpType] + " " +
-			getOperand(0)->toLlvmString() + ", " + getOperand(1)->name;
+			getOp(0)->toLlvmString() + ", " + getOp(1)->name;
 	}
 
 };

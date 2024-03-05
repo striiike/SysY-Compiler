@@ -100,13 +100,13 @@ void RemovePhi::parallelCopy(Function *f) {
 				// last instruction is branch, which is under guarantee by cfg;
 				auto branch = (BrInst *)preBb->instructionList.back();
 				if (branch->jump) {
-					branch->operandList[0] = mid;
+					branch->opList[0] = mid;
 				} else {
-					if (branch->operandList[1]==curBb) {
-						branch->operandList[1] = mid;
+					if (branch->opList[1]==curBb) {
+						branch->opList[1] = mid;
 					}
-					if (branch->operandList[2]==curBb) {
-						branch->operandList[2] = mid;
+					if (branch->opList[2]==curBb) {
+						branch->opList[2] = mid;
 					}
 				}
 				irBuilder.curBb = mid;
@@ -131,7 +131,7 @@ void RemovePhi::parallelCopy(Function *f) {
 				break;
 
 			for (int i = 0; i < pcList.size(); ++i) {
-				pcList[i]->copyPair(inst, inst->operandList[i]);
+				pcList[i]->copyPair(inst, inst->opList[i]);
 			}
 
 		}
@@ -195,6 +195,10 @@ void RemovePhi::sequentialMove(Function *f) {
 				if (flag)
 					break;
 			}
+
+			/*
+			 * 	flag means there is not a cycle
+			 */
 
 			if (flag) {
 				seq.push_back(new MoveInst(edge->first, edge->second));

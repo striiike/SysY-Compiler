@@ -13,18 +13,24 @@
 #include "backend/MipsParser.h"
 #include "llvm-ir/IrBuilder.h"
 #include "midend/MidEnd.h"
+#include "backend/MipsAllocator.h"
+#include "backend/PeepHole.h"
+
 
 using namespace std;
 
 bool PARSER_DISPLAY = true;
-bool PARSER_SWITCH = false;
+bool PARSER_SWITCH = true;
 
 std::ofstream outfile("./output.txt");
 std::ofstream errfile("./error.txt");
 std::ofstream llvmfile("./llvm_ir.txt");
 std::ofstream llvmfile_nop("./llvm_ir_nop.txt");
 std::ofstream llvmfile_m2r("./llvm_ir_m2r.txt");
+std::ofstream llvmfile_dce("./llvm_ir_dce.txt");
+std::ofstream llvmfile_gvn("./llvm_ir_gvn.txt");
 std::ofstream llvmfile_killPhi("./llvm_ir_killPhi.txt");
+std::ofstream mipsfile_vr("./mips_vr.txt");
 std::ofstream mipsfile("./mips.txt");
 
 void parseLog(const std::string &str) {
@@ -76,38 +82,73 @@ int main() {
 		for (const auto &pair : errorList) {
 			errfile << pair.second << " " << exceptionToString[pair.first] << std::endl;
 		}
+
+		if (!errorList.empty()) {
+			return 0;
+		}
 	}
 	symbol.clear();
 
 	AST.llvmIr();
-//	cout << irBuilder.getModule()->toString() << endl;
 	llvmfile_nop << irBuilder.getModule()->toString() << endl;
-
 //	auto *mid = new MidEnd();
 //	mid->run(irBuilder.getModule());
 
 	(new DFBuilder(&(irBuilder.getModule()->functionList)))->run();
-//	cout << irBuilder.getModule()->toString() << endl;
 	(new Mem2Reg())->run(irBuilder.getModule());
+
+//	llvmfile << irBuilder.getModule()->toString() << endl;
+	llvmfile_m2r << irBuilder.getModule()->toString() << endl;
+
+
+	(new DeadCodeEmit())->run(irBuilder.getModule());
+	llvmfile_dce << irBuilder.getModule()->toString() << endl;
+
+
+
+	(new GVN())->run(irBuilder.getModule());
+	llvmfile_gvn << irBuilder.getModule()->toString() << endl;
 
 
 	llvmfile << irBuilder.getModule()->toString() << endl;
 
-
-	llvmfile_m2r << irBuilder.getModule()->toString() << endl;
-//	cout << irBuilder.getModule()->toString() << endl;
-
-
-
+	(new Minority())->run(irBuilder.getModule());
+	llvmfile_gvn << irBuilder.getModule()->toString() << endl;
 
 	(new RemovePhi())->run(irBuilder.getModule());
 	llvmfile_killPhi << irBuilder.getModule()->toString() << endl;
 
 	auto mipsParser = new MipsParser(irBuilder.getModule());
 	mipsParser->parseModule();
+	mipsParser->mipsModule->print(mipsfile_vr);
 
-	mipsParser->mipsBuilder->mipsModule->print(cout);
-	mipsParser->mipsBuilder->mipsModule->print(mipsfile);
+
+	auto alloca = new MipsAllocator(mipsParser->mipsModule);
+	alloca->run();
+
+	auto peep = new PeepHole();
+	peep->run(mipsParser->mipsModule);
+
+	mipsParser->mipsModule->print(mipsfile);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	return 0;
 }

@@ -28,7 +28,7 @@ public:
 	}
 
 	void removeUse() {
-		for (auto i : operandList) {
+		for (auto i : opList) {
 			i->useList.remove_if([this](Use *u) { return (u->user)==this; });
 		}
 	}

@@ -30,6 +30,9 @@ void DFBuilder::run() {
 		buildDominateMap(i);
 		buildDominateTree(i);
 		buildDF(i);
+
+		// for GCM 
+		buildDTDepth(i->basicList.front(), 1);
 	}
 
 }
@@ -51,12 +54,12 @@ void DFBuilder::buildCFG(Function *function) {
 		if (inst->instType==BRANCH) {
 			auto brInst = (BrInst *)inst;
 			if (brInst->jump) {
-				auto *tar = (BasicBlock *)brInst->getOperand(0);
+				auto *tar = (BasicBlock *)brInst->getOp(0);
 				(*sucMap)[i]->push_back(tar);
 				(*preMap)[tar]->push_back(i);
 			} else {
-				auto *tar1 = (BasicBlock *)brInst->getOperand(1);
-				auto *tar2 = (BasicBlock *)brInst->getOperand(2);
+				auto *tar1 = (BasicBlock *)brInst->getOp(1);
+				auto *tar2 = (BasicBlock *)brInst->getOp(2);
 				(*sucMap)[i]->push_back(tar1);
 				(*sucMap)[i]->push_back(tar2);
 				(*preMap)[tar1]->push_back(i);
@@ -106,12 +109,12 @@ void DFBuilder::removeDeadBasicBlock(Function *function) {
 		if (inst->instType==BRANCH) {
 			auto brInst = (BrInst *)inst;
 			if (brInst->jump) {
-				auto *tar = (BasicBlock *)brInst->getOperand(0);
+				auto *tar = (BasicBlock *)brInst->getOp(0);
 				(*sucMap)[i]->push_back(tar);
 				(*preMap)[tar]->push_back(i);
 			} else {
-				auto *tar1 = (BasicBlock *)brInst->getOperand(1);
-				auto *tar2 = (BasicBlock *)brInst->getOperand(2);
+				auto *tar1 = (BasicBlock *)brInst->getOp(1);
+				auto *tar2 = (BasicBlock *)brInst->getOp(2);
 				(*sucMap)[i]->push_back(tar1);
 				(*sucMap)[i]->push_back(tar2);
 				(*preMap)[tar1]->push_back(i);
@@ -229,5 +232,11 @@ void DFBuilder::buildDF(Function *function) {
 
 
 
-
+void DFBuilder::buildDTDepth(BasicBlock *bb, int depth) {
+	bb->dtDepth = depth;
+	for (auto child : *bb->childBbs) {
+		child->immDominator = bb;
+		buildDTDepth(child, depth + 1);
+	}
+}
 

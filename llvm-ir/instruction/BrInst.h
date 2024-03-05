@@ -15,26 +15,26 @@ public:
 public:
 	BrInst(Value *condition, BasicBlock *bb1, BasicBlock *bb2)
 		: Instruction(IntegerType::VOID, "br", InstType::BRANCH) {
-		addOperand(condition);
-		addOperand((Value *)bb1);
-		addOperand((Value *)bb2);
+		addOp(condition);
+		addOp((Value *)bb1);
+		addOp((Value *)bb2);
 		jump = false;
 	}
 
 	explicit BrInst(BasicBlock *bb)
 		: Instruction(IntegerType::VOID, "jump", InstType::BRANCH) {
-		addOperand((Value *)bb);
+		addOp((Value *)bb);
 		jump = true;
 	}
 
 	std::string toString() override {
 		if (jump) {
-			return "br label %" + getOperand(0)->name;
+			return "br label %" + getOp(0)->name;
 		} else {
 			return "br " +
-				getOperand(0)->toLlvmString() + ", " +
-				"label %" + getOperand(1)->name + ", " +
-				"label %" + getOperand(2)->name;
+				getOp(0)->toLlvmString() + ", " +
+				"label %" + getOp(1)->name + ", " +
+				"label %" + getOp(2)->name;
 		}
 
 	}

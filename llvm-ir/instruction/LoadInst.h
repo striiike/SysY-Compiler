@@ -12,12 +12,12 @@ class LoadInst : public Instruction {
 public:
 	LoadInst(std::string name, Value *addr)
 		: Instruction(addr->type->getTargetType(), std::move(name), InstType::LOAD) {
-		addOperand(addr);
+		addOp(addr);
 	}
 
 	std::string toString() override {
 		return name + " = load " + type->toString() + ", " +
-			getOperand(0)->toLlvmString();
+			getOp(0)->toLlvmString();
 	}
 };
 

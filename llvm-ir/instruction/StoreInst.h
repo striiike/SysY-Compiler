@@ -13,14 +13,14 @@ public:
 	/// return void
 	StoreInst(Value *content, Value *addr)
 		: Instruction(IntegerType::VOID, "store", STORE) {
-		this->addOperand(content);
-		this->addOperand(addr);
+		this->addOp(content);
+		this->addOp(addr);
 	}
 
 	std::string toString() override {
 		return "store " +
-			getOperand(0)->toLlvmString() + ", " +
-			getOperand(1)->toLlvmString();
+			getOp(0)->toLlvmString() + ", " +
+			getOp(1)->toLlvmString();
 	}
 };
 

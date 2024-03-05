@@ -9,6 +9,9 @@
 #include "../llvm-ir/Module.h"
 #include "Mem2Reg.h"
 #include "RemovePhi.h"
+#include "GVN.h"
+#include "DeadCodeEmit.h"
+#include "Minority.h"
 
 class MidEnd {
 public:

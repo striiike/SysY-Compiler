@@ -13,11 +13,11 @@ class ReturnInst : public Instruction {
 public:
 	ReturnInst(std::string name, Value *ret)
 		: Instruction(ret->type, std::move(name), InstType::RETURN) {
-		addOperand(ret);
+		addOp(ret);
 	}
 
 	std::string toString() override {
-		return "ret " + getOperand(0)->toLlvmString();
+		return "ret " + getOp(0)->toLlvmString();
 	}
 };
 

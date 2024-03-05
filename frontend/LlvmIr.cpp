@@ -268,7 +268,11 @@ Value *MulExp::llvmIr() {
 			sum = irBuilder.buildAlu(AluType::SDIV, sum, operands[i]->llvmIr());
 		}
 		if (operators[i]==TokenType::MOD) {
-			sum = irBuilder.buildAlu(AluType::SREM, sum, operands[i]->llvmIr());
+			auto dividend = operands[i]->llvmIr();
+			auto quo = irBuilder.buildAlu(AluType::SDIV, sum, dividend);
+			auto fake = irBuilder.buildAlu(AluType::MUL, quo, dividend);
+			sum = irBuilder.buildAlu(AluType::SUB, sum, fake);
+//			sum = irBuilder.buildAlu(AluType::SREM, sum, operands[i]->llvmIr());
 		}
 	}
 	return sum;

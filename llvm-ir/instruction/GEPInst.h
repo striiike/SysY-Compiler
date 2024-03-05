@@ -30,21 +30,21 @@ public:
 		if (targetType==IntegerType::INT32)
 			this->type = new PointerType(IntegerType::INT32);
 
-		this->addOperand(base);
-		this->addOperand(ptrOff);
+		this->addOp(base);
+		this->addOp(ptrOff);
 		if (arrOff)
-			this->addOperand(arrOff);
+			this->addOp(arrOff);
 	}
 
 	std::string toString() override {
 		std::stringstream ss;
 		ss << name + " = getelementptr inbounds " +
 			targetType->toString() + ", " +
-			getOperand(0)->toLlvmString() + ", " +
-			getOperand(1)->toLlvmString();
+			getOp(0)->toLlvmString() + ", " +
+			getOp(1)->toLlvmString();
 
-		if (getOperand(2)) {
-			ss << ", " + getOperand(2)->toLlvmString();
+		if (getOp(2)) {
+			ss << ", " + getOp(2)->toLlvmString();
 		}
 		return ss.str();
 	}

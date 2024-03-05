@@ -9,7 +9,6 @@
 #include <string>
 #include "Type.h"
 
-
 class Use;
 class Type;
 
@@ -23,7 +22,7 @@ public:
 	Value(Type *type, std::string name)
 		: type(type), name(std::move(name)) {}
 
-
+	virtual bool isImm() { return false; }
 
 	virtual std::string toString() {
 		return " !ub! ";
@@ -36,10 +35,8 @@ public:
 	/// modify all users that use @this value to @new value
 	void replaceOld2New(Value *_new);
 
-	virtual bool isGlobal() {return false;}
+	virtual bool isGlobal() { return false; }
 
 };
-
-
 
 #endif //COMPILER_LLVM_IR_VALUE_H

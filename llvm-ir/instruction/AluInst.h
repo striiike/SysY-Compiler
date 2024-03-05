@@ -35,15 +35,19 @@ public:
 	AluInst(std::string name, AluType ty, Value *op1, Value *op2)
 		: Instruction(IntegerType::INT32, std::move(name), InstType::ALU),
 		  aluType(ty) {
-		addOperand(op1);
-		addOperand(op2);
+		addOp(op1);
+		addOp(op2);
 	}
 
 	std::string toString() override {
 		return name + " = " + aluTypeMap[aluType] + " " +
-			getOperand(0)->toLlvmString() + ", " +
-			getOperand(1)->name;
+			getOp(0)->toLlvmString() + ", " +
+			getOp(1)->name;
 
+	}
+
+	std::string opName() {
+		return aluTypeMap[aluType];
 	}
 };
 
