@@ -10,8 +10,5 @@ With these methods of optimization:
   - Color Register Allocation.
   - Optimization for Multiplication & Division.
 
-Final Optimization Rank of List:
-  - 16 / 200+
-
 No Documentation & Seemingly no Bugs.
 
