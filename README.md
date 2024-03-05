@@ -13,3 +13,5 @@ With these methods of optimization:
 Final Optimization Rank of List:
   - 16 / 200+
 
+No Documentation & Seemingly no Bugs.
+
