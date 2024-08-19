@@ -1,4 +1,4 @@
-# SysY Compiler in BUAA Junior Aut
+# SysY Compiler in BUAA 2023 autumn
 
 Based on C++.
 
